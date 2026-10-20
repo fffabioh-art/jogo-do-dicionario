@@ -675,6 +675,22 @@ export function getRandomWordChoices(
   return shuffled.slice(0, count);
 }
 
+// Ensure all concepts/definitions end with a period without duplication
+export function ensureConceptPeriod(concept: string): string {
+  if (!concept) return '';
+  const trimmed = concept.trim();
+  if (!trimmed) return '';
+
+  const cleaned = trimmed.replace(/[\s,;:–—-]+$/, '');
+  if (!cleaned) return '';
+
+  if (/\.+$/.test(cleaned)) {
+    return cleaned.replace(/\s*\.+$/, '.');
+  }
+
+  return cleaned + '.';
+}
+
 // Helper to parse imported text into WordItem[] (Full support for Notepad .txt, CSV, JSON, TSV, etc.)
 export function parseImportedDictionaryText(rawText: string): { words: WordItem[]; error?: string } {
   const trimmed = rawText.trim();
@@ -694,7 +710,9 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
             words.push({
               id: item.id || `custom_${Date.now()}_${i}`,
               word: String(item.word).replace(/^[*"']+|[*"']+$/g, '').trim(),
-              definition: String(item.definition).replace(/^[*"']+|[*"']+$/g, '').trim().toUpperCase(),
+              definition: ensureConceptPeriod(
+                String(item.definition).replace(/^[*"']+|[*"']+$/g, '').trim().toUpperCase()
+              ),
               partOfSpeech: item.partOfSpeech ? String(item.partOfSpeech).trim() : 'substantivo',
               exampleSentence: item.exampleSentence ? String(item.exampleSentence).trim() : undefined,
               difficulty: item.difficulty || 'medio',
@@ -726,10 +744,11 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
   };
 
   const cleanDef = (raw: string) => {
-    return raw
+    const base = raw
       .replace(/^[*"']+|[*"']+$/g, '')
       .trim()
       .toUpperCase();
+    return ensureConceptPeriod(base);
   };
 
   for (let i = 0; i < rawLines.length; i++) {

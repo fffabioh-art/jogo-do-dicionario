@@ -53,15 +53,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          {/* Host Dictionary Admin Shortcut */}
-          {room && isHost && onOpenDictionary && (
+          {/* Administrator Dictionary Button (always available when not in room OR when host) */}
+          {onOpenDictionary && (!room || isHost) && (
             <button
               onClick={onOpenDictionary}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-900/60 hover:bg-amber-800/80 text-amber-200 transition-colors border border-amber-600/60 text-xs font-bold shadow-sm"
-              title="Adicionar palavras via Bloco de Notas (.txt) ou explorar banco de dados"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-black text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 active:scale-95"
+              title="Painel do Administrador: Upar banco de dados via Bloco de Notas (.txt)"
             >
-              <FileText className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline">Bloco de Notas</span>
+              <FileText className="w-3.5 h-3.5 text-stone-950 flex-shrink-0" />
+              <span>Admin: Banco .txt</span>
             </button>
           )}
 

@@ -1,8 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { BookOpen, Users, Sparkles, Play, PlusCircle, ArrowRight, Bot, Target, Clock, Settings2, FileText, CheckCircle2 } from 'lucide-react';
+import {
+  BookOpen,
+  Users,
+  Sparkles,
+  Play,
+  PlusCircle,
+  ArrowRight,
+  Bot,
+  Target,
+  Clock,
+  Settings2,
+  FileText,
+  CheckCircle2,
+  Upload,
+  Trash2,
+  Database,
+  Shield,
+} from 'lucide-react';
 import { WordItem } from '../types/game';
 import { parseImportedDictionaryText } from '../data/dictionary';
+import {
+  getLocalCustomWords,
+  saveLocalCustomWords,
+  clearLocalCustomWords,
+  pushLocalCustomWordsToServer,
+  deleteCustomWordsFromServer,
+  subscribeToCustomWords,
+} from '../utils/persistentStorage';
 
 const AVATAR_OPTIONS = [
   '🎓', '🎭', '🦁', '🦊', '🦉', '🎩', '🐙', '🐉', '🕵️', '🧙‍♂️', '🚀', '👑',
@@ -38,7 +63,11 @@ const COLOR_OPTIONS = [
   { name: 'Prata Nobre', hex: '#94A3B8' },
 ];
 
-export const HomeOrJoin: React.FC = () => {
+interface HomeOrJoinProps {
+  onOpenDictionary?: (tab?: 'notepad' | 'list') => void;
+}
+
+export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
   const { createRoom, joinRoom, error, clearError } = useGame();
 
   const [mode, setMode] = useState<'create' | 'join'>('create');
@@ -54,10 +83,27 @@ export const HomeOrJoin: React.FC = () => {
   const [leaderBluffsRule, setLeaderBluffsRule] = useState<'auto' | 'always' | 'never'>('auto');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Notepad / Custom dictionary preload state
-  const [loadedCustomWords, setLoadedCustomWords] = useState<WordItem[] | null>(null);
-  const [loadedFileName, setLoadedFileName] = useState<string | null>(null);
-  const [exclusivePreload, setExclusivePreload] = useState<boolean>(false);
+  // Persistent custom words state (saved forever)
+  const [loadedCustomWords, setLoadedCustomWords] = useState<WordItem[]>(() => getLocalCustomWords());
+  const [loadedFileName, setLoadedFileName] = useState<string | null>(() => {
+    const saved = getLocalCustomWords();
+    return saved.length > 0 ? `Banco salvo (${saved.length} palavras)` : null;
+  });
+  const [exclusivePreload, setExclusivePreload] = useState<boolean>(() => getLocalCustomWords().length > 0);
+
+  // Subscribe to persistent storage updates
+  useEffect(() => {
+    return subscribeToCustomWords((words) => {
+      setLoadedCustomWords(words);
+      if (words.length > 0) {
+        setExclusivePreload(true);
+        setLoadedFileName(`Banco salvo (${words.length} palavras)`);
+      } else {
+        setLoadedFileName(null);
+        setExclusivePreload(false);
+      }
+    });
+  }, []);
 
   // Check URL params for room code e.g. ?room=ABCD
   useEffect(() => {
@@ -81,10 +127,21 @@ export const HomeOrJoin: React.FC = () => {
           setLoadedCustomWords(res.words);
           setLoadedFileName(file.name);
           setExclusivePreload(true);
+          // Persist forever in localStorage and on server disk
+          saveLocalCustomWords(res.words);
+          pushLocalCustomWordsToServer(res.words, true).catch(() => {});
         }
       }
     };
     reader.readAsText(file);
+  };
+
+  const handleClearSavedWords = () => {
+    setLoadedCustomWords([]);
+    setLoadedFileName(null);
+    setExclusivePreload(false);
+    clearLocalCustomWords();
+    deleteCustomWordsFromServer().catch(() => {});
   };
 
   const handleCreate = (e?: React.FormEvent, withBots = false) => {
@@ -351,57 +408,96 @@ export const HomeOrJoin: React.FC = () => {
               )}
             </div>
 
-            {/* Optional Notepad Database Preload */}
+            {/* Administrator Database Panel - Visible Forever */}
             <div className="pt-1">
-              <label className="cursor-pointer w-full py-2.5 px-3 rounded-xl bg-stone-950 hover:bg-stone-800 border border-amber-600/50 text-amber-200 text-xs font-bold flex items-center justify-between transition-all shadow-sm">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-amber-400" />
-                  <span>
-                    {loadedCustomWords
-                      ? `✓ ${loadedCustomWords.length} palavras do Bloco de Notas prontas!`
-                      : 'Add Banco de Dados via Bloco de Notas (.txt) (Opcional)'}
-                  </span>
-                </div>
-                <span className="text-[10px] text-amber-300 bg-amber-950 border border-amber-700/50 px-2 py-0.5 rounded font-mono font-semibold">
-                  {loadedCustomWords ? `${loadedCustomWords.length} termos` : 'Selecionar .txt'}
-                </span>
-                <input
-                  type="file"
-                  accept=".txt,.csv,.json,.tsv,text/plain"
-                  className="hidden"
-                  onChange={handleFileSelect}
-                />
-              </label>
-              {loadedFileName && (
-                <div className="space-y-1.5 mt-2 p-2.5 rounded-xl bg-stone-950 border border-emerald-600/50">
-                  <div className="flex items-center justify-between text-[11px] text-emerald-400 font-semibold">
-                    <span className="flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> {loadedFileName} ({loadedCustomWords?.length} palavras)
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setLoadedCustomWords(null);
-                        setLoadedFileName(null);
-                        setExclusivePreload(false);
-                      }}
-                      className="text-rose-400 hover:text-rose-300 underline text-[10px]"
-                    >
-                      Remover / Zerar
-                    </button>
+              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/40 border border-amber-500/50 shadow-md space-y-2.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-amber-500 text-stone-950 font-black shadow-md">
+                      <FileText className="w-4 h-4 text-stone-950" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-bold text-amber-200">
+                          Banco de Dados (.txt)
+                        </span>
+                        <span className="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-700/80 px-1.5 py-0.2 rounded font-mono font-semibold">
+                          💾 Salvo Para Sempre
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400">
+                        {loadedCustomWords.length > 0 ? (
+                          <span className="text-emerald-400 font-semibold">
+                            ✓ {loadedCustomWords.length} palavras salvas permanentemente no jogo
+                          </span>
+                        ) : (
+                          <span>Upe seu Bloco de Notas para ficar gravado para todo sempre.</span>
+                        )}
+                      </p>
+                    </div>
                   </div>
 
-                  <label className="flex items-center gap-2 cursor-pointer pt-1 text-[11px] text-amber-200">
-                    <input
-                      type="checkbox"
-                      checked={exclusivePreload}
-                      onChange={(e) => setExclusivePreload(e.target.checked)}
-                      className="rounded border-amber-600 bg-stone-900 text-amber-500 focus:ring-0"
-                    />
-                    <span>Jogar exclusivamente com este arquivo (zerar/ignorar banco padrão)</span>
-                  </label>
+                  <div className="flex items-center gap-1.5 self-start sm:self-auto flex-wrap">
+                    {onOpenDictionary && (
+                      <button
+                        type="button"
+                        onClick={() => onOpenDictionary(loadedCustomWords.length > 0 ? 'list' : 'notepad')}
+                        className="py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs transition-all shadow-sm flex items-center gap-1 hover:scale-105 active:scale-95"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>{loadedCustomWords.length > 0 ? 'Gerenciar Banco' : 'Upar .txt'}</span>
+                      </button>
+                    )}
+
+                    <label className="cursor-pointer py-1.5 px-2.5 rounded-lg bg-stone-800 hover:bg-stone-750 border border-stone-700 text-stone-300 hover:text-stone-100 font-semibold text-xs transition-all flex items-center gap-1">
+                      <span>Selecionar Arquivo</span>
+                      <input
+                        type="file"
+                        accept=".txt,.csv,.json,.tsv,text/plain"
+                        className="hidden"
+                        onChange={handleFileSelect}
+                      />
+                    </label>
+
+                    {loadedCustomWords.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleClearSavedWords}
+                        className="py-1.5 px-2 rounded-lg bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-300 text-xs font-bold transition-all flex items-center gap-1"
+                        title="Zerar banco de dados salvo permanentemente"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Zerar</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              )}
+
+                {loadedCustomWords.length > 0 && (
+                  <div className="pt-1.5 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-amber-200">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={exclusivePreload}
+                        onChange={(e) => setExclusivePreload(e.target.checked)}
+                        className="rounded border-amber-600 bg-stone-900 text-amber-500 focus:ring-0"
+                      />
+                      <span>Jogar exclusivamente com suas palavras (banco padrão oculto)</span>
+                    </label>
+
+                    {onOpenDictionary && (
+                      <button
+                        type="button"
+                        onClick={() => onOpenDictionary('list')}
+                        className="text-amber-400 hover:text-amber-300 underline font-semibold flex items-center gap-1"
+                      >
+                        <BookOpen className="w-3 h-3" />
+                        <span>Ver todas ({loadedCustomWords.length})</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Submit Create Room */}

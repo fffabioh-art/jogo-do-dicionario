@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { RoomState, Player, WordItem, GameSettings } from '../types/game';
 import { soundManager } from '../utils/soundEffects';
+import {
+  getLocalCustomWords,
+  saveLocalCustomWords,
+  clearLocalCustomWords,
+  syncCustomWordsWithServer,
+  pushLocalCustomWordsToServer,
+  deleteCustomWordsFromServer,
+} from '../utils/persistentStorage';
 
 interface GameContextType {
   room: RoomState | null;
@@ -76,6 +84,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearError = () => setError(null);
 
+  // Sync custom words with server disk storage on mount so words persist forever
+  useEffect(() => {
+    syncCustomWordsWithServer().catch(() => {});
+  }, []);
+
   // Setup WebSocket connection
   const connectSocket = useCallback(() => {
     if (socketRef.current && (socketRef.current.readyState === WebSocket.OPEN || socketRef.current.readyState === WebSocket.CONNECTING)) {
@@ -122,10 +135,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
               currentRoomCodeRef.current = data.room.roomCode;
               localStorage.setItem(STORAGE_KEYS.LAST_ROOM, data.room.roomCode);
             }
+            if (data.room && Array.isArray(data.room.customWords) && data.room.customWords.length > 0) {
+              saveLocalCustomWords(data.room.customWords);
+            }
             soundManager.playPop();
             break;
 
           case 'ROOM_UPDATE':
+            if (data.room && Array.isArray(data.room.customWords) && data.room.customWords.length > 0) {
+              saveLocalCustomWords(data.room.customWords);
+            }
             setRoom((prev) => {
               // Sound effects based on phase transition
               if (prev?.currentRound?.phase !== data.room?.currentRound?.phase) {
@@ -202,13 +221,19 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.PLAYER_AVATAR, avatar);
     localStorage.setItem(STORAGE_KEYS.PLAYER_COLOR, color);
 
+    const saved = getLocalCustomWords();
+    const finalCustomWords = Array.isArray(customWords) && customWords.length > 0
+      ? customWords
+      : saved;
+    const isExclusive = finalCustomWords.length > 0 ? true : exclusiveCustomWords;
+
     sendAction('CREATE_ROOM', {
       playerId: myPlayerId,
       playerName: name,
       avatar,
       color,
-      customWords,
-      exclusiveCustomWords,
+      customWords: finalCustomWords,
+      exclusiveCustomWords: isExclusive,
       ...settings,
     });
   };
@@ -299,6 +324,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const importDictionary = (words: WordItem[], replaceAll = false, exclusiveCustomWords?: boolean) => {
     sendAction('IMPORT_DICTIONARY', { words, replaceAll, exclusiveCustomWords });
     soundManager.playPop();
+
+    // Persist locally in localStorage and to server disk forever
+    const current = replaceAll ? [] : getLocalCustomWords();
+    const seen = new Set(current.map((w) => w.word.toLowerCase()));
+    for (const w of words) {
+      if (w && w.word && !seen.has(w.word.toLowerCase())) {
+        seen.add(w.word.toLowerCase());
+        current.push(w);
+      }
+    }
+    saveLocalCustomWords(current);
+    pushLocalCustomWordsToServer(current, replaceAll).catch(() => {});
   };
 
   const setExclusiveCustomWords = (exclusive: boolean) => {
@@ -309,6 +346,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resetDictionary = () => {
     sendAction('RESET_DICTIONARY');
     soundManager.playPop();
+    clearLocalCustomWords();
+    deleteCustomWordsFromServer().catch(() => {});
   };
 
   const restartGame = () => {

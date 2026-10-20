@@ -3,13 +3,15 @@ import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import {
   RoomState,
   Player,
   RoundData,
   GameSettings,
   BluffEntry,
-  RoundScoreDetail
+  RoundScoreDetail,
+  WordItem
 } from './src/types/game.js';
 import {
   DICTIONARY_WORDS,
@@ -25,6 +27,109 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 app.use(express.json());
+
+// Persistent disk storage file for custom words (database uploaded by admin)
+const PERSISTENT_WORDS_FILE = path.join(__dirname, 'persistent_custom_words.json');
+
+function loadPersistentWords(): WordItem[] {
+  try {
+    if (fs.existsSync(PERSISTENT_WORDS_FILE)) {
+      const data = fs.readFileSync(PERSISTENT_WORDS_FILE, 'utf-8');
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => ({
+          ...item,
+          definition: ensureConceptPeriod(item.definition || ''),
+        }));
+      }
+    }
+  } catch (err) {
+    console.error('Error loading persistent_custom_words.json:', err);
+  }
+  return [];
+}
+
+function savePersistentWords(words: WordItem[]): void {
+  try {
+    fs.writeFileSync(PERSISTENT_WORDS_FILE, JSON.stringify(words, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving persistent_custom_words.json:', err);
+  }
+}
+
+// Ensure every created concept/definition ends with a period without duplication
+function ensureConceptPeriod(concept: string): string {
+  if (!concept) return '';
+  const trimmed = concept.trim();
+  if (!trimmed) return '';
+
+  // Clean trailing non-sentence punctuation (like commas, colons, semicolons, dashes)
+  const cleaned = trimmed.replace(/[\s,;:–—-]+$/, '');
+  if (!cleaned) return '';
+
+  // If already ends with one or more periods (e.g. '.', '..', '...'), normalize to a single period
+  if (/\.+$/.test(cleaned)) {
+    return cleaned.replace(/\s*\.+$/, '.');
+  }
+
+  // Otherwise, append the period automatically
+  return cleaned + '.';
+}
+
+// REST API for Administrator to upload, fetch, and manage persistent database
+app.get('/api/dictionary/custom', (_req, res) => {
+  const words = loadPersistentWords();
+  res.json({ words, count: words.length });
+});
+
+app.post('/api/dictionary/custom', (req, res) => {
+  const { words, replaceAll } = req.body;
+  if (!Array.isArray(words)) {
+    return res.status(400).json({ error: 'Array of words is required' });
+  }
+
+  let current = replaceAll ? [] : loadPersistentWords();
+  const existing = new Set(current.map((w) => w.word.toLowerCase()));
+
+  for (const w of words) {
+    if (w && w.word && w.definition && !existing.has(String(w.word).toLowerCase())) {
+      existing.add(String(w.word).toLowerCase());
+      current.push({
+        id: w.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        word: String(w.word).trim(),
+        definition: ensureConceptPeriod(String(w.definition).trim().toUpperCase()),
+        partOfSpeech: w.partOfSpeech ? String(w.partOfSpeech).trim() : 'substantivo',
+        exampleSentence: w.exampleSentence ? String(w.exampleSentence).trim() : undefined,
+        difficulty: w.difficulty || 'medio',
+        isCustom: true,
+      });
+    }
+  }
+
+  savePersistentWords(current);
+
+  // Sync any active rooms with the updated persistent custom words
+  for (const room of rooms.values()) {
+    if (replaceAll || !room.customWords || room.customWords.length === 0) {
+      room.customWords = current;
+      room.exclusiveCustomWords = current.length > 0;
+      broadcastToRoom(room.roomCode, { type: 'ROOM_UPDATE', room });
+    }
+  }
+
+  res.json({ success: true, count: current.length, words: current });
+});
+
+app.delete('/api/dictionary/custom', (_req, res) => {
+  savePersistentWords([]);
+  // Clear from active rooms as well
+  for (const room of rooms.values()) {
+    room.customWords = [];
+    room.exclusiveCustomWords = false;
+    broadcastToRoom(room.roomCode, { type: 'ROOM_UPDATE', room });
+  }
+  res.json({ success: true, count: 0, words: [] });
+});
 
 // In-memory room store
 const rooms = new Map<string, RoomState>();
@@ -202,23 +307,23 @@ function handleStartVotingPhase(room: RoomState) {
   const round = room.currentRound;
   if (!round) return;
 
-  // Add the real dictionary definition in UPPERCASE
+  // Add the real dictionary definition in UPPERCASE with mandatory period
   const realBluff: BluffEntry = {
     id: 'entry_real_' + Date.now(),
     authorId: 'REAL',
-    text: round.word.definition.trim().toUpperCase(),
+    text: ensureConceptPeriod(round.word.definition.trim().toUpperCase()),
     isReal: true,
   };
 
   const finalBluffs: BluffEntry[] = [...round.bluffs, realBluff];
 
-  // If 2 players, inject decoy definitions in UPPERCASE
+  // If 2 players, inject decoy definitions in UPPERCASE with mandatory period
   const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
   if (activePlayers.length <= 2 || finalBluffs.length < 3) {
     const decoy1: BluffEntry = {
       id: 'entry_decoy_1',
       authorId: 'BOT_DECOY',
-      text: getDecoyBluff(round.word, 0).trim().toUpperCase(),
+      text: ensureConceptPeriod(getDecoyBluff(round.word, 0).trim().toUpperCase()),
       isReal: false,
     };
     finalBluffs.push(decoy1);
@@ -227,7 +332,7 @@ function handleStartVotingPhase(room: RoomState) {
       const decoy2: BluffEntry = {
         id: 'entry_decoy_2',
         authorId: 'BOT_DECOY',
-        text: getDecoyBluff(round.word, 1).trim().toUpperCase(),
+        text: ensureConceptPeriod(getDecoyBluff(round.word, 1).trim().toUpperCase()),
         isReal: false,
       };
       finalBluffs.push(decoy2);
@@ -328,7 +433,7 @@ function handleBotSubmissions(room: RoomState) {
       (room.settings.leaderBluffsRule === 'auto' && room.players.length <= 4);
 
     if (shouldBluff) {
-      const bluffText = getDecoyBluff(round.word, index + 3).trim().toUpperCase();
+      const bluffText = ensureConceptPeriod(getDecoyBluff(round.word, index + 3).trim().toUpperCase());
       round.bluffs.push({
         id: 'bot_bluff_' + bot.id,
         authorId: bot.id,
@@ -527,6 +632,16 @@ wss.on('connection', (ws: WebSocket) => {
             isConnected: true,
           };
 
+          const persistent = loadPersistentWords();
+          const roomCustomWords = Array.isArray(payload.customWords) && payload.customWords.length > 0
+            ? payload.customWords
+            : persistent;
+
+          // If words were passed from host, persist them to disk forever
+          if (Array.isArray(payload.customWords) && payload.customWords.length > 0) {
+            savePersistentWords(payload.customWords);
+          }
+
           const newRoom: RoomState = {
             roomCode,
             hostId: hostPlayer.id,
@@ -541,8 +656,8 @@ wss.on('connection', (ws: WebSocket) => {
             currentRound: null,
             roundHistory: [],
             isTieBreakActive: false,
-            customWords: Array.isArray(payload.customWords) ? payload.customWords : [],
-            exclusiveCustomWords: Boolean(payload.exclusiveCustomWords),
+            customWords: roomCustomWords,
+            exclusiveCustomWords: roomCustomWords.length > 0 ? true : Boolean(payload.exclusiveCustomWords),
           };
           rooms.set(roomCode, newRoom);
           socketMap.set(ws, { roomCode, playerId: hostPlayer.id });
@@ -785,8 +900,9 @@ wss.on('connection', (ws: WebSocket) => {
           const player = room.players.find((p) => p.id === meta.playerId);
           if (!player) return;
 
-          const bluffText = (payload.bluffText || '').trim().toUpperCase();
+          let bluffText = (payload.bluffText || '').trim().toUpperCase();
           if (!bluffText) return;
+          bluffText = ensureConceptPeriod(bluffText);
 
           // Check if player already submitted
           const existingIndex = room.currentRound.bluffs.findIndex((b) => b.authorId === player.id);
@@ -964,12 +1080,13 @@ wss.on('connection', (ws: WebSocket) => {
             room.customWords.push({
               id: word.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
               word: String(word.word).trim(),
-              definition: String(word.definition).trim().toUpperCase(),
+              definition: ensureConceptPeriod(String(word.definition).trim().toUpperCase()),
               partOfSpeech: word.partOfSpeech ? String(word.partOfSpeech).trim() : 'substantivo',
               exampleSentence: word.exampleSentence ? String(word.exampleSentence).trim() : undefined,
               difficulty: word.difficulty || 'medio',
               isCustom: true,
             });
+            savePersistentWords(room.customWords);
             broadcastToRoom(room.roomCode, {
               type: 'ROOM_UPDATE',
               room,
@@ -1001,7 +1118,7 @@ wss.on('connection', (ws: WebSocket) => {
                 newWords.push({
                   id: w.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
                   word: String(w.word).trim(),
-                  definition: String(w.definition).trim().toUpperCase(),
+                  definition: ensureConceptPeriod(String(w.definition).trim().toUpperCase()),
                   partOfSpeech: w.partOfSpeech ? String(w.partOfSpeech).trim() : 'substantivo',
                   exampleSentence: w.exampleSentence ? String(w.exampleSentence).trim() : undefined,
                   difficulty: w.difficulty || 'medio',
@@ -1010,6 +1127,7 @@ wss.on('connection', (ws: WebSocket) => {
               }
             }
             room.customWords = newWords;
+            savePersistentWords(newWords);
 
             broadcastToRoom(room.roomCode, {
               type: 'ROOM_UPDATE',
@@ -1027,6 +1145,7 @@ wss.on('connection', (ws: WebSocket) => {
 
           room.customWords = [];
           room.exclusiveCustomWords = false;
+          savePersistentWords([]);
           broadcastToRoom(room.roomCode, {
             type: 'ROOM_UPDATE',
             room,

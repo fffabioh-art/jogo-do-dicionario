@@ -2,6 +2,15 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { WordItem } from '../types/game';
 import { parseImportedDictionaryText } from '../data/dictionary';
+import { ensureConceptPeriod } from '../utils/textFormatting';
+import {
+  getLocalCustomWords,
+  saveLocalCustomWords,
+  clearLocalCustomWords,
+  pushLocalCustomWordsToServer,
+  deleteCustomWordsFromServer,
+  subscribeToCustomWords,
+} from '../utils/persistentStorage';
 import {
   X,
   BookOpen,
@@ -120,7 +129,18 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
     }
   }, [room?.exclusiveCustomWords]);
 
-  const customWords = room?.customWords || [];
+  // Persistent words saved forever across browser sessions and server restarts
+  const [persistentWords, setPersistentWords] = useState<WordItem[]>(() => getLocalCustomWords());
+
+  useEffect(() => {
+    return subscribeToCustomWords((words) => {
+      setPersistentWords(words);
+    });
+  }, []);
+
+  const customWords = (room?.customWords && room.customWords.length > 0)
+    ? room.customWords
+    : persistentWords;
   // Do NOT show the 80 initial words of the database. Only show user-imported / custom words.
   const allWords = customWords;
 
@@ -193,18 +213,31 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
 
     // When replacing all, always play exclusively with the new notepad bank
     const finalExclusive = replaceAll ? true : exclusiveMode;
-    importDictionary(parseResult.words, replaceAll, finalExclusive);
-    if (replaceAll) {
-      setExclusiveMode(true);
+
+    if (room) {
+      importDictionary(parseResult.words, replaceAll, finalExclusive);
+    } else {
+      // Standalone Admin Mode (e.g. from Home screen or Header outside a room)
+      const current = replaceAll ? [] : getLocalCustomWords();
+      const seen = new Set(current.map((w) => w.word.toLowerCase()));
+      for (const w of parseResult.words) {
+        if (!seen.has(w.word.toLowerCase())) {
+          seen.add(w.word.toLowerCase());
+          current.push(w);
+        }
+      }
+      saveLocalCustomWords(current);
+      pushLocalCustomWordsToServer(current, replaceAll).catch(() => {});
     }
 
     if (replaceAll) {
+      setExclusiveMode(true);
       setImportSuccessMsg(
-        `⚡ BANCO ZERADO! O banco anterior foi completamente apagado e ${parseResult.words.length} novas palavras do Bloco de Notas foram gravadas na sala!`
+        `⚡ BANCO ZERADO E SALVO! O banco anterior foi apagado e ${parseResult.words.length} novas palavras do Bloco de Notas foram salvas permanentemente no sistema!`
       );
     } else {
       setImportSuccessMsg(
-        `➕ ${parseResult.words.length} palavras do Bloco de Notas foram adicionadas ao banco de dados da sala!`
+        `➕ ${parseResult.words.length} palavras do Bloco de Notas foram salvas permanentemente no banco de dados!`
       );
     }
 
@@ -220,9 +253,14 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
 
   // Handle wiping / resetting the database directly
   const handleConfirmResetDatabase = () => {
-    resetDictionary();
+    if (room) {
+      resetDictionary();
+    } else {
+      clearLocalCustomWords();
+      deleteCustomWordsFromServer().catch(() => {});
+    }
     setShowConfirmReset(false);
-    setImportSuccessMsg('🗑️ BANCO DE DADOS ZERADO! Todas as palavras customizadas foram apagadas. Agora você pode carregar o novo arquivo do Bloco de Notas.');
+    setImportSuccessMsg('🗑️ BANCO DE DADOS ZERADO! Todas as palavras foram apagadas no navegador e no servidor. Agora você pode upar o novo arquivo.');
     setActiveTab('notepad');
     setTimeout(() => {
       setImportSuccessMsg(null);
@@ -297,19 +335,28 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
     e.preventDefault();
     if (!singleWord.trim() || !singleDef.trim()) return;
 
-    addCustomWord({
+    const newWordItem: WordItem = {
+      id: `custom_${Date.now()}`,
       word: singleWord.trim(),
       partOfSpeech: singlePart.trim(),
-      definition: singleDef.trim().toUpperCase(),
+      definition: ensureConceptPeriod(singleDef.trim().toUpperCase()),
       exampleSentence: singleExample.trim() || undefined,
       difficulty: singleDiff,
       isCustom: true,
-    });
+    };
+
+    if (room) {
+      addCustomWord(newWordItem);
+    }
+    const current = getLocalCustomWords();
+    current.push(newWordItem);
+    saveLocalCustomWords(current);
+    pushLocalCustomWordsToServer([newWordItem], false).catch(() => {});
 
     setSingleWord('');
     setSingleDef('');
     setSingleExample('');
-    setImportSuccessMsg(`Palavra "${singleWord}" adicionada ao banco com sucesso!`);
+    setImportSuccessMsg(`Palavra "${singleWord}" salva permanentemente no banco com sucesso!`);
     setTimeout(() => {
       setImportSuccessMsg(null);
       setActiveTab('list');
@@ -317,10 +364,10 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
   };
 
   const handleExportJson = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allWords, null, 2));
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(customWords, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `dicionario_jogo_${Date.now()}.json`);
+    downloadAnchor.setAttribute('download', `dicionario_personalizado_${Date.now()}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -350,18 +397,22 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                 <Database className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h3 className="font-serif font-black text-base sm:text-lg text-amber-200 leading-tight">
-                  Banco de Dados do Dicionário
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-serif font-black text-base sm:text-lg text-amber-200 leading-tight">
+                    Painel do Administrador • Banco de Dados
+                  </h3>
+                  <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-700/80 px-2 py-0.5 rounded-full font-mono font-bold hidden sm:inline-flex items-center gap-1">
+                    💾 Gravado Para Sempre
+                  </span>
+                </div>
                 <p className="text-[10px] sm:text-xs text-stone-400">
                   {customWords.length > 0 ? (
                     <span className="text-amber-300 font-bold">
-                      {customWords.length} palavras cadastradas do Bloco de Notas
-                      {exclusiveMode ? ' • Modo Exclusivo' : ''}
+                      {customWords.length} palavras salvas permanentemente (ativas para todas as partidas)
                     </span>
                   ) : (
                     <span className="text-stone-400">
-                      0 palavras cadastradas (as 80 palavras padrão do sistema estão ocultas)
+                      Nenhum banco upado ainda. Upe seu arquivo .txt do Bloco de Notas para ficar salvo para todo sempre!
                     </span>
                   )}
                 </p>
@@ -923,6 +974,14 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                   className="w-full p-3.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500 font-medium uppercase text-xs"
                   required
                 />
+                <p className="text-[11px] text-stone-400 mt-1 flex items-center justify-between">
+                  <span>Ponto final obrigatório ao fim do conceito (o sistema inclui automaticamente caso não digite).</span>
+                  {singleDef.trim() && (
+                    <span className="font-mono text-amber-300">
+                      Prévia: {ensureConceptPeriod(singleDef.trim().toUpperCase())}
+                    </span>
+                  )}
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">

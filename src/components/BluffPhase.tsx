@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BookOpen, Clock, Send, CheckCircle2, Lightbulb, Crown, Sparkles, Users, Type } from 'lucide-react';
+import { ensureConceptPeriod } from '../utils/textFormatting';
 
 export const BluffPhase: React.FC = () => {
   const { room, myPlayerId, isLeader, submitBluff } = useGame();
@@ -40,7 +41,8 @@ export const BluffPhase: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!bluffText.trim()) return;
-    submitBluff(bluffText.trim().toUpperCase());
+    const finalConcept = ensureConceptPeriod(bluffText.trim().toUpperCase());
+    submitBluff(finalConcept);
   };
 
   const eligiblePlayers = room.players.filter((p) => {
@@ -130,7 +132,7 @@ export const BluffPhase: React.FC = () => {
           </div>
 
           <div className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-xs font-mono font-medium text-amber-200 uppercase max-w-md mx-auto text-left leading-relaxed">
-            "{bluffText.toUpperCase()}"
+            "{ensureConceptPeriod(bluffText.trim().toUpperCase())}"
           </div>
 
           <div className="text-xs text-amber-400 font-semibold flex items-center justify-center gap-2">
@@ -142,10 +144,26 @@ export const BluffPhase: React.FC = () => {
         /* Submission Form */
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-stone-900/95 border border-amber-800/40 rounded-3xl p-5 sm:p-7 shadow-xl space-y-4">
-            {/* Caixa Alta Requirement Badge */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium">
-              <Type className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Obrigatório: Respostas digitadas e exibidas em <strong>CAIXA ALTA</strong> para manter o padrão sem pistas visuais.</span>
+            {/* Caixa Alta & Ponto Final Requirement Badge */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium">
+                <Type className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>
+                  Obrigatório: Respostas em <strong>CAIXA ALTA</strong> com <strong>ponto final</strong> obrigatório ao fim do conceito (adicionado automaticamente se você não colocar, sem duplicidade).
+                </span>
+              </div>
+
+              {bluffText.trim() && (
+                <div className="flex items-center justify-between gap-2 px-3.5 py-1.5 rounded-xl bg-stone-950/80 border border-stone-800 text-xs">
+                  <span className="text-stone-400">Prévia formatada:</span>
+                  <span className="font-mono text-amber-200 font-bold truncate">
+                    "{ensureConceptPeriod(bluffText.trim().toUpperCase())}"
+                  </span>
+                  <span className="text-[10px] text-emerald-400 shrink-0 font-medium">
+                    {bluffText.trim().endsWith('.') ? '✓ Ponto preservado' : '+ Ponto automático'}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div>

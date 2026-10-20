@@ -21,11 +21,27 @@ function MainGameView() {
   if (!room) {
     return (
       <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans selection:bg-amber-500 selection:text-stone-950">
-        <Header onOpenRules={() => setShowRules(true)} />
+        <Header
+          onOpenRules={() => setShowRules(true)}
+          onOpenDictionary={() => {
+            setDictDefaultTab('notepad');
+            setShowDictAdmin(true);
+          }}
+        />
         <main className="flex-1 flex items-center justify-center p-4">
-          <HomeOrJoin />
+          <HomeOrJoin
+            onOpenDictionary={(tab) => {
+              setDictDefaultTab(tab || 'notepad');
+              setShowDictAdmin(true);
+            }}
+          />
         </main>
         <RulesModal isOpen={showRules} onClose={() => setShowRules(false)} />
+        <DictionaryAdminModal
+          isOpen={showDictAdmin}
+          defaultTab={dictDefaultTab}
+          onClose={() => setShowDictAdmin(false)}
+        />
       </div>
     );
   }

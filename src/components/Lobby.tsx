@@ -320,32 +320,50 @@ export const Lobby: React.FC = () => {
             </div>
 
             {/* Leader Bluff Rule */}
-            <div className="pt-2 border-t border-stone-800">
-              <span className="block font-semibold text-stone-300 mb-1">
-                Líder digita blefe:
-              </span>
+            <div className="pt-2 border-t border-stone-800 space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-stone-300">
+                  Líder da Rodada digita blefe?
+                </span>
+                <span className="text-[10px] text-amber-400 font-mono">
+                  {room.settings.leaderBluffsRule === 'never'
+                    ? 'Líder NÃO digita'
+                    : room.settings.leaderBluffsRule === 'always'
+                    ? 'Líder digita sempre'
+                    : room.players.length <= 4
+                    ? 'Auto (Digita ≤4)'
+                    : 'Auto (Não digita 5+)'}
+                </span>
+              </div>
               {isHost ? (
-                <div className="grid grid-cols-3 gap-1">
+                <div className="grid grid-cols-3 gap-1.5">
                   {[
-                    { id: 'auto', label: 'Auto (3-4)' },
-                    { id: 'always', label: 'Sempre' },
-                    { id: 'never', label: 'Nunca' },
+                    { id: 'never', label: 'NÃO Digita', desc: 'Nunca digita' },
+                    { id: 'always', label: 'Digita', desc: 'Sempre digita' },
+                    { id: 'auto', label: 'Auto', desc: 'Digita se ≤4' },
                   ].map((opt) => (
                     <button
                       key={opt.id}
                       onClick={() => updateSettings({ leaderBluffsRule: opt.id as any })}
-                      className={`py-1.5 px-1 rounded-lg text-[10px] font-bold border transition-all ${
+                      className={`py-2 px-1 rounded-xl text-[10px] font-bold border transition-all flex flex-col items-center justify-center ${
                         room.settings.leaderBluffsRule === opt.id
-                          ? 'bg-amber-600 text-stone-950 border-amber-400'
-                          : 'bg-stone-950 border-stone-800 text-stone-400'
+                          ? 'bg-amber-600 text-stone-950 border-amber-400 shadow-md font-black scale-[1.02]'
+                          : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
                       }`}
                     >
-                      {opt.label}
+                      <span>{opt.label}</span>
+                      <span className="text-[9px] opacity-75 font-normal">{opt.desc}</span>
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="text-stone-400">Regra: {room.settings.leaderBluffsRule}</p>
+                <p className="text-stone-400 text-xs">
+                  {room.settings.leaderBluffsRule === 'never'
+                    ? 'Líder NÃO digita'
+                    : room.settings.leaderBluffsRule === 'always'
+                    ? 'Líder digita sempre'
+                    : 'Automático'}
+                </p>
               )}
             </div>
 

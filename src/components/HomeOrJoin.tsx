@@ -381,25 +381,26 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                   {/* Leader bluffing rule */}
                   <div>
                     <label className="block text-stone-300 font-semibold mb-1">
-                      Líder digita blefe?
+                      Líder da Rodada digita blefe?
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
                       {[
-                        { id: 'auto', label: 'Auto (3-4 jogam)' },
-                        { id: 'always', label: 'Sempre blefa' },
-                        { id: 'never', label: 'Apenas aguarda' },
+                        { id: 'never', label: 'NÃO Digita', desc: 'Nunca digita' },
+                        { id: 'always', label: 'Digita', desc: 'Sempre digita' },
+                        { id: 'auto', label: 'Auto', desc: 'Digita se ≤4' },
                       ].map((r) => (
                         <button
                           key={r.id}
                           type="button"
                           onClick={() => setLeaderBluffsRule(r.id as any)}
-                          className={`py-1.5 px-1 text-[11px] rounded-lg font-bold border ${
+                          className={`py-2 px-1 text-[11px] rounded-xl font-bold border transition-all flex flex-col items-center justify-center ${
                             leaderBluffsRule === r.id
-                              ? 'bg-amber-500/20 border-amber-500 text-amber-300'
-                              : 'bg-stone-900 border-stone-800 text-stone-400'
+                              ? 'bg-amber-600 text-stone-950 border-amber-400 font-black shadow-md scale-[1.02]'
+                              : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
                           }`}
                         >
-                          {r.label}
+                          <span>{r.label}</span>
+                          <span className="text-[9px] opacity-75 font-normal">{r.desc}</span>
                         </button>
                       ))}
                     </div>

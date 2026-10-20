@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
 import { BluffEntry, Player } from '../types/game';
+import { formatConcept } from '../utils/textFormatting';
 import {
   Award,
   BookOpen,
@@ -35,13 +36,14 @@ export const RevealPhase: React.FC = () => {
   const realEntry = bluffs.find((b) => b.isReal);
   const realOptionId = realEntry?.id;
 
-  // Check if anyone voted for real
-  const correctVoters = Object.entries(votes)
+  // Check if any non-leader player voted for real (condition for leader sweep bonus)
+  const nonLeaderVotes = Object.entries(votes).filter(([voterId]) => voterId !== round.leaderId);
+  const correctVoters = nonLeaderVotes
     .filter(([_, optId]) => optId === realOptionId)
     .map(([voterId]) => room.players.find((p) => p.id === voterId))
     .filter(Boolean) as Player[];
 
-  const leaderSweep = correctVoters.length === 0;
+  const leaderSweep = correctVoters.length === 0 && nonLeaderVotes.length > 0;
 
   // Helper to get voters for an option
   const getVotersForOption = (optionId: string): Player[] => {
@@ -382,13 +384,13 @@ export const RevealPhase: React.FC = () => {
                 )}
               </div>
 
-              {/* Definition text in strict UPPERCASE */}
+              {/* Definition text in strict UPPERCASE without accents/tildes, preserving Ç */}
               <p
                 className={`text-sm sm:text-base font-serif leading-relaxed uppercase font-medium ${
                   isReal ? 'text-emerald-100' : 'text-stone-200'
                 }`}
               >
-                {entry.text.toUpperCase()}
+                {formatConcept(entry.text)}
               </p>
 
               {/* Voters List on this specific card */}

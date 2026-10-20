@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BluffEntry } from '../types/game';
 import { Clock, CheckCircle2, ShieldCheck, EyeOff, Users, ArrowRight, Lock, Unlock, Crown } from 'lucide-react';
+import { formatConcept, isLeaderBluffing } from '../utils/textFormatting';
 
 export const VotingPhase: React.FC = () => {
   const { room, myPlayerId, submitVote, revealResults, isHost, isLeader } = useGame();
@@ -33,9 +34,16 @@ export const VotingPhase: React.FC = () => {
     return () => clearInterval(interval);
   }, [round.deadline]);
 
-  const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
+  const leaderIsBluffing = isLeaderBluffing(room.settings, room.players.length);
+
+  const eligibleVoters = room.players.filter((p) => {
+    if (!p.isConnected && !p.isBot) return false;
+    if (p.id === round.leaderId && !leaderIsBluffing) return false;
+    return true;
+  });
+
   const totalVotesCount = Object.keys(round.votes).length;
-  const allVotesReceived = Boolean(round.allVotesIn || totalVotesCount >= activePlayers.length);
+  const allVotesReceived = Boolean(round.allVotesIn || totalVotesCount >= eligibleVoters.length);
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-6 animate-fade-in">
@@ -116,16 +124,27 @@ export const VotingPhase: React.FC = () => {
         </div>
       ) : (
         /* Progress while still voting */
-        <div className="flex items-center justify-between text-xs text-stone-400 px-1">
-          <span className="flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-amber-400" />
-            Votos computados: <strong className="text-amber-200">{totalVotesCount} de {activePlayers.length}</strong>
-          </span>
-          {hasVoted && (
-            <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-4 h-4" /> Seu voto foi computado!
-            </span>
+        <div className="space-y-2">
+          {isLeader && !leaderIsBluffing && (
+            <div className="p-3 bg-amber-950/40 border border-amber-600/30 rounded-2xl text-center text-xs text-amber-200 flex items-center justify-center gap-2">
+              <Crown className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>
+                Você é o Líder da Rodada (Regra: <strong>Líder não digita / não vota</strong>). Aguardando os votos dos participantes.
+              </span>
+            </div>
           )}
+
+          <div className="flex items-center justify-between text-xs text-stone-400 px-1">
+            <span className="flex items-center gap-1.5">
+              <Users className="w-4 h-4 text-amber-400" />
+              Votos computados: <strong className="text-amber-200">{totalVotesCount} de {eligibleVoters.length}</strong>
+            </span>
+            {hasVoted && (
+              <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4" /> Seu voto foi computado!
+              </span>
+            )}
+          </div>
         </div>
       )}
 
@@ -159,9 +178,9 @@ export const VotingPhase: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  {/* Strict UPPERCASE rendering */}
+                  {/* Strict UPPERCASE rendering without accents/tildes, preserving Ç */}
                   <p className="text-sm sm:text-base text-stone-200 font-serif leading-relaxed uppercase font-medium">
-                    {entry.text.toUpperCase()}
+                    {formatConcept(entry.text)}
                   </p>
                   {isMyOwnBluff && (
                     <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">
@@ -179,6 +198,13 @@ export const VotingPhase: React.FC = () => {
                     className="py-2 px-4 rounded-xl bg-stone-950/60 text-stone-500 text-xs font-bold border border-stone-800 cursor-not-allowed"
                   >
                     Seu Blefe
+                  </button>
+                ) : isLeader && !leaderIsBluffing ? (
+                  <button
+                    disabled
+                    className="py-2 px-4 rounded-xl bg-stone-950/60 text-stone-400 text-xs font-bold border border-stone-800 cursor-not-allowed"
+                  >
+                    Líder não vota
                   </button>
                 ) : (
                   <button

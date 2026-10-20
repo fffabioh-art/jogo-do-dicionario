@@ -1,4 +1,7 @@
 import { WordItem } from '../types/game';
+import { removeAccentsKeepCedilla, ensureConceptPeriod, formatConcept } from '../utils/textFormatting';
+
+export { removeAccentsKeepCedilla, ensureConceptPeriod, formatConcept };
 
 export const DICTIONARY_WORDS: WordItem[] = [
   {
@@ -644,14 +647,21 @@ export const DICTIONARY_WORDS: WordItem[] = [
 ];
 
 // Combined words helper (supports playing exclusively with the imported database)
+// All definitions are normalized via formatConcept (removing accents/tildes, keeping Ç, UPPERCASE, and single period)
 export function getAllWords(customWords?: WordItem[], exclusiveCustomWords?: boolean): WordItem[] {
+  let list: WordItem[];
   if (exclusiveCustomWords && customWords && customWords.length > 0) {
-    return customWords;
+    list = customWords;
+  } else if (!customWords || customWords.length === 0) {
+    list = DICTIONARY_WORDS;
+  } else {
+    list = [...DICTIONARY_WORDS, ...customWords];
   }
-  if (!customWords || customWords.length === 0) {
-    return DICTIONARY_WORDS;
-  }
-  return [...DICTIONARY_WORDS, ...customWords];
+
+  return list.map((w) => ({
+    ...w,
+    definition: formatConcept(w.definition),
+  }));
 }
 
 // Helper to get random word choices from either default or custom words
@@ -668,27 +678,11 @@ export function getRandomWordChoices(
   // If pool still has fewer than count words (e.g. exclusive bank has only 1 or 2 words), pad from DICTIONARY_WORDS
   if (pool.length < count) {
     const pad = DICTIONARY_WORDS.filter((w) => !pool.some((p) => p.word.toLowerCase() === w.word.toLowerCase()));
-    pool = [...pool, ...pad];
+    pool = [...pool, ...pad.map((w) => ({ ...w, definition: formatConcept(w.definition) }))];
   }
 
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
-}
-
-// Ensure all concepts/definitions end with a period without duplication
-export function ensureConceptPeriod(concept: string): string {
-  if (!concept) return '';
-  const trimmed = concept.trim();
-  if (!trimmed) return '';
-
-  const cleaned = trimmed.replace(/[\s,;:–—-]+$/, '');
-  if (!cleaned) return '';
-
-  if (/\.+$/.test(cleaned)) {
-    return cleaned.replace(/\s*\.+$/, '.');
-  }
-
-  return cleaned + '.';
 }
 
 // Helper to parse imported text into WordItem[] (Full support for Notepad .txt, CSV, JSON, TSV, etc.)
@@ -710,8 +704,8 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
             words.push({
               id: item.id || `custom_${Date.now()}_${i}`,
               word: String(item.word).replace(/^[*"']+|[*"']+$/g, '').trim(),
-              definition: ensureConceptPeriod(
-                String(item.definition).replace(/^[*"']+|[*"']+$/g, '').trim().toUpperCase()
+              definition: formatConcept(
+                String(item.definition).replace(/^[*"']+|[*"']+$/g, '').trim()
               ),
               partOfSpeech: item.partOfSpeech ? String(item.partOfSpeech).trim() : 'substantivo',
               exampleSentence: item.exampleSentence ? String(item.exampleSentence).trim() : undefined,
@@ -746,9 +740,8 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
   const cleanDef = (raw: string) => {
     const base = raw
       .replace(/^[*"']+|[*"']+$/g, '')
-      .trim()
-      .toUpperCase();
-    return ensureConceptPeriod(base);
+      .trim();
+    return formatConcept(base);
   };
 
   for (let i = 0; i < rawLines.length; i++) {

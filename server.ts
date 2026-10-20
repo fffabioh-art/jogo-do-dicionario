@@ -39,7 +39,7 @@ function loadPersistentWords(): WordItem[] {
       if (Array.isArray(parsed)) {
         return parsed.map((item) => ({
           ...item,
-          definition: ensureConceptPeriod(item.definition || ''),
+          definition: formatConcept(item.definition || ''),
         }));
       }
     }
@@ -57,23 +57,65 @@ function savePersistentWords(words: WordItem[]): void {
   }
 }
 
-// Ensure every created concept/definition ends with a period without duplication
+/**
+ * Strips all accents and tildes while strictly preserving 'ç' and 'Ç'.
+ * Rule:
+ * "Todos as respostas nao podem conter acento ou til. Apenas ç.
+ *  Mesmo que a pessoa coloque, retire. Os signigicados tbm tem que aparecer
+ *  obedecendo essa regra, para que nao haja diferenciacao"
+ */
+function removeAccentsKeepCedilla(text: string): string {
+  if (!text) return '';
+  const protectedText = text
+    .replace(/ç/g, '__cedilla_lower__')
+    .replace(/Ç/g, '__cedilla_upper__');
+
+  const normalized = protectedText
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  const cleaned = normalized.replace(/[~^´`¨]/g, '');
+
+  return cleaned
+    .replace(/__cedilla_lower__/g, 'ç')
+    .replace(/__cedilla_upper__/g, 'Ç');
+}
+
+/**
+ * Utility to ensure all concepts and definitions end with a single period without duplication.
+ */
 function ensureConceptPeriod(concept: string): string {
   if (!concept) return '';
   const trimmed = concept.trim();
   if (!trimmed) return '';
 
-  // Clean trailing non-sentence punctuation (like commas, colons, semicolons, dashes)
   const cleaned = trimmed.replace(/[\s,;:–—-]+$/, '');
   if (!cleaned) return '';
 
-  // If already ends with one or more periods (e.g. '.', '..', '...'), normalize to a single period
   if (/\.+$/.test(cleaned)) {
     return cleaned.replace(/\s*\.+$/, '.');
   }
 
-  // Otherwise, append the period automatically
   return cleaned + '.';
+}
+
+/**
+ * Master concept formatter: strips accents/tildes, preserves Ç, forces UPPERCASE, ends with single period.
+ */
+function formatConcept(text: string): string {
+  if (!text) return '';
+  const noAccents = removeAccentsKeepCedilla(text);
+  const upper = noAccents.toUpperCase().trim();
+  return ensureConceptPeriod(upper);
+}
+
+// Whether the round's leader is expected to type/submit a bluff and vote
+function isLeaderBluffing(settings?: GameSettings | null, playerCount: number = 0): boolean {
+  const rule = settings?.leaderBluffsRule || 'auto';
+  if (rule === 'always') return true;
+  if (rule === 'never') return false;
+  // 'auto': leader bluffs if 4 or fewer players
+  return playerCount <= 4;
 }
 
 // REST API for Administrator to upload, fetch, and manage persistent database
@@ -97,7 +139,7 @@ app.post('/api/dictionary/custom', (req, res) => {
       current.push({
         id: w.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         word: String(w.word).trim(),
-        definition: ensureConceptPeriod(String(w.definition).trim().toUpperCase()),
+        definition: formatConcept(String(w.definition).trim()),
         partOfSpeech: w.partOfSpeech ? String(w.partOfSpeech).trim() : 'substantivo',
         exampleSentence: w.exampleSentence ? String(w.exampleSentence).trim() : undefined,
         difficulty: w.difficulty || 'medio',
@@ -250,9 +292,11 @@ function computeRoundPoints(room: RoomState): {
     }
   }
 
-  // Leader sweep bonus: +3 points to Leader if NO player guessed the real definition
-  // Note: Only non-leader votes count toward testing if anyone guessed real!
-  if (countCorrectVotes === 0) {
+  // Leader sweep bonus: +3 points to Leader if NO other player guessed the real definition
+  const nonLeaderVotes = Object.entries(round.votes).filter(([voterId]) => voterId !== round.leaderId);
+  const correctNonLeaderVotes = nonLeaderVotes.filter(([, optId]) => optId === realOptionId).length;
+
+  if (correctNonLeaderVotes === 0 && nonLeaderVotes.length > 0) {
     const leaderDetail = detailsMap.get(round.leaderId);
     if (leaderDetail) {
       leaderDetail.pointsEarned += 3;
@@ -307,35 +351,31 @@ function handleStartVotingPhase(room: RoomState) {
   const round = room.currentRound;
   if (!round) return;
 
-  // Add the real dictionary definition in UPPERCASE with mandatory period
+  // Add the real dictionary definition formatted uniformly (no accents/tildes, Ç preserved, UPPERCASE, single period)
   const realBluff: BluffEntry = {
     id: 'entry_real_' + Date.now(),
     authorId: 'REAL',
-    text: ensureConceptPeriod(round.word.definition.trim().toUpperCase()),
+    text: formatConcept(round.word.definition),
     isReal: true,
   };
 
   const finalBluffs: BluffEntry[] = [...round.bluffs, realBluff];
 
-  // If 2 players, inject decoy definitions in UPPERCASE with mandatory period
+  // CRITICAL RULE:
+  // 1. When leader does NOT bluff ("líder não digitar"), NEVER inject automatic decoy concepts!
+  // 2. When there are 3 or more players, NEVER inject automatic decoy concepts!
+  // 3. ONLY for a 2-player game where leader bluffs and finalBluffs has fewer than 3 entries:
   const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-  if (activePlayers.length <= 2 || finalBluffs.length < 3) {
-    const decoy1: BluffEntry = {
-      id: 'entry_decoy_1',
-      authorId: 'BOT_DECOY',
-      text: ensureConceptPeriod(getDecoyBluff(round.word, 0).trim().toUpperCase()),
-      isReal: false,
-    };
-    finalBluffs.push(decoy1);
+  const leaderBluffs = isLeaderBluffing(room.settings, activePlayers.length);
 
-    if (finalBluffs.length < 4) {
-      const decoy2: BluffEntry = {
-        id: 'entry_decoy_2',
+  if (leaderBluffs && activePlayers.length < 3 && room.settings.leaderBluffsRule !== 'never') {
+    if (finalBluffs.length < 3) {
+      finalBluffs.push({
+        id: 'entry_decoy_1',
         authorId: 'BOT_DECOY',
-        text: ensureConceptPeriod(getDecoyBluff(round.word, 1).trim().toUpperCase()),
+        text: formatConcept(getDecoyBluff(round.word, 0)),
         isReal: false,
-      };
-      finalBluffs.push(decoy2);
+      });
     }
   }
 
@@ -405,7 +445,7 @@ function handleStartRevealPhase(room: RoomState) {
   room.roundHistory.unshift({
     roundNumber: round.roundNumber,
     word: round.word.word,
-    realDefinition: round.word.definition,
+    realDefinition: formatConcept(round.word.definition),
   });
 
   // Check game over or sudden death
@@ -424,16 +464,14 @@ function handleBotSubmissions(room: RoomState) {
   const round = room.currentRound;
   if (!round || round.phase !== 'SUBMISSION') return;
 
+  const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
   const bots = room.players.filter((p) => p.isBot && !p.hasSubmitted);
   bots.forEach((bot, index) => {
     const isLeader = bot.id === round.leaderId;
-    const shouldBluff =
-      !isLeader ||
-      room.settings.leaderBluffsRule === 'always' ||
-      (room.settings.leaderBluffsRule === 'auto' && room.players.length <= 4);
+    const shouldBluff = !isLeader || leaderBluffs;
 
     if (shouldBluff) {
-      const bluffText = ensureConceptPeriod(getDecoyBluff(round.word, index + 3).trim().toUpperCase());
+      const bluffText = formatConcept(getDecoyBluff(round.word, index + 3));
       round.bluffs.push({
         id: 'bot_bluff_' + bot.id,
         authorId: bot.id,
@@ -453,7 +491,13 @@ function handleBotVotes(room: RoomState) {
   const round = room.currentRound;
   if (!round || round.phase !== 'VOTING') return;
 
-  const bots = room.players.filter((p) => p.isBot && !p.hasVoted);
+  const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+  const bots = room.players.filter((p) => {
+    if (!p.isBot || p.hasVoted) return false;
+    if (p.id === round.leaderId && !leaderBluffs) return false;
+    return true;
+  });
+
   bots.forEach((bot) => {
     // Bot cannot vote for own bluff
     const eligibleOptions = round.bluffs.filter((b) => b.authorId !== bot.id);
@@ -476,13 +520,10 @@ function checkSubmissionCompletion(room: RoomState) {
   const round = room.currentRound;
   if (!round || round.phase !== 'SUBMISSION') return;
 
+  const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
   const eligiblePlayers = room.players.filter((p) => {
     if (!p.isConnected && !p.isBot) return false;
-    if (p.id === round.leaderId) {
-      // Leader eligibility depends on rule
-      if (room.settings.leaderBluffsRule === 'never') return false;
-      if (room.settings.leaderBluffsRule === 'auto' && room.players.length >= 5) return false;
-    }
+    if (p.id === round.leaderId && !leaderBluffs) return false;
     return true;
   });
 
@@ -501,8 +542,14 @@ function checkVotingCompletion(room: RoomState) {
   const round = room.currentRound;
   if (!round || round.phase !== 'VOTING') return;
 
-  const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-  const allVoted = activePlayers.every((p) => round.votes[p.id] !== undefined);
+  const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+  const eligibleVoters = room.players.filter((p) => {
+    if (!p.isConnected && !p.isBot) return false;
+    if (p.id === round.leaderId && !leaderBluffs) return false;
+    return true;
+  });
+
+  const allVoted = eligibleVoters.every((p) => round.votes[p.id] !== undefined);
 
   if (allVoted) {
     // Crucial rule: DO NOT auto-reveal! Wait for leader permission
@@ -918,9 +965,13 @@ wss.on('connection', (ws: WebSocket) => {
           const player = room.players.find((p) => p.id === meta.playerId);
           if (!player) return;
 
-          let bluffText = (payload.bluffText || '').trim().toUpperCase();
+          const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+          if (player.id === room.currentRound.leaderId && !leaderBluffs) {
+            return;
+          }
+
+          let bluffText = formatConcept(payload.bluffText || '');
           if (!bluffText) return;
-          bluffText = ensureConceptPeriod(bluffText);
 
           // Check if player already submitted
           const existingIndex = room.currentRound.bluffs.findIndex((b) => b.authorId === player.id);
@@ -950,6 +1001,11 @@ wss.on('connection', (ws: WebSocket) => {
 
           const player = room.players.find((p) => p.id === meta.playerId);
           if (!player) return;
+
+          const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+          if (player.id === room.currentRound.leaderId && !leaderBluffs) {
+            return;
+          }
 
           const optionId = payload.optionId;
           const chosenOption = room.currentRound.bluffs.find((b) => b.id === optionId);
@@ -1098,7 +1154,7 @@ wss.on('connection', (ws: WebSocket) => {
             room.customWords.push({
               id: word.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
               word: String(word.word).trim(),
-              definition: ensureConceptPeriod(String(word.definition).trim().toUpperCase()),
+              definition: formatConcept(String(word.definition).trim()),
               partOfSpeech: word.partOfSpeech ? String(word.partOfSpeech).trim() : 'substantivo',
               exampleSentence: word.exampleSentence ? String(word.exampleSentence).trim() : undefined,
               difficulty: word.difficulty || 'medio',
@@ -1136,7 +1192,7 @@ wss.on('connection', (ws: WebSocket) => {
                 newWords.push({
                   id: w.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
                   word: String(w.word).trim(),
-                  definition: ensureConceptPeriod(String(w.definition).trim().toUpperCase()),
+                  definition: formatConcept(String(w.definition).trim()),
                   partOfSpeech: w.partOfSpeech ? String(w.partOfSpeech).trim() : 'substantivo',
                   exampleSentence: w.exampleSentence ? String(w.exampleSentence).trim() : undefined,
                   difficulty: w.difficulty || 'medio',

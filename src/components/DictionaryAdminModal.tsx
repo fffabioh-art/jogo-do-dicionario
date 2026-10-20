@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { WordItem } from '../types/game';
 import { parseImportedDictionaryText } from '../data/dictionary';
-import { ensureConceptPeriod } from '../utils/textFormatting';
+import { ensureConceptPeriod, formatConcept, removeAccentsKeepCedilla } from '../utils/textFormatting';
 import {
   getLocalCustomWords,
   saveLocalCustomWords,
@@ -339,7 +339,7 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
       id: `custom_${Date.now()}`,
       word: singleWord.trim(),
       partOfSpeech: singlePart.trim(),
-      definition: ensureConceptPeriod(singleDef.trim().toUpperCase()),
+      definition: formatConcept(singleDef),
       exampleSentence: singleExample.trim() || undefined,
       difficulty: singleDiff,
       isCustom: true,
@@ -964,21 +964,21 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
 
               <div className="text-xs">
                 <label className="block text-stone-300 font-semibold mb-1">
-                  Definição Real do Dicionário (Será salva em CAIXA ALTA) *
+                  Definição Real do Dicionário (Sem acentos/til, apenas Ç, em CAIXA ALTA) *
                 </label>
                 <textarea
                   value={singleDef}
-                  onChange={(e) => setSingleDef(e.target.value)}
+                  onChange={(e) => setSingleDef(removeAccentsKeepCedilla(e.target.value))}
                   rows={3}
                   placeholder="Ex: Pessoa obstinada e teimosa que rejeita qualquer novidade..."
                   className="w-full p-3.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500 font-medium uppercase text-xs"
                   required
                 />
                 <p className="text-[11px] text-stone-400 mt-1 flex items-center justify-between">
-                  <span>Ponto final obrigatório ao fim do conceito (o sistema inclui automaticamente caso não digite).</span>
+                  <span>Regra: Sem acentos ou til (apenas Ç permitido) com ponto final obrigatório (incluído automaticamente).</span>
                   {singleDef.trim() && (
                     <span className="font-mono text-amber-300">
-                      Prévia: {ensureConceptPeriod(singleDef.trim().toUpperCase())}
+                      Prévia: {formatConcept(singleDef)}
                     </span>
                   )}
                 </p>

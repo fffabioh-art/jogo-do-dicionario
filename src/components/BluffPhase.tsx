@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BookOpen, Clock, Send, CheckCircle2, Lightbulb, Crown, Sparkles, Users, Type } from 'lucide-react';
-import { ensureConceptPeriod } from '../utils/textFormatting';
+import { formatConcept, removeAccentsKeepCedilla, isLeaderBluffing } from '../utils/textFormatting';
 
 export const BluffPhase: React.FC = () => {
   const { room, myPlayerId, isLeader, submitBluff } = useGame();
@@ -15,11 +15,8 @@ export const BluffPhase: React.FC = () => {
   const myPlayer = room.players.find((p) => p.id === myPlayerId);
   const hasSubmitted = Boolean(myPlayer?.hasSubmitted);
 
-  // Determine if the leader bluffs this round
-  const leaderBluffs =
-    !isLeader ||
-    room.settings.leaderBluffsRule === 'always' ||
-    (room.settings.leaderBluffsRule === 'auto' && room.players.length <= 4);
+  // Determine if the leader bluffs this round (independent of which player is viewing)
+  const leaderIsBluffing = isLeaderBluffing(room.settings, room.players.length);
 
   // Timer countdown hook
   useEffect(() => {
@@ -41,13 +38,13 @@ export const BluffPhase: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!bluffText.trim()) return;
-    const finalConcept = ensureConceptPeriod(bluffText.trim().toUpperCase());
+    const finalConcept = formatConcept(bluffText);
     submitBluff(finalConcept);
   };
 
   const eligiblePlayers = room.players.filter((p) => {
     if (!p.isConnected && !p.isBot) return false;
-    if (p.id === round.leaderId && !leaderBluffs) return false;
+    if (p.id === round.leaderId && !leaderIsBluffing) return false;
     return true;
   });
 
@@ -90,8 +87,8 @@ export const BluffPhase: React.FC = () => {
       </div>
 
       {/* Main Action Area */}
-      {!leaderBluffs ? (
-        /* Leader waiting view (when 5+ players or rule = never) */
+      {isLeader && !leaderIsBluffing ? (
+        /* Leader waiting view (when leader does not bluff) */
         <div className="bg-stone-900/90 border border-amber-800/40 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-xl">
           <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto text-2xl">
             👑
@@ -101,8 +98,8 @@ export const BluffPhase: React.FC = () => {
               Você é o Líder da Rodada!
             </h3>
             <p className="text-xs sm:text-sm text-stone-300 max-w-md mx-auto">
-              A definição oficial já foi convertida para CAIXA ALTA e guardada pelo sistema.
-              Os outros participantes estão digitando suas respostas em segredo.
+              Regra ativa: <strong>Líder não digita blefe</strong>.
+              Aguarde os outros <strong>{eligiblePlayers.length} participantes</strong> enviarem suas definições em segredo.
             </p>
           </div>
 
@@ -132,7 +129,7 @@ export const BluffPhase: React.FC = () => {
           </div>
 
           <div className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-xs font-mono font-medium text-amber-200 uppercase max-w-md mx-auto text-left leading-relaxed">
-            "{ensureConceptPeriod(bluffText.trim().toUpperCase())}"
+            "{formatConcept(bluffText)}"
           </div>
 
           <div className="text-xs text-amber-400 font-semibold flex items-center justify-center gap-2">
@@ -149,15 +146,15 @@ export const BluffPhase: React.FC = () => {
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium">
                 <Type className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  Obrigatório: Respostas em <strong>CAIXA ALTA</strong> com <strong>ponto final</strong> obrigatório ao fim do conceito (adicionado automaticamente se você não colocar, sem duplicidade).
+                  Regra Oficial: <strong>Sem acentos ou til</strong> (apenas <strong>Ç</strong> permitido) • <strong>CAIXA ALTA</strong> • <strong>Ponto final</strong> obrigatório (adicionado automaticamente se não colocado). Acentos e tis são removidos para igualar ao dicionário.
                 </span>
               </div>
 
               {bluffText.trim() && (
                 <div className="flex items-center justify-between gap-2 px-3.5 py-1.5 rounded-xl bg-stone-950/80 border border-stone-800 text-xs">
-                  <span className="text-stone-400">Prévia formatada:</span>
+                  <span className="text-stone-400">Prévia padronizada:</span>
                   <span className="font-mono text-amber-200 font-bold truncate">
-                    "{ensureConceptPeriod(bluffText.trim().toUpperCase())}"
+                    "{formatConcept(bluffText)}"
                   </span>
                   <span className="text-[10px] text-emerald-400 shrink-0 font-medium">
                     {bluffText.trim().endsWith('.') ? '✓ Ponto preservado' : '+ Ponto automático'}
@@ -172,9 +169,9 @@ export const BluffPhase: React.FC = () => {
               </label>
               <textarea
                 value={bluffText}
-                onChange={(e) => setBluffText(e.target.value.toUpperCase())}
+                onChange={(e) => setBluffText(removeAccentsKeepCedilla(e.target.value.toUpperCase()))}
                 rows={3}
-                placeholder="EX: DIZ-SE DO PÁSSARO MARINHO... / QUALIDADE DAQUELE QUE... / ANTIGO UTENSÍLIO DE TECELAGEM..."
+                placeholder="EX: DIZ-SE DO PASSARO MARINHO... / QUALIDADE DAQUELE QUE... / ANTIGO UTENSILIO DE TECELAGEM..."
                 className="w-full p-4 rounded-2xl bg-stone-950 border border-stone-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 text-amber-100 placeholder-stone-600 outline-none text-sm sm:text-base resize-none transition-all uppercase font-medium"
                 autoFocus
               />

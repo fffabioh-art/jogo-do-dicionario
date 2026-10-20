@@ -579,12 +579,17 @@ function prepareNextRound(room: RoomState) {
   const nextLeader = room.players[nextIndex] || room.players[0];
 
   const roundNumber = (room.currentRound?.roundNumber || 0) + 1;
-  const wordChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
+  const rawChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
+  // Mask definition so leader cannot see the meaning when choosing the word
+  const wordChoices = rawChoices.map((w) => ({
+    ...w,
+    definition: '',
+  }));
 
   room.currentRound = {
     roundNumber,
     leaderId: nextLeader.id,
-    word: wordChoices[0],
+    word: { ...rawChoices[0], definition: '' },
     phase: 'WORD_CHOICE',
     wordChoices,
     bluffs: [],
@@ -606,7 +611,7 @@ function prepareNextRound(room: RoomState) {
   if (nextLeader.isBot) {
     setTimeout(() => {
       if (room.currentRound?.phase === 'WORD_CHOICE') {
-        startRoundWithWord(room, wordChoices[0]);
+        startRoundWithWord(room, rawChoices[0]);
       }
     }, 2000);
   }
@@ -850,12 +855,17 @@ wss.on('connection', (ws: WebSocket) => {
           room.isTieBreakActive = false;
 
           const leader = room.players[0];
-          const wordChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
+          const rawChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
+          // Mask definition so leader cannot see the meaning when choosing the word
+          const wordChoices = rawChoices.map((w) => ({
+            ...w,
+            definition: '',
+          }));
 
           room.currentRound = {
             roundNumber: 1,
             leaderId: leader.id,
-            word: wordChoices[0],
+            word: { ...rawChoices[0], definition: '' },
             phase: 'WORD_CHOICE',
             wordChoices,
             bluffs: [],
@@ -870,7 +880,7 @@ wss.on('connection', (ws: WebSocket) => {
           if (leader.isBot) {
             setTimeout(() => {
               if (room.currentRound?.phase === 'WORD_CHOICE') {
-                startRoundWithWord(room, wordChoices[0]);
+                startRoundWithWord(room, rawChoices[0]);
               }
             }, 2000);
           }
@@ -886,7 +896,15 @@ wss.on('connection', (ws: WebSocket) => {
 
           const selectedWord = payload.word;
           if (selectedWord) {
-            startRoundWithWord(room, selectedWord);
+            let authenticWord = (room.customWords || []).find(
+              (w) => w.id === selectedWord.id || w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
+            );
+            if (!authenticWord) {
+              authenticWord = DICTIONARY_WORDS.find(
+                (w) => w.id === selectedWord.id || w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
+              );
+            }
+            startRoundWithWord(room, authenticWord || selectedWord);
           }
           break;
         }

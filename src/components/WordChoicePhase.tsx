@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { BookOpen, Sparkles, Shuffle, Crown, Clock, Search, X, Filter, ArrowLeft } from 'lucide-react';
+import { BookOpen, Sparkles, Shuffle, Crown, Clock, Search, X, Filter, ArrowLeft, Lock } from 'lucide-react';
 import { WordItem } from '../types/game';
 
 export const WordChoicePhase: React.FC = () => {
@@ -29,12 +29,11 @@ export const WordChoicePhase: React.FC = () => {
   // Do NOT show the 80 initial words of the database. Only show custom words if loaded.
   const allAvailableWords = customWords;
 
-  // Filter full dictionary database
+  // Filter full dictionary database (without searching definition to prevent leaks)
   const filteredWords = useMemo(() => {
     return allAvailableWords.filter((item) => {
       const matchesSearch =
         item.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.definition.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.partOfSpeech.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesDiff =
@@ -63,8 +62,8 @@ export const WordChoicePhase: React.FC = () => {
             <h2 className="font-serif font-black text-2xl sm:text-4xl text-amber-100">
               Você é o Líder da Rodada!
             </h2>
-            <p className="text-amber-300/80 text-sm max-w-md mx-auto mt-1">
-              Escolha uma palavra desconhecida abaixo ou explore o banco completo de termos:
+            <p className="text-amber-300/80 text-sm max-w-lg mx-auto mt-1">
+              Escolha uma palavra abaixo sem ver o significado. O significado oficial permanecerá em segredo absoluto até o término da votação!
             </p>
           </div>
         ) : (
@@ -98,9 +97,13 @@ export const WordChoicePhase: React.FC = () => {
                   <h3 className="font-serif font-black text-2xl text-amber-200 mb-1 tracking-tight">
                     {item.word}
                   </h3>
-                  <p className="text-xs text-amber-400/90 italic mb-4">
+                  <p className="text-xs text-amber-400/90 italic mb-3">
                     {item.partOfSpeech}
                   </p>
+                  <div className="inline-flex items-center gap-1.5 text-[11px] text-stone-400 bg-stone-950/80 px-2.5 py-1 rounded-xl border border-stone-800/80 mb-4 font-mono">
+                    <Lock className="w-3 h-3 text-amber-400 shrink-0" />
+                    <span>Significado em segredo</span>
+                  </div>
                 </div>
 
                 <button
@@ -190,7 +193,7 @@ export const WordChoicePhase: React.FC = () => {
                       Banco Completo de Palavras
                     </h3>
                     <p className="text-xs text-stone-400">
-                      Selecione um termo para a rodada ({filteredWords.length} encontrados)
+                      Selecione um termo para a rodada ({filteredWords.length} encontrados) • Significado oculto para manter o segredo
                     </p>
                   </div>
                 </div>
@@ -213,7 +216,7 @@ export const WordChoicePhase: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Pesquisar termo ou significado..."
+                  placeholder="Pesquisar termo ou classe gramatical..."
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-900 border border-stone-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-sm text-stone-200 placeholder-stone-500 outline-none"
                   autoFocus
                 />
@@ -282,9 +285,12 @@ export const WordChoicePhase: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-stone-300 font-serif leading-relaxed line-clamp-2">
-                        {item.definition}
-                      </p>
+                      <div className="flex items-center gap-1.5 text-xs text-stone-400 font-medium pt-0.5">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-stone-950/90 border border-stone-800 text-[11px] text-amber-300/90 font-mono">
+                          <Lock className="w-3 h-3 text-amber-400" />
+                          Significado em segredo (revelado apenas após a votação)
+                        </span>
+                      </div>
                     </div>
 
                     <button

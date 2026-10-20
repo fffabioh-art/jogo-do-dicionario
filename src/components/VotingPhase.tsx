@@ -42,17 +42,24 @@ export const VotingPhase: React.FC = () => {
       {/* Word Header */}
       <div className="bg-gradient-to-r from-stone-900 via-amber-950/40 to-stone-900 border border-amber-600/40 rounded-3xl p-5 sm:p-7 shadow-xl text-center relative overflow-hidden">
         {/* Timer */}
-        {timeLeft !== null && !allVotesReceived && (
-          <div
-            className={`absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-xs font-bold border transition-colors ${
-              timeLeft <= 10
-                ? 'bg-rose-950 text-rose-300 border-rose-500 animate-pulse'
-                : 'bg-stone-900/90 text-amber-300 border-amber-700/60'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
-            {timeLeft}s
-          </div>
+        {!allVotesReceived && (
+          timeLeft !== null ? (
+            <div
+              className={`absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-xs font-bold border transition-colors ${
+                timeLeft <= 10
+                  ? 'bg-rose-950 text-rose-300 border-rose-500 animate-pulse'
+                  : 'bg-stone-900/90 text-amber-300 border-amber-700/60'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
+              {timeLeft}s
+            </div>
+          ) : (
+            <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] font-semibold border bg-stone-950/80 text-amber-300/90 border-amber-700/50">
+              <Clock className="w-3 h-3 text-amber-400" />
+              Sem limite • Aguarda votos
+            </div>
+          )
         )}
 
         <div className="space-y-1">

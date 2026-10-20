@@ -107,6 +107,7 @@ export interface RoomState {
   winnerId?: string;
   isTieBreakActive?: boolean;
   customWords?: WordItem[];
+  exclusiveCustomWords?: boolean; // When true, rounds pull solely from imported/custom words
 }
 
 export interface ClientAction {
@@ -130,6 +131,7 @@ export interface ClientAction {
     | 'ADD_CUSTOM_WORD'
     | 'IMPORT_DICTIONARY'
     | 'RESET_DICTIONARY'
+    | 'SET_EXCLUSIVE_DICTIONARY'
     | 'RESTART_GAME';
   payload?: any;
 }

@@ -71,6 +71,159 @@ export const RevealPhase: React.FC = () => {
     };
   }).filter((m) => m.voter && m.chosenOption);
 
+  // Reusable Next Round requester & confirmation panel (displayed at TOP and bottom)
+  const renderNextRoundControl = (location: 'top' | 'bottom') => {
+    const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
+    const nextRoundRequested = Boolean(round.nextRoundRequested);
+    const confirmations = round.nextRoundConfirmations || [];
+    const hasConfirmed = confirmations.includes(myPlayerId);
+    const requester = room.players.find((p) => p.id === round.nextRoundRequesterId) || leader;
+
+    if (!nextRoundRequested) {
+      if (isLeader || isHost) {
+        return (
+          <div
+            className={`p-4 sm:p-5 rounded-3xl border-2 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4 transition-all ${
+              location === 'top'
+                ? 'bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 border-amber-500 shadow-amber-950/40 ring-2 ring-amber-500/20'
+                : 'bg-stone-900/90 border-amber-600/50'
+            }`}
+          >
+            <div className="flex items-center gap-3.5 text-left w-full sm:w-auto">
+              <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/50 shadow-inner shrink-0">
+                <Bell className="w-6 h-6 animate-bounce" />
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase tracking-wider mb-1">
+                  {location === 'top' ? 'Destaque no Topo' : 'Avançar Rodada'}
+                </div>
+                <h4 className="font-serif font-black text-amber-100 text-base sm:text-lg">
+                  {isLeader ? 'Você é o Líder da Rodada!' : 'Você é o Host da Partida!'}
+                </h4>
+                <p className="text-xs text-stone-300 max-w-md">
+                  Clique no botão para convocar todos os jogadores e avançar para o próximo desafio.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={requestNextRound}
+              className="w-full sm:w-auto py-3.5 px-7 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-black text-sm uppercase tracking-wider shadow-xl shadow-amber-950/60 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5 whitespace-nowrap border border-amber-300 shrink-0"
+            >
+              <Bell className="w-5 h-5 fill-stone-950" />
+              <span>Solicitar Próxima Rodada</span>
+            </button>
+          </div>
+        );
+      }
+
+      return (
+        <div className="p-3.5 rounded-2xl bg-stone-950/90 border border-stone-800 text-center text-xs text-amber-300/90 flex items-center justify-center gap-2.5 shadow-md">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+          <span>
+            Aguardando o Líder <strong className="text-amber-200">({leader?.name || 'da rodada'})</strong> solicitar a próxima rodada...
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={`bg-gradient-to-r from-amber-950/95 via-stone-900 to-amber-950/95 border-2 border-amber-400 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-4 animate-fade-in ${
+          location === 'top' ? 'ring-4 ring-amber-500/30' : ''
+        }`}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-2 border-b border-amber-900/60 pb-3">
+          <div className="flex items-center gap-3 text-left">
+            <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/50 shrink-0">
+              <Bell className="w-6 h-6 animate-bounce text-amber-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-serif font-black text-amber-100 text-base sm:text-lg">
+                  Próxima Rodada Solicitada!
+                </h4>
+                <span className="font-sans text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+                  Confirmação Coletiva
+                </span>
+              </div>
+              <p className="text-xs text-stone-300">
+                O Líder <strong>{requester?.name}</strong> solicitou o avanço. Confirme se você está pronto:
+              </p>
+            </div>
+          </div>
+
+          <div className="font-mono text-xs font-bold text-amber-300 bg-amber-950 px-3 py-1.5 rounded-full border border-amber-800">
+            Confirmados: {confirmations.length} de {activePlayers.length}
+          </div>
+        </div>
+
+        {/* Players Readiness Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          {activePlayers.map((p) => {
+            const isReady = confirmations.includes(p.id);
+            const isMe = p.id === myPlayerId;
+            return (
+              <div
+                key={p.id}
+                className={`p-2.5 rounded-xl border flex items-center justify-between gap-1.5 transition-all ${
+                  isReady
+                    ? 'bg-emerald-950/70 border-emerald-500/60 text-emerald-200 shadow-sm'
+                    : 'bg-stone-950 border-stone-800 text-stone-400'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 truncate">
+                  <span>{p.avatar}</span>
+                  <span className={`font-semibold truncate max-w-[80px] ${isMe ? 'text-amber-300 font-bold' : ''}`}>
+                    {p.name}
+                  </span>
+                </div>
+                {isReady ? (
+                  <span className="font-bold text-[10px] text-emerald-400 bg-emerald-900/70 px-1.5 py-0.5 rounded border border-emerald-600/50 flex items-center gap-1">
+                    <Check className="w-3 h-3 stroke-[3]" /> Pronto
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-stone-500 animate-pulse">
+                    Pendente...
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Confirmation Action for Current Player */}
+        {!hasConfirmed ? (
+          <button
+            onClick={confirmNextRound}
+            className="w-full sm:w-auto py-3.5 px-8 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 hover:from-emerald-400 hover:to-emerald-300 text-stone-950 font-black text-sm uppercase tracking-wider shadow-xl shadow-emerald-950/60 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 mx-auto border border-emerald-300"
+          >
+            <Check className="w-5 h-5 stroke-[3]" />
+            <span>Estou Pronto! Continuar para Próxima Rodada</span>
+          </button>
+        ) : (
+          <div className="flex items-center justify-center gap-2 text-xs text-emerald-300 font-semibold bg-emerald-950/50 py-2.5 px-4 rounded-xl border border-emerald-800/50 max-w-md mx-auto">
+            <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+            <span>Você já confirmou! Aguardando os demais jogadores ({confirmations.length}/{activePlayers.length})...</span>
+          </div>
+        )}
+
+        {/* Host force override option */}
+        {isHost && confirmations.length < activePlayers.length && (
+          <div className="pt-1">
+            <button
+              onClick={forceNextRound}
+              className="inline-flex items-center gap-1.5 text-[11px] text-stone-400 hover:text-amber-300 transition-colors underline"
+            >
+              <FastForward className="w-3.5 h-3.5 text-amber-400" />
+              Forçar início imediato (Host override caso alguém esteja ausente)
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-6 animate-fade-in">
       {/* Top Banner */}
@@ -107,6 +260,11 @@ export const RevealPhase: React.FC = () => {
           <strong>MORTE SÚBITA ATIVA:</strong> Dois ou mais jogadores empatados na liderança acima da meta!
         </div>
       )}
+
+      {/* REQUEST/CONFIRM NEXT ROUND BUTTON & BANNER AT THE TOP (Easy visibility) */}
+      <div className="sticky top-2 z-20">
+        {renderNextRoundControl('top')}
+      </div>
 
       {/* Section: QUEM VOTOU EM QUEM (Detailed breakdown requested by user) */}
       <div className="bg-stone-900/95 border-2 border-amber-600/50 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
@@ -311,126 +469,10 @@ export const RevealPhase: React.FC = () => {
         </div>
       </div>
 
-      {/* Next Round Confirmation Flow (Requested by Leader, confirmed by everyone) */}
-      {(() => {
-        const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-        const nextRoundRequested = Boolean(round.nextRoundRequested);
-        const confirmations = round.nextRoundConfirmations || [];
-        const hasConfirmed = confirmations.includes(myPlayerId);
-        const requester = room.players.find((p) => p.id === round.nextRoundRequesterId) || leader;
-
-        if (!nextRoundRequested) {
-          return (
-            <div className="pt-2 flex flex-col items-center gap-2">
-              {isLeader || isHost ? (
-                <>
-                  <button
-                    onClick={requestNextRound}
-                    className="w-full sm:w-auto py-3.5 px-8 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-amber-950/50 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                  >
-                    <Bell className="w-4 h-4" />
-                    Solicitar Próxima Rodada (Pedir Confirmação de Todos)
-                  </button>
-                  <p className="text-[11px] text-stone-400">
-                    Ao solicitar, todos os participantes receberão um pedido de confirmação na tela para avançar juntos.
-                  </p>
-                </>
-              ) : (
-                <div className="text-xs text-amber-400/80 animate-pulse text-center p-3 rounded-xl bg-stone-900/60 border border-stone-800">
-                  Aguardando o Líder ({leader?.name || 'da rodada'}) solicitar a próxima rodada...
-                </div>
-              )}
-            </div>
-          );
-        }
-
-        return (
-          <div className="bg-gradient-to-r from-amber-950/90 via-stone-900 to-amber-950/90 border-2 border-amber-500 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-4 animate-fade-in">
-            <div className="flex items-center justify-between flex-wrap gap-2 border-b border-amber-900/60 pb-3">
-              <div className="flex items-center gap-2 text-left">
-                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40">
-                  <Bell className="w-5 h-5 animate-bounce" />
-                </div>
-                <div>
-                  <h4 className="font-serif font-black text-amber-200 text-base sm:text-lg">
-                    Próxima Rodada Solicitada!
-                  </h4>
-                  <p className="text-xs text-stone-300">
-                    O Líder <strong>{requester?.name}</strong> solicitou o avanço. Confirme se você está pronto:
-                  </p>
-                </div>
-              </div>
-
-              <div className="font-mono text-xs font-bold text-amber-300 bg-amber-950 px-3 py-1 rounded-full border border-amber-800">
-                Confirmados: {confirmations.length} de {activePlayers.length}
-              </div>
-            </div>
-
-            {/* Players Confirmation Badges Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              {activePlayers.map((p) => {
-                const isReady = confirmations.includes(p.id);
-                const isMe = p.id === myPlayerId;
-                return (
-                  <div
-                    key={p.id}
-                    className={`p-2.5 rounded-xl border flex items-center justify-between gap-1.5 transition-all ${
-                      isReady
-                        ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-200'
-                        : 'bg-stone-950 border-stone-800 text-stone-400'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 truncate">
-                      <span>{p.avatar}</span>
-                      <span className={`font-semibold truncate max-w-[80px] ${isMe ? 'text-amber-300' : ''}`}>
-                        {p.name}
-                      </span>
-                    </div>
-                    {isReady ? (
-                      <span className="font-bold text-[10px] text-emerald-400 bg-emerald-900/60 px-1.5 py-0.5 rounded border border-emerald-600/40">
-                        ✓ Pronto
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-stone-500 animate-pulse">
-                        Pendente...
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Confirmation Action for Current Player */}
-            {!hasConfirmed ? (
-              <button
-                onClick={confirmNextRound}
-                className="w-full sm:w-auto py-3.5 px-8 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-stone-950 font-black text-sm uppercase tracking-wider shadow-xl shadow-emerald-950/60 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 mx-auto"
-              >
-                <Check className="w-5 h-5 text-stone-950" />
-                Estou Pronto! Continuar para Próxima Rodada
-              </button>
-            ) : (
-              <div className="flex items-center justify-center gap-2 text-xs text-emerald-300 font-semibold bg-emerald-950/40 py-2.5 px-4 rounded-xl border border-emerald-800/40 max-w-md mx-auto">
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span>Você já confirmou! Aguardando os demais jogadores ({confirmations.length}/{activePlayers.length})...</span>
-              </div>
-            )}
-
-            {/* Host force override option */}
-            {isHost && confirmations.length < activePlayers.length && (
-              <div className="pt-1">
-                <button
-                  onClick={forceNextRound}
-                  className="inline-flex items-center gap-1.5 text-[11px] text-stone-400 hover:text-amber-300 transition-colors underline"
-                >
-                  <FastForward className="w-3 h-3 text-amber-400" />
-                  Forçar início imediato (Host override caso alguém esteja ausente)
-                </button>
-              </div>
-            )}
-          </div>
-        );
-      })()}
+      {/* Bottom Next Round Control (Also accessible after reviewing results) */}
+      <div className="pt-4 border-t border-stone-800">
+        {renderNextRoundControl('bottom')}
+      </div>
     </div>
   );
 };

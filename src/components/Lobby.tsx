@@ -17,17 +17,21 @@ import {
   Clock,
   Sparkles,
   UserX,
-  Share2,
   Database,
+  FileText,
+  BookOpen,
+  Trash2,
 } from 'lucide-react';
 
 export const Lobby: React.FC = () => {
-  const { room, isHost, myPlayerId, updateSettings, addBot, removeBot, kickPlayer, startGame } = useGame();
+  const { room, isHost, myPlayerId, updateSettings, addBot, removeBot, kickPlayer, startGame, resetDictionary } = useGame();
 
   const [copied, setCopied] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [showQrModal, setShowQrModal] = useState(false);
   const [showDictAdmin, setShowDictAdmin] = useState(false);
+  const [dictTab, setDictTab] = useState<'notepad' | 'list'>('notepad');
+  const [showConfirmResetLobby, setShowConfirmResetLobby] = useState(false);
 
   const roomCode = room?.roomCode || '';
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/?room=${roomCode}` : '';
@@ -221,63 +225,90 @@ export const Lobby: React.FC = () => {
           </h3>
 
           <div className="bg-stone-900/90 border border-stone-800 rounded-2xl p-4 sm:p-5 space-y-4 shadow-lg text-xs">
-            {/* Target Score */}
+            {/* Target Score - Editable by host, default 20 points */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-stone-300 flex items-center gap-1.5">
                   <Target className="w-3.5 h-3.5 text-amber-400" />
                   Meta de Vitória:
                 </span>
-                <span className="font-mono font-bold text-amber-400">
-                  {room.settings.targetScore} pts
+                <span className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800">
+                  {room.settings.targetScore} pts {room.settings.targetScore === 20 ? '(Padrão)' : ''}
                 </span>
               </div>
               {isHost ? (
-                <div className="grid grid-cols-4 gap-1.5">
-                  {[20, 30, 40, 50].map((pts) => (
-                    <button
-                      key={pts}
-                      onClick={() => updateSettings({ targetScore: pts })}
-                      className={`py-1.5 rounded-lg font-bold border transition-all ${
-                        room.settings.targetScore === pts
-                          ? 'bg-amber-600 text-stone-950 border-amber-400'
-                          : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
-                      }`}
-                    >
-                      {pts}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-4 gap-1.5 mb-2">
+                    {[15, 20, 30, 40].map((pts) => (
+                      <button
+                        key={pts}
+                        onClick={() => updateSettings({ targetScore: pts })}
+                        className={`py-1.5 rounded-lg font-bold border transition-all ${
+                          room.settings.targetScore === pts
+                            ? 'bg-amber-600 text-stone-950 border-amber-400 shadow-md'
+                            : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
+                        }`}
+                      >
+                        {pts} {pts === 20 ? '★' : ''}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Editable Custom Score */}
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-stone-950 border border-stone-800">
+                    <span className="text-[11px] text-stone-400">Editar pontuação livre:</span>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        min="5"
+                        max="200"
+                        value={room.settings.targetScore}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (!isNaN(val) && val > 0) {
+                            updateSettings({ targetScore: Math.min(200, val) });
+                          }
+                        }}
+                        className="w-16 px-2 py-1 rounded bg-stone-900 border border-amber-600/50 text-amber-300 font-mono font-bold text-center text-xs outline-none focus:border-amber-400"
+                      />
+                      <span className="text-[11px] text-amber-300 font-semibold">pts</span>
+                    </div>
+                  </div>
+                </>
               ) : (
-                <p className="text-stone-400">Definido pelo Host: {room.settings.targetScore} pontos</p>
+                <p className="text-stone-400">Definido pelo Host: {room.settings.targetScore} pontos para o campeão</p>
               )}
             </div>
 
-            {/* Submission Time Limit */}
+            {/* Submission Time Limit - Default 0 (Sem limite, apenas aguarda) */}
             <div className="pt-2 border-t border-stone-800">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-stone-300 flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-amber-400" />
-                  Tempo de Envio:
+                  Tempo da Rodada:
                 </span>
                 <span className="font-mono font-bold text-amber-400">
-                  {room.settings.submissionTimeLimit === 0 ? 'Sem limite' : `${room.settings.submissionTimeLimit}s`}
+                  {room.settings.submissionTimeLimit === 0 ? 'Sem limite (Aguardar)' : `${room.settings.submissionTimeLimit}s`}
                 </span>
               </div>
               {isHost && (
                 <div className="grid grid-cols-4 gap-1.5">
                   {[
+                    { label: 'Sem limite ★', val: 0 },
                     { label: '45s', val: 45 },
                     { label: '60s', val: 60 },
                     { label: '90s', val: 90 },
-                    { label: 'Livre', val: 0 },
                   ].map((t) => (
                     <button
                       key={t.val}
-                      onClick={() => updateSettings({ submissionTimeLimit: t.val })}
-                      className={`py-1.5 rounded-lg font-bold border transition-all ${
+                      onClick={() =>
+                        updateSettings({
+                          submissionTimeLimit: t.val,
+                          votingTimeLimit: t.val,
+                        })
+                      }
+                      className={`py-1.5 rounded-lg text-[11px] font-bold border transition-all ${
                         room.settings.submissionTimeLimit === t.val
-                          ? 'bg-amber-600 text-stone-950 border-amber-400'
+                          ? 'bg-amber-600 text-stone-950 border-amber-400 shadow-md'
                           : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
                       }`}
                     >
@@ -318,15 +349,50 @@ export const Lobby: React.FC = () => {
               )}
             </div>
 
-            {/* Dictionary Management for Host */}
+            {/* Dictionary / Word Database Management for Host */}
             {isHost && (
-              <div className="pt-2 border-t border-stone-800">
+              <div className="pt-2 border-t border-stone-800 space-y-2">
+                {/* THE REQUESTED PROMINENT NOTEPAD BUTTON */}
                 <button
-                  onClick={() => setShowDictAdmin(true)}
-                  className="w-full py-2.5 px-3 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-600/50 text-amber-200 text-xs font-bold transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                  type="button"
+                  onClick={() => {
+                    setDictTab('notepad');
+                    setShowDictAdmin(true);
+                  }}
+                  className="w-full py-3 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-black text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                  title="Carregar arquivo .txt do Bloco de Notas com palavras e definições"
                 >
-                  <Database className="w-4 h-4 text-amber-400" />
-                  <span>Dicionário & Importar ({getAllWords(room.customWords).length} termos)</span>
+                  <FileText className="w-4 h-4 text-stone-950 flex-shrink-0" />
+                  <span>Add Banco de Dados via Bloco de Notas (.txt)</span>
+                </button>
+
+                {/* If custom words exist: Show option to ZERAR BANCO */}
+                {room.customWords && room.customWords.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmResetLobby(true)}
+                    className="w-full py-2 px-3 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800/80 text-rose-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                    title="Apaga as palavras customizadas da sala para que possa adicionar outro banco limpo"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Zerar Banco Atual ({room.customWords.length} palavras)</span>
+                  </button>
+                )}
+
+                {/* Option to explore words with return capability */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDictTab('list');
+                    setShowDictAdmin(true);
+                  }}
+                  className="w-full py-2 px-3 rounded-xl bg-stone-950 hover:bg-stone-800 border border-stone-700 text-stone-300 hover:text-stone-100 text-xs font-semibold transition-all flex items-center justify-center gap-2"
+                  title="Visualizar e pesquisar todas as palavras ativas"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                  <span>
+                    Ver Palavras Cadastradas ({room.customWords?.length || 0} palavras)
+                  </span>
                 </button>
               </div>
             )}
@@ -386,10 +452,54 @@ export const Lobby: React.FC = () => {
         </div>
       )}
 
+      {/* Confirmation modal for resetting database from Lobby */}
+      {showConfirmResetLobby && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
+          <div className="bg-stone-900 border-2 border-rose-600/80 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-center text-stone-100">
+            <div className="inline-flex p-3 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/40">
+              <Trash2 className="w-7 h-7 text-rose-400" />
+            </div>
+
+            <div className="space-y-1">
+              <h4 className="font-serif font-black text-lg text-rose-200">
+                Zerar Banco de Dados?
+              </h4>
+              <p className="text-xs text-stone-300">
+                Deseja apagar todas as <strong>{room?.customWords?.length || 0} palavras</strong> importadas da sala para pôr um novo banco de dados via Bloco de Notas?
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowConfirmResetLobby(false)}
+                className="flex-1 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-bold transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  resetDictionary();
+                  setShowConfirmResetLobby(false);
+                  setDictTab('notepad');
+                  setShowDictAdmin(true);
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-stone-950 text-xs font-black uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4 text-stone-950" />
+                <span>Sim, Zerar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Dictionary Admin Modal */}
       {isHost && (
         <DictionaryAdminModal
           isOpen={showDictAdmin}
+          defaultTab={dictTab}
           onClose={() => setShowDictAdmin(false)}
         />
       )}

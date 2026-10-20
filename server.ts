@@ -474,7 +474,7 @@ function prepareNextRound(room: RoomState) {
   const nextLeader = room.players[nextIndex] || room.players[0];
 
   const roundNumber = (room.currentRound?.roundNumber || 0) + 1;
-  const wordChoices = getRandomWordChoices(3, [], room.customWords);
+  const wordChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
 
   room.currentRound = {
     roundNumber,
@@ -531,9 +531,9 @@ wss.on('connection', (ws: WebSocket) => {
             roomCode,
             hostId: hostPlayer.id,
             settings: {
-              targetScore: payload.targetScore || 30,
-              submissionTimeLimit: payload.submissionTimeLimit ?? 60,
-              votingTimeLimit: payload.votingTimeLimit ?? 45,
+              targetScore: payload.targetScore !== undefined ? Number(payload.targetScore) : 20,
+              submissionTimeLimit: payload.submissionTimeLimit !== undefined ? Number(payload.submissionTimeLimit) : 0,
+              votingTimeLimit: payload.votingTimeLimit !== undefined ? Number(payload.votingTimeLimit) : 0,
               leaderBluffsRule: payload.leaderBluffsRule || 'auto',
               twoPlayerDecoyCount: 2,
             },
@@ -541,9 +541,9 @@ wss.on('connection', (ws: WebSocket) => {
             currentRound: null,
             roundHistory: [],
             isTieBreakActive: false,
-            customWords: [],
+            customWords: Array.isArray(payload.customWords) ? payload.customWords : [],
+            exclusiveCustomWords: Boolean(payload.exclusiveCustomWords),
           };
-
           rooms.set(roomCode, newRoom);
           socketMap.set(ws, { roomCode, playerId: hostPlayer.id });
 
@@ -735,7 +735,7 @@ wss.on('connection', (ws: WebSocket) => {
           room.isTieBreakActive = false;
 
           const leader = room.players[0];
-          const wordChoices = getRandomWordChoices(3, [], room.customWords);
+          const wordChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
 
           room.currentRound = {
             roundNumber: 1,
@@ -985,13 +985,20 @@ wss.on('connection', (ws: WebSocket) => {
           if (!room || room.hostId !== meta.playerId) return;
 
           const words = payload.words;
-          if (Array.isArray(words) && words.length > 0) {
-            if (!room.customWords) room.customWords = [];
-            const existing = new Set(room.customWords.map((w) => w.word.toLowerCase()));
+          const replaceAll = Boolean(payload.replaceAll);
+
+          if (payload.exclusiveCustomWords !== undefined) {
+            room.exclusiveCustomWords = Boolean(payload.exclusiveCustomWords);
+          }
+
+          if (Array.isArray(words)) {
+            const newWords: typeof room.customWords = replaceAll ? [] : (room.customWords || []);
+            const existing = new Set(newWords.map((w) => w.word.toLowerCase()));
+
             for (const w of words) {
               if (w && w.word && w.definition && !existing.has(String(w.word).toLowerCase())) {
                 existing.add(String(w.word).toLowerCase());
-                room.customWords.push({
+                newWords.push({
                   id: w.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
                   word: String(w.word).trim(),
                   definition: String(w.definition).trim().toUpperCase(),
@@ -1002,6 +1009,8 @@ wss.on('connection', (ws: WebSocket) => {
                 });
               }
             }
+            room.customWords = newWords;
+
             broadcastToRoom(room.roomCode, {
               type: 'ROOM_UPDATE',
               room,
@@ -1017,6 +1026,21 @@ wss.on('connection', (ws: WebSocket) => {
           if (!room || room.hostId !== meta.playerId) return;
 
           room.customWords = [];
+          room.exclusiveCustomWords = false;
+          broadcastToRoom(room.roomCode, {
+            type: 'ROOM_UPDATE',
+            room,
+          });
+          break;
+        }
+
+        case 'SET_EXCLUSIVE_DICTIONARY': {
+          const meta = socketMap.get(ws);
+          if (!meta) return;
+          const room = rooms.get(meta.roomCode);
+          if (!room || room.hostId !== meta.playerId) return;
+
+          room.exclusiveCustomWords = Boolean(payload.exclusive);
           broadcastToRoom(room.roomCode, {
             type: 'ROOM_UPDATE',
             room,

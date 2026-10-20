@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { BookOpen, Volume2, VolumeX, HelpCircle, LogOut, Copy, Check, Users, Database } from 'lucide-react';
+import { BookOpen, Volume2, VolumeX, HelpCircle, LogOut, Copy, Check, Users, Database, FileText } from 'lucide-react';
 
 interface HeaderProps {
   onOpenRules: () => void;
@@ -57,11 +57,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
           {room && isHost && onOpenDictionary && (
             <button
               onClick={onOpenDictionary}
-              className="flex items-center gap-1 px-2.5 py-2 rounded-lg bg-amber-900/50 hover:bg-amber-800/70 text-amber-200 transition-colors border border-amber-700/50 text-xs font-semibold"
-              title="Gerenciar Banco de Dados de Palavras (Host)"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-900/60 hover:bg-amber-800/80 text-amber-200 transition-colors border border-amber-600/60 text-xs font-bold shadow-sm"
+              title="Adicionar palavras via Bloco de Notas (.txt) ou explorar banco de dados"
             >
-              <Database className="w-4 h-4 text-amber-400" />
-              <span className="hidden sm:inline">Dicionário</span>
+              <FileText className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">Bloco de Notas</span>
             </button>
           )}
 

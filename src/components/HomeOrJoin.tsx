@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { BookOpen, Users, Sparkles, Play, PlusCircle, ArrowRight, Bot, Target, Clock, Settings2 } from 'lucide-react';
+import { BookOpen, Users, Sparkles, Play, PlusCircle, ArrowRight, Bot, Target, Clock, Settings2, FileText, CheckCircle2 } from 'lucide-react';
+import { WordItem } from '../types/game';
+import { parseImportedDictionaryText } from '../data/dictionary';
 
 const AVATAR_OPTIONS = [
   '🎓', '🎭', '🦁', '🦊', '🦉', '🎩', '🐙', '🐉', '🕵️', '🧙‍♂️', '🚀', '👑',
@@ -45,12 +47,17 @@ export const HomeOrJoin: React.FC = () => {
   const [color, setColor] = useState<string>(() => localStorage.getItem('jdd_player_color') || '#F59E0B');
   const [roomCode, setRoomCode] = useState<string>('');
 
-  // Host configuration state
-  const [targetScore, setTargetScore] = useState<number>(30);
-  const [submissionTimeLimit, setSubmissionTimeLimit] = useState<number>(60);
-  const [votingTimeLimit, setVotingTimeLimit] = useState<number>(45);
+  // Host configuration state (Default: 20 points, unlimited time)
+  const [targetScore, setTargetScore] = useState<number>(20);
+  const [submissionTimeLimit, setSubmissionTimeLimit] = useState<number>(0);
+  const [votingTimeLimit, setVotingTimeLimit] = useState<number>(0);
   const [leaderBluffsRule, setLeaderBluffsRule] = useState<'auto' | 'always' | 'never'>('auto');
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Notepad / Custom dictionary preload state
+  const [loadedCustomWords, setLoadedCustomWords] = useState<WordItem[] | null>(null);
+  const [loadedFileName, setLoadedFileName] = useState<string | null>(null);
+  const [exclusivePreload, setExclusivePreload] = useState<boolean>(false);
 
   // Check URL params for room code e.g. ?room=ABCD
   useEffect(() => {
@@ -62,15 +69,40 @@ export const HomeOrJoin: React.FC = () => {
     }
   }, []);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        const res = parseImportedDictionaryText(content);
+        if (res.words.length > 0) {
+          setLoadedCustomWords(res.words);
+          setLoadedFileName(file.name);
+          setExclusivePreload(true);
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const handleCreate = (e?: React.FormEvent, withBots = false) => {
     if (e) e.preventDefault();
     const finalName = name.trim() || 'Jogador Anônimo';
-    createRoom(finalName, avatar, color, {
-      targetScore,
-      submissionTimeLimit,
-      votingTimeLimit,
-      leaderBluffsRule,
-    });
+    createRoom(
+      finalName,
+      avatar,
+      color,
+      {
+        targetScore,
+        submissionTimeLimit,
+        votingTimeLimit,
+        leaderBluffsRule,
+      },
+      loadedCustomWords || undefined,
+      exclusivePreload
+    );
   };
 
   const handleJoin = (e: React.FormEvent) => {
@@ -194,19 +226,19 @@ export const HomeOrJoin: React.FC = () => {
         {/* Create Mode Configurations */}
         {mode === 'create' ? (
           <form onSubmit={(e) => handleCreate(e)} className="space-y-5">
-            {/* Target Score Selector */}
+            {/* Target Score Selector - Editable, default 20 points */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-semibold text-amber-300/90 uppercase tracking-wider flex items-center gap-1.5">
                   <Target className="w-3.5 h-3.5 text-amber-400" />
-                  Meta de Pontos para Vencer
+                  Meta de Pontos para Vencer (Editável)
                 </label>
                 <span className="font-mono text-xs font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800">
-                  {targetScore} pontos
+                  {targetScore} pontos {targetScore === 20 ? '(Padrão)' : ''}
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-2">
-                {[20, 30, 40, 50].map((pts) => (
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                {[15, 20, 30, 40].map((pts) => (
                   <button
                     key={pts}
                     type="button"
@@ -217,9 +249,25 @@ export const HomeOrJoin: React.FC = () => {
                         : 'bg-stone-950 border-stone-800 text-stone-300 hover:border-amber-800'
                     }`}
                   >
-                    {pts} pts
+                    {pts} pts {pts === 20 ? '★' : ''}
                   </button>
                 ))}
+              </div>
+              {/* Editable Direct Custom Score Input */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-stone-950/80 border border-stone-800">
+                <span className="text-xs text-stone-400 font-medium">Ou personalize a meta:</span>
+                <input
+                  type="number"
+                  min="5"
+                  max="200"
+                  value={targetScore}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    setTargetScore(isNaN(val) ? 20 : Math.max(1, Math.min(200, val)));
+                  }}
+                  className="w-20 px-2.5 py-1 rounded-lg bg-stone-900 border border-amber-600/50 text-amber-300 font-bold text-center text-sm focus:border-amber-400 outline-none"
+                />
+                <span className="text-xs text-amber-300 font-semibold">pontos para o campeão</span>
               </div>
             </div>
 
@@ -231,29 +279,37 @@ export const HomeOrJoin: React.FC = () => {
                 className="text-xs text-amber-400/80 hover:text-amber-300 flex items-center gap-1.5 font-medium transition-colors"
               >
                 <Settings2 className="w-3.5 h-3.5" />
-                {showAdvanced ? 'Ocultar configurações avançadas' : 'Configurações avançadas (Tempo, Líder)'}
+                {showAdvanced ? 'Ocultar configurações avançadas' : 'Configurações de tempo e regras (Tempo padrão: Sem limite)'}
               </button>
 
               {showAdvanced && (
                 <div className="mt-3 p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-3 animate-fade-in text-xs">
                   {/* Submission Time */}
                   <div>
-                    <label className="block text-stone-300 font-semibold mb-1 flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-amber-400" />
-                      Tempo de Envio de Blefe:
+                    <label className="block text-stone-300 font-semibold mb-1 flex items-center justify-between">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-amber-400" />
+                        Tempo da Rodada:
+                      </span>
+                      <span className="text-amber-400 font-mono font-bold">
+                        {submissionTimeLimit === 0 ? 'Sem limite (Apenas aguarda todos)' : `${submissionTimeLimit}s`}
+                      </span>
                     </label>
                     <div className="grid grid-cols-4 gap-1.5">
                       {[
+                        { label: 'Sem limite ★', val: 0 },
                         { label: '45s', val: 45 },
                         { label: '60s', val: 60 },
                         { label: '90s', val: 90 },
-                        { label: 'Sem limite', val: 0 },
                       ].map((t) => (
                         <button
                           key={t.val}
                           type="button"
-                          onClick={() => setSubmissionTimeLimit(t.val)}
-                          className={`py-1.5 px-2 rounded-lg font-bold border ${
+                          onClick={() => {
+                            setSubmissionTimeLimit(t.val);
+                            setVotingTimeLimit(t.val);
+                          }}
+                          className={`py-1.5 px-1.5 text-center text-[11px] rounded-lg font-bold border ${
                             submissionTimeLimit === t.val
                               ? 'bg-amber-500/20 border-amber-500 text-amber-300'
                               : 'bg-stone-900 border-stone-800 text-stone-400'
@@ -291,6 +347,59 @@ export const HomeOrJoin: React.FC = () => {
                       ))}
                     </div>
                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* Optional Notepad Database Preload */}
+            <div className="pt-1">
+              <label className="cursor-pointer w-full py-2.5 px-3 rounded-xl bg-stone-950 hover:bg-stone-800 border border-amber-600/50 text-amber-200 text-xs font-bold flex items-center justify-between transition-all shadow-sm">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-amber-400" />
+                  <span>
+                    {loadedCustomWords
+                      ? `✓ ${loadedCustomWords.length} palavras do Bloco de Notas prontas!`
+                      : 'Add Banco de Dados via Bloco de Notas (.txt) (Opcional)'}
+                  </span>
+                </div>
+                <span className="text-[10px] text-amber-300 bg-amber-950 border border-amber-700/50 px-2 py-0.5 rounded font-mono font-semibold">
+                  {loadedCustomWords ? `${loadedCustomWords.length} termos` : 'Selecionar .txt'}
+                </span>
+                <input
+                  type="file"
+                  accept=".txt,.csv,.json,.tsv,text/plain"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
+              </label>
+              {loadedFileName && (
+                <div className="space-y-1.5 mt-2 p-2.5 rounded-xl bg-stone-950 border border-emerald-600/50">
+                  <div className="flex items-center justify-between text-[11px] text-emerald-400 font-semibold">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> {loadedFileName} ({loadedCustomWords?.length} palavras)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoadedCustomWords(null);
+                        setLoadedFileName(null);
+                        setExclusivePreload(false);
+                      }}
+                      className="text-rose-400 hover:text-rose-300 underline text-[10px]"
+                    >
+                      Remover / Zerar
+                    </button>
+                  </div>
+
+                  <label className="flex items-center gap-2 cursor-pointer pt-1 text-[11px] text-amber-200">
+                    <input
+                      type="checkbox"
+                      checked={exclusivePreload}
+                      onChange={(e) => setExclusivePreload(e.target.checked)}
+                      className="rounded border-amber-600 bg-stone-900 text-amber-500 focus:ring-0"
+                    />
+                    <span>Jogar exclusivamente com este arquivo (zerar/ignorar banco padrão)</span>
+                  </label>
                 </div>
               )}
             </div>

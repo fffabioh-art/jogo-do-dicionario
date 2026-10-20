@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BookOpen, Sparkles, Shuffle, Crown, Clock, Search, X, Filter, ArrowLeft } from 'lucide-react';
 import { WordItem } from '../types/game';
-import { DICTIONARY_WORDS, getAllWords } from '../data/dictionary';
 
 export const WordChoicePhase: React.FC = () => {
   const { room, isLeader, selectWord } = useGame();
@@ -27,7 +26,8 @@ export const WordChoicePhase: React.FC = () => {
   const leader = room.players.find((p) => p.id === round.leaderId);
   const choices = round.wordChoices || [];
   const customWords = room.customWords || [];
-  const allAvailableWords = useMemo(() => getAllWords(customWords), [customWords]);
+  // Do NOT show the 80 initial words of the database. Only show custom words if loaded.
+  const allAvailableWords = customWords;
 
   // Filter full dictionary database
   const filteredWords = useMemo(() => {
@@ -115,13 +115,15 @@ export const WordChoicePhase: React.FC = () => {
 
           {/* Action Row: Full Database Browser + Randomizer */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <button
-              onClick={() => setShowDictionaryModal(true)}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Search className="w-4 h-4 text-amber-400" />
-              Explorar Todo o Banco de Palavras ({allAvailableWords.length} disponíveis)
-            </button>
+            {customWords.length > 0 && (
+              <button
+                onClick={() => setShowDictionaryModal(true)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Search className="w-4 h-4 text-amber-400" />
+                Explorar Banco Personalizado ({customWords.length} palavras)
+              </button>
+            )}
 
             <button
               onClick={() => choices.length > 0 && handlePickWord(choices[0])}
@@ -299,7 +301,7 @@ export const WordChoicePhase: React.FC = () => {
             {/* Modal Footer with Explicit Back Button */}
             <div className="p-3.5 sm:p-4 border-t border-stone-800 bg-stone-950/90 flex items-center justify-between text-xs">
               <span className="text-stone-400">
-                Total disponível: <strong>{allAvailableWords.length} palavras</strong>
+                Banco Personalizado: <strong>{customWords.length} palavras</strong>
               </span>
               <button
                 onClick={() => setShowDictionaryModal(false)}

@@ -15,7 +15,14 @@ interface GameContextType {
   clearError: () => void;
 
   // Actions
-  createRoom: (name: string, avatar: string, color: string, settings?: Partial<GameSettings>) => void;
+  createRoom: (
+    name: string,
+    avatar: string,
+    color: string,
+    settings?: Partial<GameSettings>,
+    customWords?: WordItem[],
+    exclusiveCustomWords?: boolean
+  ) => void;
   joinRoom: (roomCode: string, name: string, avatar: string, color: string) => void;
   updateSettings: (settings: Partial<GameSettings>) => void;
   addBot: () => void;
@@ -31,7 +38,8 @@ interface GameContextType {
   confirmNextRound: () => void;
   forceNextRound: () => void;
   addCustomWord: (word: Partial<WordItem>) => void;
-  importDictionary: (words: WordItem[]) => void;
+  importDictionary: (words: WordItem[], replaceAll?: boolean, exclusiveCustomWords?: boolean) => void;
+  setExclusiveCustomWords: (exclusive: boolean) => void;
   resetDictionary: () => void;
   restartGame: () => void;
   leaveRoom: () => void;
@@ -182,7 +190,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     socketRef.current.send(JSON.stringify({ type, payload }));
   }, [connectSocket]);
 
-  const createRoom = (name: string, avatar: string, color: string, settings?: Partial<GameSettings>) => {
+  const createRoom = (
+    name: string,
+    avatar: string,
+    color: string,
+    settings?: Partial<GameSettings>,
+    customWords?: WordItem[],
+    exclusiveCustomWords?: boolean
+  ) => {
     localStorage.setItem(STORAGE_KEYS.PLAYER_NAME, name);
     localStorage.setItem(STORAGE_KEYS.PLAYER_AVATAR, avatar);
     localStorage.setItem(STORAGE_KEYS.PLAYER_COLOR, color);
@@ -192,6 +207,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       playerName: name,
       avatar,
       color,
+      customWords,
+      exclusiveCustomWords,
       ...settings,
     });
   };
@@ -279,8 +296,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundManager.playPop();
   };
 
-  const importDictionary = (words: WordItem[]) => {
-    sendAction('IMPORT_DICTIONARY', { words });
+  const importDictionary = (words: WordItem[], replaceAll = false, exclusiveCustomWords?: boolean) => {
+    sendAction('IMPORT_DICTIONARY', { words, replaceAll, exclusiveCustomWords });
+    soundManager.playPop();
+  };
+
+  const setExclusiveCustomWords = (exclusive: boolean) => {
+    sendAction('SET_EXCLUSIVE_DICTIONARY', { exclusive });
     soundManager.playPop();
   };
 
@@ -334,6 +356,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         forceNextRound,
         addCustomWord,
         importDictionary,
+        setExclusiveCustomWords,
         resetDictionary,
         restartGame,
         leaveRoom,

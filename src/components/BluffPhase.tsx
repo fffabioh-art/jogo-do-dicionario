@@ -56,7 +56,7 @@ export const BluffPhase: React.FC = () => {
       {/* Word Header Card */}
       <div className="bg-gradient-to-b from-stone-900 to-amber-950/40 border border-amber-600/40 rounded-3xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
         {/* Timer Pill */}
-        {timeLeft !== null && (
+        {timeLeft !== null ? (
           <div
             className={`absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-xs font-bold border transition-colors ${
               timeLeft <= 10
@@ -66,6 +66,11 @@ export const BluffPhase: React.FC = () => {
           >
             <Clock className="w-3.5 h-3.5 text-amber-400" />
             {timeLeft}s
+          </div>
+        ) : (
+          <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] font-semibold border bg-stone-950/80 text-amber-300/90 border-amber-700/50">
+            <Clock className="w-3 h-3 text-amber-400" />
+            Sem limite • Aguarda todos
           </div>
         )}
 

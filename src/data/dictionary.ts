@@ -643,8 +643,11 @@ export const DICTIONARY_WORDS: WordItem[] = [
   }
 ];
 
-// Combined words helper
-export function getAllWords(customWords?: WordItem[]): WordItem[] {
+// Combined words helper (supports playing exclusively with the imported database)
+export function getAllWords(customWords?: WordItem[], exclusiveCustomWords?: boolean): WordItem[] {
+  if (exclusiveCustomWords && customWords && customWords.length > 0) {
+    return customWords;
+  }
   if (!customWords || customWords.length === 0) {
     return DICTIONARY_WORDS;
   }
@@ -652,22 +655,34 @@ export function getAllWords(customWords?: WordItem[]): WordItem[] {
 }
 
 // Helper to get random word choices from either default or custom words
-export function getRandomWordChoices(count = 3, excludeIds: string[] = [], customWords?: WordItem[]): WordItem[] {
-  const all = getAllWords(customWords);
+export function getRandomWordChoices(
+  count = 3,
+  excludeIds: string[] = [],
+  customWords?: WordItem[],
+  exclusiveCustomWords?: boolean
+): WordItem[] {
+  const all = getAllWords(customWords, exclusiveCustomWords);
   const available = all.filter((w) => !excludeIds.includes(w.id));
-  const pool = available.length >= count ? available : all;
+  let pool = available.length >= count ? available : all;
+
+  // If pool still has fewer than count words (e.g. exclusive bank has only 1 or 2 words), pad from DICTIONARY_WORDS
+  if (pool.length < count) {
+    const pad = DICTIONARY_WORDS.filter((w) => !pool.some((p) => p.word.toLowerCase() === w.word.toLowerCase()));
+    pool = [...pool, ...pad];
+  }
+
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
 
-// Helper to parse imported text into WordItem[]
+// Helper to parse imported text into WordItem[] (Full support for Notepad .txt, CSV, JSON, TSV, etc.)
 export function parseImportedDictionaryText(rawText: string): { words: WordItem[]; error?: string } {
   const trimmed = rawText.trim();
   if (!trimmed) {
-    return { words: [], error: 'O texto fornecido está vazio.' };
+    return { words: [], error: 'O arquivo do Bloco de Notas está vazio.' };
   }
 
-  // 1. Try JSON
+  // 1. Try JSON Array
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
     try {
       const parsed = JSON.parse(trimmed);
@@ -678,8 +693,8 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
           if (item && item.word && item.definition) {
             words.push({
               id: item.id || `custom_${Date.now()}_${i}`,
-              word: String(item.word).trim(),
-              definition: String(item.definition).trim().toUpperCase(),
+              word: String(item.word).replace(/^[*"']+|[*"']+$/g, '').trim(),
+              definition: String(item.definition).replace(/^[*"']+|[*"']+$/g, '').trim().toUpperCase(),
               partOfSpeech: item.partOfSpeech ? String(item.partOfSpeech).trim() : 'substantivo',
               exampleSentence: item.exampleSentence ? String(item.exampleSentence).trim() : undefined,
               difficulty: item.difficulty || 'medio',
@@ -689,53 +704,126 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
         }
         if (words.length > 0) return { words };
       }
-    } catch (e) {
-      // not valid JSON, fallback to line-by-line
+    } catch {
+      // Not JSON, continue to text parsing
     }
   }
 
-  // 2. Line by line parsing
-  const lines = trimmed.split(/\r?\n/).map((l) => l.trim()).filter((l) => l.length > 0);
+  // 2. Line by line parsing with rich Notepad tolerance
+  const rawLines = trimmed.split(/\r?\n/).map((l) => l.trim()).filter((l) => l.length > 0);
   const words: WordItem[] = [];
+  const seenWords = new Set<string>();
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  const cleanTerm = (raw: string) => {
+    return raw
+      // Remove leading list numbers: "1. ", "02 - ", "1) "
+      .replace(/^\d+[\.\)\-]\s*/, '')
+      // Remove leading markdown bullet: "- ", "* ", "• "
+      .replace(/^[\-\*•–—]\s*/, '')
+      // Remove surrounding quotes or markdown bold
+      .replace(/^[*"']+|[*"']+$/g, '')
+      .trim();
+  };
 
-    // Check semicolon or tab delimiter
+  const cleanDef = (raw: string) => {
+    return raw
+      .replace(/^[*"']+|[*"']+$/g, '')
+      .trim()
+      .toUpperCase();
+  };
+
+  for (let i = 0; i < rawLines.length; i++) {
+    let line = rawLines[i].trim();
+
+    // Skip comment lines in txt files
+    if (line.startsWith('#') || line.startsWith('//')) continue;
+
+    // Strip leading list enumeration e.g. "1. ", "02 - ", "3) ", "4: ", "- ", "• "
+    line = line
+      .replace(/^\d+\s*[\.\)\-–—:]\s*/, '')
+      .replace(/^[\-\*•–—]\s*/, '')
+      .trim();
+
+    if (!line) continue;
+
+    // Check semicolon or tab delimiter (CSV / TSV)
     if (line.includes(';') || line.includes('\t')) {
       const parts = (line.includes(';') ? line.split(';') : line.split('\t')).map((p) => p.trim());
       if (parts.length >= 2 && parts[0] && parts[1]) {
+        const word = cleanTerm(parts[0]);
+        if (word.length >= 2 && !seenWords.has(word.toLowerCase())) {
+          seenWords.add(word.toLowerCase());
+          const hasGrammar = parts.length >= 3 && parts[1].length < 40;
+          words.push({
+            id: `custom_${Date.now()}_${i}`,
+            word,
+            partOfSpeech: hasGrammar ? parts[1].toLowerCase() : 'substantivo',
+            definition: cleanDef(hasGrammar ? parts[2] : parts[1]),
+            exampleSentence: parts.length >= 4 ? parts[3] : undefined,
+            difficulty: 'medio',
+            isCustom: true,
+          });
+          continue;
+        }
+      }
+    }
+
+    // Check standard Notepad line formats:
+    // "Palavra: Definição", "Palavra - Definição", "Palavra — Definição", "Palavra = Definição", "Palavra | Definição"
+    const regex = /^([^\:\-\—\–\=\|]+)(?:\:|\s+[\-\—\–\=\|]\s+|\s*\=\s*|\s*\|\s*)(.+)$/;
+    const match = line.match(regex);
+
+    if (match) {
+      let rawWord = match[1].trim();
+      let rawDef = match[2].trim();
+
+      // Extract grammar tag in parentheses if present, e.g. "Abelhudice (s.f.)"
+      let partOfSpeech = 'substantivo';
+      const parenMatch = rawWord.match(/^(.*?)\s*\(([^)]+)\)$/);
+      if (parenMatch) {
+        rawWord = parenMatch[1].trim();
+        partOfSpeech = parenMatch[2].trim().toLowerCase();
+      }
+
+      const word = cleanTerm(rawWord);
+      const definition = cleanDef(rawDef);
+
+      if (word.length >= 2 && definition.length >= 3 && !seenWords.has(word.toLowerCase())) {
+        seenWords.add(word.toLowerCase());
         words.push({
           id: `custom_${Date.now()}_${i}`,
-          word: parts[0],
-          partOfSpeech: parts.length >= 3 && parts[1].length < 35 ? parts[1] : 'termo',
-          definition: (parts.length >= 3 && parts[1].length < 35 ? parts[2] : parts[1]).toUpperCase(),
-          exampleSentence: parts.length >= 4 ? parts[3] : undefined,
+          word,
+          partOfSpeech,
+          definition,
           difficulty: 'medio',
           isCustom: true,
         });
         continue;
       }
     }
+  }
 
-    // Check "Palavra: Definição" or "Palavra - Definição"
-    const colonIdx = line.indexOf(':');
-    const dashIdx = line.indexOf(' - ');
-    const sepIdx = colonIdx !== -1 ? colonIdx : dashIdx;
-
-    if (sepIdx !== -1) {
-      const term = line.substring(0, sepIdx).trim();
-      const def = line.substring(sepIdx + (colonIdx !== -1 ? 1 : 3)).trim();
-      if (term.length > 1 && def.length > 3) {
+  // 3. Fallback: Block format where word is on one line and definition is on the next line
+  if (words.length === 0 && rawLines.length >= 2) {
+    for (let i = 0; i < rawLines.length - 1; i += 2) {
+      const possibleWord = cleanTerm(rawLines[i]);
+      const possibleDef = cleanDef(rawLines[i + 1]);
+      if (
+        possibleWord.length >= 2 &&
+        possibleWord.length < 35 &&
+        possibleDef.length >= 5 &&
+        !possibleWord.includes(':') &&
+        !seenWords.has(possibleWord.toLowerCase())
+      ) {
+        seenWords.add(possibleWord.toLowerCase());
         words.push({
           id: `custom_${Date.now()}_${i}`,
-          word: term,
+          word: possibleWord,
           partOfSpeech: 'substantivo',
-          definition: def.toUpperCase(),
+          definition: possibleDef,
           difficulty: 'medio',
           isCustom: true,
         });
-        continue;
       }
     }
   }
@@ -744,7 +832,7 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
     return {
       words: [],
       error:
-        'Não foi possível extrair palavras válidas. Use formato JSON, CSV com ponto e vírgula (Palavra; Classe; Definição), ou "Palavra: Definição".',
+        'Não foi possível extrair palavras válidas do arquivo Bloco de Notas. Certifique-se de usar linhas no formato: "Palavra: Definição" ou "Palavra - Definição" ou "Palavra; Classe; Definição".',
     };
   }
 

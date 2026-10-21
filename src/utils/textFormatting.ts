@@ -69,17 +69,16 @@ export function formatConcept(text: string): string {
 
 /**
  * Determines whether the round's leader is expected to type/submit a bluff and vote.
- * - 'always': leader always bluffs and votes
- * - 'never': leader NEVER bluffs and NEVER votes (sweep bonus if 0 players guess correctly)
- * - 'auto': leader bluffs if 4 or fewer players
+ * - 'always': leader bluffs and votes
+ * - 'never' (default): leader does NOT bluff and does NOT vote (sweep bonus if 0 players guess correctly)
  */
 export function isLeaderBluffing(
-  settings?: { leaderBluffsRule?: 'auto' | 'always' | 'never' } | null,
+  settings?: { leaderBluffsRule?: 'always' | 'never' | 'auto' } | null,
   playerCount: number = 0
 ): boolean {
-  const rule = settings?.leaderBluffsRule || 'auto';
+  const rule = settings?.leaderBluffsRule || 'never';
   if (rule === 'always') return true;
-  if (rule === 'never') return false;
-  return playerCount <= 4;
+  return false;
 }
+
 

@@ -49,6 +49,8 @@ interface GameContextType {
   importDictionary: (words: WordItem[], replaceAll?: boolean, exclusiveCustomWords?: boolean) => void;
   setExclusiveCustomWords: (exclusive: boolean) => void;
   resetDictionary: () => void;
+  adjustPlayerScore: (playerId: string, delta: number) => void;
+  setPlayerScore: (playerId: string, score: number) => void;
   restartGame: () => void;
   leaveRoom: () => void;
 }
@@ -350,6 +352,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     deleteCustomWordsFromServer().catch(() => {});
   };
 
+  const adjustPlayerScore = (playerId: string, delta: number) => {
+    sendAction('ADJUST_PLAYER_SCORE', { playerId, delta });
+    soundManager.playPop();
+  };
+
+  const setPlayerScore = (playerId: string, score: number) => {
+    sendAction('ADJUST_PLAYER_SCORE', { playerId, score });
+    soundManager.playPop();
+  };
+
   const restartGame = () => {
     sendAction('RESTART_GAME');
     soundManager.playPop();
@@ -397,6 +409,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         importDictionary,
         setExclusiveCustomWords,
         resetDictionary,
+        adjustPlayerScore,
+        setPlayerScore,
         restartGame,
         leaveRoom,
       }}

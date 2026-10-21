@@ -85,11 +85,12 @@ export interface RoundData {
 }
 
 export interface GameSettings {
-  targetScore: number; // 20, 30, 40, 50 or custom
+  targetScore: number; // custom score with stepper arrows
   submissionTimeLimit: number; // in seconds, e.g. 60, 90, 120, 0 = no limit
   votingTimeLimit: number; // in seconds, e.g. 45, 60, 0 = no limit
-  leaderBluffsRule: 'auto' | 'always' | 'never'; // 'auto': 3-4 players leader bluffs, 5+ leader waits
-  twoPlayerDecoyCount: number; // number of decoy definitions for 2-player or low player rooms
+  leaderBluffsRule: 'never' | 'always'; // default: 'never' (Líder NÃO digita). 'always': Líder digita
+  readingMode: 'visible' | 'leader_read'; // 'visible': enunciados visíveis pra todos. 'leader_read': lido pelo líder em voz alta (votantes só veem A, B, C...)
+  twoPlayerDecoyCount: number;
 }
 
 export interface RoomState {

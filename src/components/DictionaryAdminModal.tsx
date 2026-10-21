@@ -85,6 +85,14 @@ const MASSIVE_PACK: WordItem[] = [
   { id: 'ext_45', word: 'Zombeteiro', partOfSpeech: 'adjetivo', definition: 'QUE TEM O COSTUME DE ZOMBAR, ESCARNECER OU FAZER GRAÇA DOS OUTROS.', difficulty: 'facil', isCustom: true },
 ];
 
+const ALPHABET = ['TODAS', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+
+function getInitialLetter(word: string): string {
+  if (!word) return '';
+  const first = word.trim().charAt(0).toUpperCase();
+  return first.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
   isOpen,
   onClose,
@@ -94,6 +102,7 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
 
   const [activeTab, setActiveTab] = useState<'notepad' | 'list' | 'single'>(defaultTab);
   const [searchFilter, setSearchFilter] = useState('');
+  const [selectedLetter, setSelectedLetter] = useState<string>('TODAS');
 
   // Notepad / bulk import state
   const [bulkText, setBulkText] = useState('');
@@ -145,13 +154,21 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
   const allWords = customWords;
 
   const filteredWords = useMemo(() => {
-    return allWords.filter(
-      (w) =>
-        w.word.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        w.definition.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        w.partOfSpeech.toLowerCase().includes(searchFilter.toLowerCase())
-    );
-  }, [allWords, searchFilter]);
+    return allWords
+      .filter((w) => {
+        const matchesSearch =
+          w.word.toLowerCase().includes(searchFilter.toLowerCase()) ||
+          w.definition.toLowerCase().includes(searchFilter.toLowerCase()) ||
+          w.partOfSpeech.toLowerCase().includes(searchFilter.toLowerCase());
+
+        const initial = getInitialLetter(w.word);
+        const matchesLetter =
+          selectedLetter === 'TODAS' || initial === selectedLetter;
+
+        return matchesSearch && matchesLetter;
+      })
+      .sort((a, b) => a.word.localeCompare(b.word, 'pt-BR', { sensitivity: 'base' }));
+  }, [allWords, searchFilter, selectedLetter]);
 
   if (!isOpen) return null;
 
@@ -827,6 +844,38 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                 </div>
               </div>
 
+              {/* Alphabetical (A-Z) Initial Filter */}
+              <div className="p-2.5 rounded-xl bg-stone-950 border border-stone-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs px-0.5">
+                  <span className="text-stone-400 font-semibold text-[11px]">
+                    Filtro por Letra Inicial:
+                  </span>
+                  <span className="text-[11px] font-mono text-amber-400">
+                    {selectedLetter === 'TODAS' ? 'Todas as Letras' : `Letra "${selectedLetter}"`} ({filteredWords.length} palavras)
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1 overflow-x-auto pb-1 text-xs scrollbar-thin">
+                  {ALPHABET.map((letter) => {
+                    const isSelected = selectedLetter === letter;
+                    return (
+                      <button
+                        key={letter}
+                        type="button"
+                        onClick={() => setSelectedLetter(letter)}
+                        className={`min-w-[28px] h-7 px-2 rounded-lg font-bold text-xs transition-all flex items-center justify-center shrink-0 ${
+                          isSelected
+                            ? 'bg-amber-600 text-stone-950 font-black shadow-md scale-105'
+                            : 'bg-stone-900 text-stone-400 hover:text-stone-100 hover:bg-stone-800 border border-stone-800'
+                        }`}
+                      >
+                        {letter === 'TODAS' ? 'Todas' : letter}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Mode indicator & toggle for Exclusive Custom Words */}
               <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                 <div>
@@ -984,35 +1033,17 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="block text-stone-300 font-semibold mb-1">
-                    Frase de Exemplo / Uso Literário (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={singleExample}
-                    onChange={(e) => setSingleExample(e.target.value)}
-                    placeholder="Ex: O velho caturra não abria mão do seu relógio de corda."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500 font-medium"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-stone-300 font-semibold mb-1">
-                    Nível de Dificuldade
-                  </label>
-                  <select
-                    value={singleDiff}
-                    onChange={(e) => setSingleDiff(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 outline-none focus:border-amber-500 font-medium"
-                  >
-                    <option value="facil">Fácil</option>
-                    <option value="medio">Médio</option>
-                    <option value="dificil">Difícil</option>
-                    <option value="insano">Insano</option>
-                  </select>
-                </div>
+              <div className="text-xs">
+                <label className="block text-stone-300 font-semibold mb-1">
+                  Frase de Exemplo / Uso Literário (Opcional)
+                </label>
+                <input
+                  type="text"
+                  value={singleExample}
+                  onChange={(e) => setSingleExample(e.target.value)}
+                  placeholder="Ex: O velho caturra não abria mão do seu relógio de corda."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500 font-medium"
+                />
               </div>
 
               <button

@@ -111,11 +111,9 @@ function formatConcept(text: string): string {
 
 // Whether the round's leader is expected to type/submit a bluff and vote
 function isLeaderBluffing(settings?: GameSettings | null, playerCount: number = 0): boolean {
-  const rule = settings?.leaderBluffsRule || 'auto';
+  const rule = settings?.leaderBluffsRule || 'never';
   if (rule === 'always') return true;
-  if (rule === 'never') return false;
-  // 'auto': leader bluffs if 4 or fewer players
-  return playerCount <= 4;
+  return false;
 }
 
 // REST API for Administrator to upload, fetch, and manage persistent database
@@ -701,7 +699,8 @@ wss.on('connection', (ws: WebSocket) => {
               targetScore: payload.targetScore !== undefined ? Number(payload.targetScore) : 20,
               submissionTimeLimit: payload.submissionTimeLimit !== undefined ? Number(payload.submissionTimeLimit) : 0,
               votingTimeLimit: payload.votingTimeLimit !== undefined ? Number(payload.votingTimeLimit) : 0,
-              leaderBluffsRule: payload.leaderBluffsRule || 'auto',
+              leaderBluffsRule: payload.leaderBluffsRule === 'always' ? 'always' : 'never',
+              readingMode: payload.readingMode === 'leader_read' ? 'leader_read' : 'visible',
               twoPlayerDecoyCount: 2,
             },
             players: [hostPlayer],
@@ -817,6 +816,35 @@ wss.on('connection', (ws: WebSocket) => {
             type: 'ROOM_UPDATE',
             room,
           });
+          break;
+        }
+
+        case 'ADJUST_PLAYER_SCORE': {
+          const meta = socketMap.get(ws);
+          if (!meta) return;
+          const room = rooms.get(meta.roomCode);
+          if (!room) return;
+
+          const isHost = room.hostId === meta.playerId;
+          const isLeader = room.currentRound?.leaderId === meta.playerId;
+          if (!isHost && !isLeader) return;
+
+          const targetPlayerId = payload.playerId;
+          const delta = typeof payload.delta === 'number' ? payload.delta : 0;
+          const targetPlayer = room.players.find((p) => p.id === targetPlayerId);
+
+          if (targetPlayer) {
+            if (payload.score !== undefined) {
+              targetPlayer.score = Math.max(0, Math.round(Number(payload.score) || 0));
+            } else {
+              targetPlayer.score = Math.max(0, targetPlayer.score + delta);
+            }
+
+            broadcastToRoom(room.roomCode, {
+              type: 'ROOM_UPDATE',
+              room,
+            });
+          }
           break;
         }
 

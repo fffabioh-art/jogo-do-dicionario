@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { Trophy, Target, Crown, ShieldAlert, ChevronDown, ChevronUp, Users, Sparkles, UserCheck, Flame, BookOpen } from 'lucide-react';
+import { Trophy, Target, Crown, ShieldAlert, ChevronDown, ChevronUp, Users, Sparkles, UserCheck, Flame, BookOpen, Plus, Minus } from 'lucide-react';
 
 export const ScoreBoard: React.FC = () => {
-  const { room, myPlayerId } = useGame();
+  const { room, myPlayerId, isHost, isLeader, adjustPlayerScore } = useGame();
   const [expandedPlayerIds, setExpandedPlayerIds] = useState<Record<string, boolean>>({});
   const [activeTab, setActiveTab] = useState<'scoreboard' | 'votesBreakdown'>('scoreboard');
 
@@ -11,6 +11,7 @@ export const ScoreBoard: React.FC = () => {
 
   const targetScore = room.settings.targetScore;
   const sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
+  const canManageScores = isHost || isLeader;
 
   const togglePlayerExpanded = (playerId: string) => {
     setExpandedPlayerIds((prev) => ({
@@ -158,9 +159,35 @@ export const ScoreBoard: React.FC = () => {
                       )}
                     </button>
 
-                    <span className="font-black text-amber-200 text-sm">
-                      {player.score} <span className="text-[10px] text-stone-400 font-normal">pts</span>
-                    </span>
+                    {canManageScores ? (
+                      <div className="flex items-center gap-1 bg-stone-900/90 px-1.5 py-1 rounded-xl border border-amber-500/40 shadow-inner" title="Ajuste livre de pontuação (Líder / Administrador)">
+                        <button
+                          onClick={() => adjustPlayerScore(player.id, -1)}
+                          disabled={player.score <= 0}
+                          className="w-6 h-6 rounded-lg flex items-center justify-center bg-stone-800 hover:bg-stone-700 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed text-stone-300 hover:text-amber-300 font-bold transition-all"
+                          title="Diminuir pontuação (-1)"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+
+                        <span className="font-mono font-black text-amber-200 text-sm min-w-[28px] text-center">
+                          {player.score}
+                        </span>
+
+                        <button
+                          onClick={() => adjustPlayerScore(player.id, 1)}
+                          className="w-6 h-6 rounded-lg flex items-center justify-center bg-stone-800 hover:bg-stone-700 active:scale-90 text-stone-300 hover:text-amber-300 font-bold transition-all"
+                          title="Aumentar pontuação (+1)"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="text-[10px] text-stone-400 font-normal pl-0.5">pts</span>
+                      </div>
+                    ) : (
+                      <span className="font-black text-amber-200 text-sm">
+                        {player.score} <span className="text-[10px] text-stone-400 font-normal">pts</span>
+                      </span>
+                    )}
                     <span className="text-[10px] text-stone-500 w-7 text-right">
                       {percentage}%
                     </span>

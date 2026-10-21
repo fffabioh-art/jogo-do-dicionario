@@ -2,12 +2,21 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BookOpen, Sparkles, Shuffle, Crown, Clock, Search, X, Filter, ArrowLeft, Lock } from 'lucide-react';
 import { WordItem } from '../types/game';
+import { getAllWords } from '../data/dictionary';
+
+const ALPHABET = ['TODAS', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+
+function getInitialLetter(word: string): string {
+  if (!word) return '';
+  const first = word.trim().charAt(0).toUpperCase();
+  return first.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 export const WordChoicePhase: React.FC = () => {
   const { room, isLeader, selectWord } = useGame();
   const [showDictionaryModal, setShowDictionaryModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('todos');
+  const [selectedLetter, setSelectedLetter] = useState<string>('TODAS');
 
   // Handle ESC key to return
   useEffect(() => {
@@ -25,23 +34,28 @@ export const WordChoicePhase: React.FC = () => {
   const round = room.currentRound;
   const leader = room.players.find((p) => p.id === round.leaderId);
   const choices = round.wordChoices || [];
-  const customWords = room.customWords || [];
-  // Do NOT show the 80 initial words of the database. Only show custom words if loaded.
-  const allAvailableWords = customWords;
+  
+  // Full list of available words in the database
+  const allAvailableWords = useMemo(() => {
+    return getAllWords(room.customWords, room.exclusiveCustomWords);
+  }, [room.customWords, room.exclusiveCustomWords]);
 
-  // Filter full dictionary database (without searching definition to prevent leaks)
+  // Filter full dictionary database by search and alphabetical letter (A-Z)
   const filteredWords = useMemo(() => {
-    return allAvailableWords.filter((item) => {
-      const matchesSearch =
-        item.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.partOfSpeech.toLowerCase().includes(searchQuery.toLowerCase());
+    return allAvailableWords
+      .filter((item) => {
+        const matchesSearch =
+          item.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.partOfSpeech.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesDiff =
-        selectedDifficulty === 'todos' || item.difficulty === selectedDifficulty;
+        const initial = getInitialLetter(item.word);
+        const matchesLetter =
+          selectedLetter === 'TODAS' || initial === selectedLetter;
 
-      return matchesSearch && matchesDiff;
-    });
-  }, [allAvailableWords, searchQuery, selectedDifficulty]);
+        return matchesSearch && matchesLetter;
+      })
+      .sort((a, b) => a.word.localeCompare(b.word, 'pt-BR', { sensitivity: 'base' }));
+  }, [allAvailableWords, searchQuery, selectedLetter]);
 
   const handlePickWord = (word: WordItem) => {
     setShowDictionaryModal(false);
@@ -118,15 +132,13 @@ export const WordChoicePhase: React.FC = () => {
 
           {/* Action Row: Full Database Browser + Randomizer */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            {customWords.length > 0 && (
-              <button
-                onClick={() => setShowDictionaryModal(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Search className="w-4 h-4 text-amber-400" />
-                Explorar Banco Personalizado ({customWords.length} palavras)
-              </button>
-            )}
+            <button
+              onClick={() => setShowDictionaryModal(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-200 text-xs sm:text-sm font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Search className="w-4 h-4 text-amber-400" />
+              Explorar Banco de Dados ({allAvailableWords.length} palavras)
+            </button>
 
             <button
               onClick={() => choices.length > 0 && handlePickWord(choices[0])}
@@ -208,7 +220,7 @@ export const WordChoicePhase: React.FC = () => {
               </button>
             </div>
 
-            {/* Search and Filters */}
+            {/* Search and Alphabetical Filters */}
             <div className="p-4 bg-stone-950/70 border-b border-stone-800 space-y-3">
               <div className="relative">
                 <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -222,28 +234,37 @@ export const WordChoicePhase: React.FC = () => {
                 />
               </div>
 
-              {/* Difficulty Filter Chips */}
-              <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
-                <span className="text-stone-400 text-[11px] font-semibold mr-1">Dificuldade:</span>
-                {[
-                  { id: 'todos', label: 'Todas' },
-                  { id: 'facil', label: 'Fácil' },
-                  { id: 'medio', label: 'Médio' },
-                  { id: 'dificil', label: 'Difícil' },
-                  { id: 'insano', label: 'Insano' },
-                ].map((diff) => (
-                  <button
-                    key={diff.id}
-                    onClick={() => setSelectedDifficulty(diff.id)}
-                    className={`py-1 px-3 rounded-lg font-medium transition-all ${
-                      selectedDifficulty === diff.id
-                        ? 'bg-amber-600 text-stone-950 font-bold'
-                        : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
-                    }`}
-                  >
-                    {diff.label}
-                  </button>
-                ))}
+              {/* Alphabetical (A-Z) Initial Filter */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-stone-400 font-semibold flex items-center gap-1.5 text-[11px]">
+                    <Filter className="w-3.5 h-3.5 text-amber-400" />
+                    Filtro por Letra Inicial:
+                  </span>
+                  <span className="text-[11px] font-mono text-amber-400">
+                    {selectedLetter === 'TODAS' ? 'Todas as Letras' : `Letra "${selectedLetter}"`} ({filteredWords.length} palavras)
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1 overflow-x-auto pb-1 text-xs scrollbar-thin">
+                  {ALPHABET.map((letter) => {
+                    const isSelected = selectedLetter === letter;
+                    return (
+                      <button
+                        key={letter}
+                        type="button"
+                        onClick={() => setSelectedLetter(letter)}
+                        className={`min-w-[28px] h-7 px-2 rounded-lg font-bold text-xs transition-all flex items-center justify-center shrink-0 ${
+                          isSelected
+                            ? 'bg-amber-600 text-stone-950 font-black shadow-md scale-105'
+                            : 'bg-stone-900 text-stone-400 hover:text-stone-100 hover:bg-stone-800 border border-stone-800'
+                        }`}
+                      >
+                        {letter === 'TODAS' ? 'Todas' : letter}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -255,11 +276,11 @@ export const WordChoicePhase: React.FC = () => {
                   <button
                     onClick={() => {
                       setSearchQuery('');
-                      setSelectedDifficulty('todos');
+                      setSelectedLetter('TODAS');
                     }}
                     className="text-xs text-amber-400 underline font-semibold"
                   >
-                    Limpar pesquisa
+                    Limpar pesquisa e mostrar todas
                   </button>
                 </div>
               ) : (
@@ -275,9 +296,6 @@ export const WordChoicePhase: React.FC = () => {
                         </span>
                         <span className="text-xs text-amber-400/80 italic">
                           ({item.partOfSpeech})
-                        </span>
-                        <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-stone-950 text-stone-400 border border-stone-800">
-                          {item.difficulty}
                         </span>
                         {item.isCustom && (
                           <span className="text-[10px] bg-purple-950 text-purple-300 border border-purple-700 px-1.5 py-0.2 rounded font-mono font-bold">
@@ -307,7 +325,7 @@ export const WordChoicePhase: React.FC = () => {
             {/* Modal Footer with Explicit Back Button */}
             <div className="p-3.5 sm:p-4 border-t border-stone-800 bg-stone-950/90 flex items-center justify-between text-xs">
               <span className="text-stone-400">
-                Banco Personalizado: <strong>{customWords.length} palavras</strong>
+                Banco de Dados: <strong>{allAvailableWords.length} palavras disponíveis</strong>
               </span>
               <button
                 onClick={() => setShowDictionaryModal(false)}

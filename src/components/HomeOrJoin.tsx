@@ -14,9 +14,13 @@ import {
   FileText,
   CheckCircle2,
   Upload,
-  Trash2,
   Database,
   Shield,
+  Plus,
+  Minus,
+  Eye,
+  Volume2,
+  Trash2,
 } from 'lucide-react';
 import { WordItem } from '../types/game';
 import { parseImportedDictionaryText } from '../data/dictionary';
@@ -76,11 +80,11 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
   const [color, setColor] = useState<string>(() => localStorage.getItem('jdd_player_color') || '#F59E0B');
   const [roomCode, setRoomCode] = useState<string>('');
 
-  // Host configuration state (Default: 20 points, unlimited time)
   const [targetScore, setTargetScore] = useState<number>(20);
   const [submissionTimeLimit, setSubmissionTimeLimit] = useState<number>(0);
   const [votingTimeLimit, setVotingTimeLimit] = useState<number>(0);
-  const [leaderBluffsRule, setLeaderBluffsRule] = useState<'auto' | 'always' | 'never'>('auto');
+  const [leaderBluffsRule, setLeaderBluffsRule] = useState<'always' | 'never'>('never');
+  const [readingMode, setReadingMode] = useState<'visible' | 'leader_read'>('visible');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Persistent custom words state (saved forever)
@@ -156,6 +160,7 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
         submissionTimeLimit,
         votingTimeLimit,
         leaderBluffsRule,
+        readingMode,
       },
       loadedCustomWords || undefined,
       exclusivePreload
@@ -383,11 +388,10 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                     <label className="block text-stone-300 font-semibold mb-1">
                       Líder da Rodada digita blefe?
                     </label>
-                    <div className="grid grid-cols-3 gap-1.5">
+                    <div className="grid grid-cols-2 gap-1.5">
                       {[
-                        { id: 'never', label: 'NÃO Digita', desc: 'Nunca digita' },
-                        { id: 'always', label: 'Digita', desc: 'Sempre digita' },
-                        { id: 'auto', label: 'Auto', desc: 'Digita se ≤4' },
+                        { id: 'never', label: 'NÃO Digita (Padrão)', desc: 'Líder não digita' },
+                        { id: 'always', label: 'Digita', desc: 'Líder digita e vota' },
                       ].map((r) => (
                         <button
                           key={r.id}
@@ -401,6 +405,41 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                         >
                           <span>{r.label}</span>
                           <span className="text-[9px] opacity-75 font-normal">{r.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Reading Mode (Visual vs Audio/Leader Read) */}
+                  <div>
+                    <label className="block text-stone-300 font-semibold mb-1">
+                      Modo de Exibição dos Significados (Votação):
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        {
+                          id: 'visible',
+                          label: 'Modo Visual (Padrão)',
+                          desc: 'Enunciados visíveis na tela de todos',
+                        },
+                        {
+                          id: 'leader_read',
+                          label: 'Áudio / Leitura Líder',
+                          desc: 'Lido em voz alta; votantes só veem A, B, C...',
+                        },
+                      ].map((m) => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setReadingMode(m.id as any)}
+                          className={`py-2 px-1.5 text-[11px] rounded-xl font-bold border transition-all flex flex-col items-center justify-center text-center ${
+                            readingMode === m.id
+                              ? 'bg-amber-600 text-stone-950 border-amber-400 font-black shadow-md scale-[1.02]'
+                              : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                          }`}
+                        >
+                          <span>{m.label}</span>
+                          <span className="text-[9px] opacity-75 font-normal mt-0.5">{m.desc}</span>
                         </button>
                       ))}
                     </div>

@@ -18,10 +18,12 @@ import {
   Bell,
   Check,
   FastForward,
+  Plus,
+  Minus,
 } from 'lucide-react';
 
 export const RevealPhase: React.FC = () => {
-  const { room, myPlayerId, isLeader, isHost, requestNextRound, confirmNextRound, forceNextRound } = useGame();
+  const { room, myPlayerId, isLeader, isHost, adjustPlayerScore, requestNextRound, confirmNextRound, forceNextRound } = useGame();
 
   if (!room || !room.currentRound) return null;
 
@@ -461,9 +463,32 @@ export const RevealPhase: React.FC = () => {
                   <span className="font-mono font-bold text-amber-400">
                     +{detail.pointsEarned} pts
                   </span>
-                  <span className="text-[10px] text-stone-400">
-                    (Total: {player.score})
-                  </span>
+                  {isHost || isLeader ? (
+                    <div className="flex items-center gap-1 bg-stone-900 px-1 py-0.5 rounded border border-stone-800" title="Ajustar total manualmente">
+                      <button
+                        onClick={() => adjustPlayerScore(player.id, -1)}
+                        disabled={player.score <= 0}
+                        className="w-4 h-4 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 disabled:opacity-30 text-stone-300 hover:text-amber-300 font-bold text-[10px]"
+                        title="Diminuir 1 ponto (-1)"
+                      >
+                        <Minus className="w-2.5 h-2.5" />
+                      </button>
+                      <span className="font-mono text-[11px] font-bold text-stone-300 min-w-[20px] text-center">
+                        {player.score}
+                      </span>
+                      <button
+                        onClick={() => adjustPlayerScore(player.id, 1)}
+                        className="w-4 h-4 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-300 font-bold text-[10px]"
+                        title="Aumentar 1 ponto (+1)"
+                      >
+                        <Plus className="w-2.5 h-2.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-[10px] text-stone-400">
+                      (Total: {player.score})
+                    </span>
+                  )}
                 </div>
               </div>
             );

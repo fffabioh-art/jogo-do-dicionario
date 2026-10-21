@@ -326,27 +326,22 @@ export const Lobby: React.FC = () => {
                   Líder da Rodada digita blefe?
                 </span>
                 <span className="text-[10px] text-amber-400 font-mono">
-                  {room.settings.leaderBluffsRule === 'never'
-                    ? 'Líder NÃO digita'
-                    : room.settings.leaderBluffsRule === 'always'
+                  {room.settings.leaderBluffsRule === 'always'
                     ? 'Líder digita sempre'
-                    : room.players.length <= 4
-                    ? 'Auto (Digita ≤4)'
-                    : 'Auto (Não digita 5+)'}
+                    : 'Líder NÃO digita (Padrão)'}
                 </span>
               </div>
               {isHost ? (
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="grid grid-cols-2 gap-1.5">
                   {[
-                    { id: 'never', label: 'NÃO Digita', desc: 'Nunca digita' },
-                    { id: 'always', label: 'Digita', desc: 'Sempre digita' },
-                    { id: 'auto', label: 'Auto', desc: 'Digita se ≤4' },
+                    { id: 'never', label: 'NÃO Digita (Padrão)', desc: 'Líder não digita' },
+                    { id: 'always', label: 'Digita', desc: 'Líder digita e vota' },
                   ].map((opt) => (
                     <button
                       key={opt.id}
                       onClick={() => updateSettings({ leaderBluffsRule: opt.id as any })}
                       className={`py-2 px-1 rounded-xl text-[10px] font-bold border transition-all flex flex-col items-center justify-center ${
-                        room.settings.leaderBluffsRule === opt.id
+                        (room.settings.leaderBluffsRule || 'never') === opt.id
                           ? 'bg-amber-600 text-stone-950 border-amber-400 shadow-md font-black scale-[1.02]'
                           : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
                       }`}
@@ -358,11 +353,58 @@ export const Lobby: React.FC = () => {
                 </div>
               ) : (
                 <p className="text-stone-400 text-xs">
-                  {room.settings.leaderBluffsRule === 'never'
-                    ? 'Líder NÃO digita'
-                    : room.settings.leaderBluffsRule === 'always'
+                  {room.settings.leaderBluffsRule === 'always'
                     ? 'Líder digita sempre'
-                    : 'Automático'}
+                    : 'Líder NÃO digita (Padrão)'}
+                </p>
+              )}
+            </div>
+
+            {/* Reading Mode / Exibição dos Significados (Visual vs Leitura Líder) */}
+            <div className="pt-2 border-t border-stone-800 space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-stone-300">
+                  Modo de Exibição dos Significados:
+                </span>
+                <span className="text-[10px] text-amber-400 font-mono">
+                  {room.settings.readingMode === 'leader_read'
+                    ? 'Áudio / Leitura Líder'
+                    : 'Visual (Padrão)'}
+                </span>
+              </div>
+              {isHost ? (
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[
+                    {
+                      id: 'visible',
+                      label: 'Modo Visual (Padrão)',
+                      desc: 'Enunciados visíveis na tela de todos',
+                    },
+                    {
+                      id: 'leader_read',
+                      label: 'Áudio / Leitura Líder',
+                      desc: 'Lido em voz alta; tela só tem A, B, C...',
+                    },
+                  ].map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => updateSettings({ readingMode: m.id as any })}
+                      className={`py-2 px-1 rounded-xl text-[10px] font-bold border transition-all flex flex-col items-center justify-center text-center ${
+                        (room.settings.readingMode || 'visible') === m.id
+                          ? 'bg-amber-600 text-stone-950 border-amber-400 shadow-md font-black scale-[1.02]'
+                          : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
+                      }`}
+                    >
+                      <span>{m.label}</span>
+                      <span className="text-[9px] opacity-75 font-normal mt-0.5">{m.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-stone-400 text-xs">
+                  {room.settings.readingMode === 'leader_read'
+                    ? 'Modo Áudio / Leitura do Líder: Os enunciados serão lidos pelo líder em voz alta; os votantes verão apenas as alternativas A, B, C...'
+                    : 'Modo Visual: Todos os participantes veem os textos completos das definições na tela.'}
                 </p>
               )}
             </div>

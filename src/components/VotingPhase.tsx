@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BluffEntry } from '../types/game';
-import { Clock, CheckCircle2, ShieldCheck, EyeOff, Users, ArrowRight, Lock, Unlock, Crown } from 'lucide-react';
+import { Clock, CheckCircle2, ShieldCheck, EyeOff, Users, ArrowRight, Lock, Unlock, Crown, Volume2, Headphones } from 'lucide-react';
 import { formatConcept, isLeaderBluffing } from '../utils/textFormatting';
 
 export const VotingPhase: React.FC = () => {
@@ -45,6 +45,9 @@ export const VotingPhase: React.FC = () => {
   const totalVotesCount = Object.keys(round.votes).length;
   const allVotesReceived = Boolean(round.allVotesIn || totalVotesCount >= eligibleVoters.length);
 
+  const isLeaderReadMode = room.settings.readingMode === 'leader_read';
+  const canSeeText = !isLeaderReadMode || isLeader || (leader?.isBot && isHost);
+
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-6 animate-fade-in">
       {/* Word Header */}
@@ -73,16 +76,45 @@ export const VotingPhase: React.FC = () => {
         <div className="space-y-1">
           <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 flex items-center justify-center gap-1.5">
             <EyeOff className="w-3.5 h-3.5" />
-            Mural de Votação Anônima (Respostas em Caixa Alta)
+            Mural de Votação {isLeaderReadMode ? '• Modo Leitura em Voz Alta' : 'Anônima (Respostas em Caixa Alta)'}
           </span>
           <h2 className="font-serif font-black text-3xl sm:text-5xl text-amber-100 tracking-tight uppercase">
             {word.word}
           </h2>
           <p className="text-xs sm:text-sm text-stone-300 max-w-lg mx-auto">
-            Qual destas opções em caixa alta é o significado autêntico do dicionário?
+            {isLeaderReadMode && !canSeeText
+              ? 'Ouça a leitura do Líder e vote na letra correspondente ao significado verdadeiro!'
+              : 'Qual destas opções em caixa alta é o significado autêntico do dicionário?'}
           </p>
         </div>
       </div>
+
+      {/* Audio / Leader Read Instruction Card */}
+      {isLeaderReadMode && (
+        isLeader ? (
+          <div className="p-4 rounded-2xl bg-amber-950/80 border-2 border-amber-500/80 text-amber-200 text-xs sm:text-sm space-y-1.5 shadow-xl animate-fade-in">
+            <div className="flex items-center gap-2 font-bold text-amber-300 text-sm sm:text-base">
+              <Volume2 className="w-5 h-5 text-amber-400 animate-pulse" />
+              <span>Você é o Leitor Oficial da Rodada!</span>
+            </div>
+            <p className="text-stone-300 text-xs leading-relaxed">
+              <strong>Leia em voz alta para todos os jogadores</strong> o texto de cada alternativa abaixo (Alternativa A, Alternativa B...).
+              Na tela dos votantes, os enunciados estão ocultos e eles verão apenas os botões das alternativas (A, B, C...) para escolher!
+            </p>
+          </div>
+        ) : (
+          <div className="p-4 rounded-2xl bg-purple-950/60 border border-purple-700/60 text-purple-200 text-xs sm:text-sm space-y-1.5 shadow-xl animate-fade-in">
+            <div className="flex items-center gap-2 font-bold text-purple-300 text-sm">
+              <Headphones className="w-4 h-4 text-purple-400" />
+              <span>Modo Áudio: O Líder Lerá as Alternativas em Voz Alta</span>
+            </div>
+            <p className="text-stone-300 text-xs leading-relaxed">
+              O Líder <strong>{leader?.name}</strong> está lendo os significados em voz alta para o grupo.
+              Ouça atentamente cada alternativa e clique no botão da letra correspondente (A, B, C...) para registrar seu voto.
+            </p>
+          </div>
+        )
+      )}
 
       {/* Leader Permission Gate Banner (When all have voted) */}
       {allVotesReceived ? (
@@ -148,11 +180,12 @@ export const VotingPhase: React.FC = () => {
         </div>
       )}
 
-      {/* Anonymous Options List in Strict UPPERCASE */}
+      {/* Options List */}
       <div className="grid gap-3.5">
         {bluffs.map((entry: BluffEntry, index: number) => {
           const isMyOwnBluff = entry.authorId === myPlayerId;
           const isSelectedByMe = myVote === entry.id;
+          const letter = entry.letterLabel || String.fromCharCode(65 + index);
 
           return (
             <div
@@ -168,20 +201,35 @@ export const VotingPhase: React.FC = () => {
               <div className="flex items-start gap-3.5 flex-1">
                 {/* Letter badge */}
                 <div
-                  className={`w-9 h-9 rounded-xl font-mono font-black text-base flex items-center justify-center shrink-0 shadow-inner ${
+                  className={`w-10 h-10 rounded-xl font-mono font-black text-lg flex items-center justify-center shrink-0 shadow-inner ${
                     isSelectedByMe
                       ? 'bg-amber-400 text-stone-950'
                       : 'bg-stone-950 border border-stone-800 text-amber-300'
                   }`}
                 >
-                  {entry.letterLabel || String.fromCharCode(65 + index)}
+                  {letter}
                 </div>
 
                 <div className="space-y-1">
-                  {/* Strict UPPERCASE rendering without accents/tildes, preserving Ç */}
-                  <p className="text-sm sm:text-base text-stone-200 font-serif leading-relaxed uppercase font-medium">
-                    {formatConcept(entry.text)}
-                  </p>
+                  {canSeeText ? (
+                    /* Leader view or Standard Visual Mode: full UPPERCASE text */
+                    <p className="text-sm sm:text-base text-stone-200 font-serif leading-relaxed uppercase font-medium">
+                      {formatConcept(entry.text)}
+                    </p>
+                  ) : (
+                    /* Audio Mode for Voters: Enunciado is hidden */
+                    <div className="space-y-0.5">
+                      <span className="font-serif font-black text-base text-amber-200">
+                        Alternativa {letter}
+                      </span>
+                      <p className="text-xs text-stone-400 italic">
+                        {isMyOwnBluff
+                          ? 'Seu próprio blefe enviado nesta rodada'
+                          : 'Texto lido em voz alta pelo líder • Enunciado oculto'}
+                      </p>
+                    </div>
+                  )}
+
                   {isMyOwnBluff && (
                     <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">
                       <ShieldCheck className="w-3 h-3" /> Seu próprio blefe (bloqueado para voto)
@@ -218,7 +266,15 @@ export const VotingPhase: React.FC = () => {
                         : 'bg-amber-600 hover:bg-amber-500 text-stone-950 hover:scale-105 active:scale-95'
                     }`}
                   >
-                    {isSelectedByMe ? 'Votado ✓' : allVotesReceived ? 'Votação Encerrada' : hasVoted ? 'Mudar Voto' : 'Votar Nesta'}
+                    {isSelectedByMe
+                      ? `Votado na Opção ${letter} ✓`
+                      : allVotesReceived
+                      ? 'Votação Encerrada'
+                      : hasVoted
+                      ? `Mudar para ${letter}`
+                      : !canSeeText
+                      ? `Votar na Alternativa ${letter}`
+                      : `Votar Nesta (${letter})`}
                   </button>
                 )}
               </div>

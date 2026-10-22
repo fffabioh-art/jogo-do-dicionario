@@ -664,6 +664,18 @@ export function getAllWords(customWords?: WordItem[], exclusiveCustomWords?: boo
   }));
 }
 
+// Pure uniform Fisher-Yates shuffle
+function fisherYatesShuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = result[i];
+    result[i] = result[j];
+    result[j] = temp;
+  }
+  return result;
+}
+
 // Helper to get random word choices from either default or custom words
 export function getRandomWordChoices(
   count = 3,
@@ -681,7 +693,8 @@ export function getRandomWordChoices(
     pool = [...pool, ...pad.map((w) => ({ ...w, definition: formatConcept(w.definition) }))];
   }
 
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  // True uniform shuffle across all words
+  const shuffled = fisherYatesShuffle(pool);
   return shuffled.slice(0, count);
 }
 

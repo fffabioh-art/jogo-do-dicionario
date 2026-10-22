@@ -37,6 +37,7 @@ interface GameContextType {
   removeBot: () => void;
   kickPlayer: (playerId: string) => void;
   startGame: () => void;
+  rerollWordChoices: () => void;
   selectWord: (word: WordItem) => void;
   submitBluff: (text: string) => void;
   submitVote: (optionId: string) => void;
@@ -280,6 +281,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundManager.playPop();
   };
 
+  const rerollWordChoices = () => {
+    sendAction('REROLL_WORDS');
+    soundManager.playPop();
+  };
+
   const selectWord = (word: WordItem) => {
     sendAction('SELECT_WORD', { word });
     soundManager.playPop();
@@ -409,6 +415,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         removeBot,
         kickPlayer,
         startGame,
+        rerollWordChoices,
         selectWord,
         submitBluff,
         submitVote,

@@ -19,6 +19,7 @@ import {
   Plus,
   Minus,
 } from 'lucide-react';
+import { StickmanFigure } from './StickmanFigure';
 
 export const RevealPhase: React.FC = () => {
   const {
@@ -306,7 +307,12 @@ export const RevealPhase: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">{voter.avatar}</span>
+                    <StickmanFigure
+                      avatarId={voter.avatar}
+                      color={voter.color || '#a8a29e'}
+                      size={20}
+                      state="standing"
+                    />
                     <span className="font-bold text-stone-100">
                       {voter.name}
                     </span>
@@ -409,9 +415,14 @@ export const RevealPhase: React.FC = () => {
                     {voters.map((v) => (
                       <span
                         key={v.id}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-stone-950 border border-stone-800 text-stone-200 text-xs"
+                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-stone-950 border border-stone-800 text-stone-200 text-xs"
                       >
-                        <span>{v.avatar}</span>
+                        <StickmanFigure
+                          avatarId={v.avatar}
+                          color={v.color || '#a8a29e'}
+                          size={16}
+                          state="standing"
+                        />
                         <span>{v.name}</span>
                         {isReal && (
                           <span className="text-emerald-400 font-bold font-mono ml-0.5">+2</span>
@@ -465,7 +476,12 @@ export const RevealPhase: React.FC = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-base">{player.avatar}</span>
+                    <StickmanFigure
+                      avatarId={player.avatar}
+                      color={player.color || '#a8a29e'}
+                      size={20}
+                      state="standing"
+                    />
                     <span className={`font-semibold ${isMe ? 'text-amber-300' : 'text-stone-200'}`}>
                       {player.name} {isMe && '(Você)'}
                     </span>

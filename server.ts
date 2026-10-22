@@ -191,18 +191,20 @@ const socketMap = new Map<WebSocket, { roomCode: string; playerId: string }>();
 // Timer references per room for countdowns
 const roomTimers = new Map<string, NodeJS.Timeout>();
 
-// Bot names and avatars for fun additions
+// Bot names and avatars with animal, hat, and fun stick figure forms
 const BOT_PRESETS = [
-  { name: 'Machado de Assis', avatar: '🎩', color: '#8B5CF6' },
-  { name: 'Clarice Lispector', avatar: '✨', color: '#EC4899' },
-  { name: 'Aurélio Buarque', avatar: '📖', color: '#10B981' },
-  { name: 'Guimarães Rosa', avatar: '🌿', color: '#F59E0B' },
-  { name: 'O Embusteiro Bot', avatar: '🎭', color: '#3B82F6' },
-  { name: 'Carlos Drummond', avatar: '📜', color: '#06B6D4' },
-  { name: 'Cecília Meireles', avatar: '🌸', color: '#F43F5E' },
-  { name: 'Jorge Amado', avatar: '🌊', color: '#D97706' },
-  { name: 'Rachel de Queiroz', avatar: '🌾', color: '#84CC16' },
-  { name: 'Mário de Andrade', avatar: '🎨', color: '#6366F1' },
+  { name: 'Machado de Assis', avatar: 'palito_cartola', color: '#8B5CF6' },
+  { name: 'Clarice Lispector', avatar: 'palito_gato', color: '#EC4899' },
+  { name: 'Aurélio Buarque', avatar: 'palito_mago', color: '#10B981' },
+  { name: 'Guimarães Rosa', avatar: 'palito_coelho', color: '#F59E0B' },
+  { name: 'O Embusteiro Bot', avatar: 'palito_pirata', color: '#EF4444' },
+  { name: 'Carlos Drummond', avatar: 'palito_oculos', color: '#06B6D4' },
+  { name: 'Cecília Meireles', avatar: 'palito_urso', color: '#F43F5E' },
+  { name: 'Jorge Amado', avatar: 'palito_bone', color: '#D97706' },
+  { name: 'Rachel de Queiroz', avatar: 'palito_sapo', color: '#22C55E' },
+  { name: 'Mário de Andrade', avatar: 'palito_alien', color: '#6366F1' },
+  { name: 'Graciliano Ramos', avatar: 'palito_chifrinho', color: '#DC2626' },
+  { name: 'Monteiro Lobato', avatar: 'palito_chef', color: '#14B8A6' },
 ];
 
 function generateRoomCode(): string {
@@ -645,7 +647,7 @@ function prepareNextRound(room: RoomState) {
   const nextLeader = room.players[nextIndex] || room.players[0];
 
   const roundNumber = (room.currentRound?.roundNumber || 0) + 1;
-  const rawChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
+  const rawChoices = getRandomWordChoices(3, room.usedWordIds || [], room.customWords, room.exclusiveCustomWords);
   // Mask definition so leader cannot see the meaning when choosing the word
   const wordChoices = rawChoices.map((w) => ({
     ...w,
@@ -983,7 +985,7 @@ wss.on('connection', (ws: WebSocket) => {
           const room = rooms.get(meta.roomCode);
           if (!room || room.hostId !== meta.playerId) return;
 
-          // Reset all scores and vote stats
+          // Reset all scores, vote stats, and used words
           room.players.forEach((p) => {
             p.score = 0;
             p.hasSubmitted = false;
@@ -994,8 +996,10 @@ wss.on('connection', (ws: WebSocket) => {
           room.roundHistory = [];
           room.winnerId = undefined;
           room.isTieBreakActive = false;
+          room.usedWordIds = [];
 
           const leader = room.players[0];
+          // Pure uniform random choices from the entire dictionary
           const rawChoices = getRandomWordChoices(3, [], room.customWords, room.exclusiveCustomWords);
           // Mask definition so leader cannot see the meaning when choosing the word
           const wordChoices = rawChoices.map((w) => ({
@@ -1028,6 +1032,31 @@ wss.on('connection', (ws: WebSocket) => {
           break;
         }
 
+        case 'REROLL_WORDS': {
+          const meta = socketMap.get(ws);
+          if (!meta) return;
+          const room = rooms.get(meta.roomCode);
+          if (!room || !room.currentRound || room.currentRound.phase !== 'WORD_CHOICE') return;
+          if (room.currentRound.leaderId !== meta.playerId && room.hostId !== meta.playerId) return;
+
+          const currentIds = (room.currentRound.wordChoices || []).map((w) => w.id);
+          const rawChoices = getRandomWordChoices(
+            3,
+            [...(room.usedWordIds || []), ...currentIds],
+            room.customWords,
+            room.exclusiveCustomWords
+          );
+          room.currentRound.wordChoices = rawChoices.map((w) => ({
+            ...w,
+            definition: '',
+          }));
+          broadcastToRoom(room.roomCode, {
+            type: 'ROOM_UPDATE',
+            room,
+          });
+          break;
+        }
+
         case 'SELECT_WORD': {
           const meta = socketMap.get(ws);
           if (!meta) return;
@@ -1044,6 +1073,10 @@ wss.on('connection', (ws: WebSocket) => {
               authenticWord = DICTIONARY_WORDS.find(
                 (w) => w.id === selectedWord.id || w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
               );
+            }
+            if (authenticWord) {
+              if (!room.usedWordIds) room.usedWordIds = [];
+              room.usedWordIds.push(authenticWord.id);
             }
             startRoundWithWord(room, authenticWord || selectedWord);
           }

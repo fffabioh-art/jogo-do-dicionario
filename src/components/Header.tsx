@@ -28,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
           </div>
           <div>
             <span className="font-serif font-black text-base tracking-tight text-amber-100">
-              Jogo do Dicionário
+              Jogo do Dicionário <span className="text-amber-400 font-sans text-xs font-semibold tracking-normal">by Fabulous</span>
             </span>
           </div>
         </div>

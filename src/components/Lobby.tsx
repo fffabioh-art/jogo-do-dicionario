@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import QRCode from 'qrcode';
 import { DictionaryAdminModal } from './DictionaryAdminModal';
+import { StickmanFigure } from './StickmanFigure';
 import {
   Copy,
   Check,
@@ -140,7 +141,15 @@ export const Lobby: React.FC = () => {
                   }}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="text-xl shrink-0">{player.avatar}</span>
+                    <div className="shrink-0 flex items-center justify-center">
+                      <StickmanFigure
+                        avatarId={player.avatar}
+                        color={player.color || '#F59E0B'}
+                        size={28}
+                        state="standing"
+                        showCrown={player.isHost}
+                      />
+                    </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1">
                         <span className="font-medium text-xs text-stone-200 truncate">

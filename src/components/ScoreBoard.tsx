@@ -14,6 +14,7 @@ import {
   Info,
 } from 'lucide-react';
 import { Player, ReceivedVoteDetail } from '../types/game';
+import { StickmanFigure } from './StickmanFigure';
 
 export const ScoreBoard: React.FC = () => {
   const { room, myPlayerId, isHost, isLeader, adjustPlayerScore, setPlayerScore } = useGame();
@@ -168,7 +169,15 @@ export const ScoreBoard: React.FC = () => {
                     <span className="font-mono text-stone-500 text-xs w-4 text-right">
                       {index + 1}º
                     </span>
-                    <span className="text-base shrink-0">{player.avatar}</span>
+                    <div className="shrink-0 flex items-center justify-center">
+                      <StickmanFigure
+                        avatarId={player.avatar}
+                        color={player.color || '#F59E0B'}
+                        size={24}
+                        state="standing"
+                        showCrown={isCurrentLeader}
+                      />
+                    </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span
@@ -250,15 +259,69 @@ export const ScoreBoard: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Slim Progress Bar */}
-                <div className="w-full h-1.5 rounded-full bg-stone-900 overflow-hidden mt-2">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${percentage}%`,
-                      backgroundColor: player.color || '#F59E0B',
-                    }}
-                  />
+                {/* Stickman Race Track Lane */}
+                <div className="relative mt-2.5">
+                  <div className="w-full h-8 sm:h-9 bg-stone-950 rounded-xl border border-stone-800/80 relative flex items-center px-2 overflow-hidden shadow-inner">
+                    {/* Distance Track Guide Markers (25%, 50%, 75%) */}
+                    <div className="absolute inset-x-3 top-0 bottom-0 pointer-events-none flex justify-between items-center opacity-15">
+                      <div className="w-px h-full bg-stone-500" />
+                      <div className="w-px h-2.5 bg-stone-500" />
+                      <div className="w-px h-4 bg-stone-500" />
+                      <div className="w-px h-2.5 bg-stone-500" />
+                      <div className="w-px h-full bg-stone-500" />
+                    </div>
+
+                    {/* Central Track Rail */}
+                    <div className="absolute inset-x-2 h-1 bg-stone-900 rounded-full" />
+
+                    {/* Runner Distance Trail */}
+                    <div
+                      className="absolute left-2 h-1 rounded-full transition-all duration-700 ease-out"
+                      style={{
+                        width: `calc((${percentage} / 100) * (100% - 44px))`,
+                        backgroundColor: player.color || '#F59E0B',
+                        boxShadow: `0 0 10px ${player.color || '#F59E0B'}80`,
+                      }}
+                    />
+
+                    {/* Start Line */}
+                    <div
+                      className="absolute left-1.5 top-1 bottom-1 w-1 bg-stone-700/60 rounded-full"
+                      title="Largada (0 pts)"
+                    />
+
+                    {/* Finish Line Checkered Strip */}
+                    <div
+                      className="absolute right-1 top-1 bottom-1 w-3.5 rounded-r opacity-50 select-none"
+                      style={{
+                        backgroundImage: 'repeating-conic-gradient(#fff 0% 25%, #000 0% 50%)',
+                        backgroundSize: '6px 6px',
+                      }}
+                      title={`Linha de Chegada: Meta de ${targetScore} pts`}
+                    />
+                    <span
+                      className="absolute right-5 text-[11px] select-none opacity-80"
+                      title={`Meta: ${targetScore} pts`}
+                    >
+                      🏁
+                    </span>
+
+                    {/* Animated Running Stickman Character */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out z-10 flex items-center pointer-events-none"
+                      style={{
+                        left: `calc(4px + (${percentage} / 100) * (100% - 48px))`,
+                      }}
+                    >
+                      <StickmanFigure
+                        avatarId={player.avatar}
+                        color={player.color || '#F59E0B'}
+                        size={24}
+                        state={player.score >= targetScore ? 'celebrating' : 'running'}
+                        showCrown={isCurrentLeader}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Expanded Quick Victims View */}
@@ -276,7 +339,12 @@ export const ScoreBoard: React.FC = () => {
                             key={v.voterId}
                             className="inline-flex items-center gap-1 bg-stone-900 border border-stone-800 px-2 py-0.5 rounded-lg text-stone-200"
                           >
-                            <span>{v.voterAvatar}</span>
+                            <StickmanFigure
+                              avatarId={v.voterAvatar}
+                              color="#d6d3d1"
+                              size={16}
+                              state="standing"
+                            />
                             <span>{v.voterName}</span>
                             <strong className="text-amber-400 font-mono">({v.count}x)</strong>
                           </span>
@@ -340,7 +408,12 @@ export const ScoreBoard: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-lg">{player.avatar}</span>
+                          <StickmanFigure
+                            avatarId={player.avatar}
+                            color={player.color || '#F59E0B'}
+                            size={28}
+                            state="standing"
+                          />
                           <div>
                             <span className="font-bold text-stone-100">
                               {player.name} {isMe && '(Você)'}
@@ -368,7 +441,12 @@ export const ScoreBoard: React.FC = () => {
                                 className="p-2 rounded-lg bg-stone-900 border border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-[11px]"
                               >
                                 <div className="flex items-center gap-1.5 text-stone-200">
-                                  <span>{detail.voterAvatar}</span>
+                                  <StickmanFigure
+                                    avatarId={detail.voterAvatar}
+                                    color="#e5e5e5"
+                                    size={18}
+                                    state="standing"
+                                  />
                                   <strong>{detail.voterName}</strong>
                                   <span className="text-stone-400">caiu na palavra</span>
                                   <strong className="text-amber-300 uppercase">{detail.word}</strong>

@@ -23,19 +23,44 @@ import {
   deleteCustomWordsFromServer,
   subscribeToCustomWords,
 } from '../utils/persistentStorage';
-
-const AVATAR_OPTIONS = [
-  '🎓', '🎭', '🦁', '🦊', '🦉', '🎩', '🐙', '🐉', '🕵️', '🧙‍♂️', '🚀', '👑',
-  '🦄', '🐼', '🐯', '🧐', '📜', '🏆', '💎', '🎲', '🧠', '⚡', '🔥', '🎨'
-];
+import { STICKMAN_PRESETS, StickmanFigure } from './StickmanFigure';
 
 const COLOR_OPTIONS = [
-  { name: 'Âmbar', hex: '#F59E0B' },
-  { name: 'Safira', hex: '#3B82F6' },
-  { name: 'Esmeralda', hex: '#10B981' },
+  // Vermelhos & Rosas
   { name: 'Carmesim', hex: '#EF4444' },
+  { name: 'Rosa Choque', hex: '#F43F5E' },
+  { name: 'Coral', hex: '#FB7185' },
+  { name: 'Rosa Chiclete', hex: '#EC4899' },
+  { name: 'Fúcsia', hex: '#D946EF' },
+
+  // Roxos & Violetas
   { name: 'Púrpura', hex: '#A855F7' },
+  { name: 'Violeta Elétrico', hex: '#8B5CF6' },
+  { name: 'Índigo', hex: '#6366F1' },
+
+  // Azuis & Cianos
+  { name: 'Safira', hex: '#3B82F6' },
+  { name: 'Azul Céu', hex: '#0EA5E9' },
   { name: 'Ciano', hex: '#06B6D4' },
+  { name: 'Azul Petróleo', hex: '#0F766E' },
+
+  // Verdes
+  { name: 'Verde Mar', hex: '#14B8A6' },
+  { name: 'Menta', hex: '#059669' },
+  { name: 'Esmeralda', hex: '#10B981' },
+  { name: 'Lima Neon', hex: '#84CC16' },
+  { name: 'Oliva', hex: '#65A30D' },
+
+  // Amarelos & Laranjas
+  { name: 'Amarelo Ouro', hex: '#EAB308' },
+  { name: 'Âmbar', hex: '#F59E0B' },
+  { name: 'Laranja Neon', hex: '#F97316' },
+
+  // Terrosos & Tons Neutros
+  { name: 'Caramelo', hex: '#B45309' },
+  { name: 'Terra', hex: '#78350F' },
+  { name: 'Prata / Neve', hex: '#E2E8F0' },
+  { name: 'Grafite', hex: '#94A3B8' },
 ];
 
 interface HomeOrJoinProps {
@@ -47,7 +72,7 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
 
   const [mode, setMode] = useState<'create' | 'join'>('create');
   const [name, setName] = useState<string>(() => localStorage.getItem('jdd_player_name') || '');
-  const [avatar, setAvatar] = useState<string>(() => localStorage.getItem('jdd_player_avatar') || '🎓');
+  const [avatar, setAvatar] = useState<string>(() => localStorage.getItem('jdd_player_avatar') || 'palito_classico');
   const [color, setColor] = useState<string>(() => localStorage.getItem('jdd_player_color') || '#F59E0B');
   const [roomCode, setRoomCode] = useState<string>('');
 
@@ -139,7 +164,7 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
       {/* Title */}
       <div className="text-center space-y-1.5">
         <h2 className="font-serif font-black text-3xl sm:text-4xl text-amber-100 tracking-tight">
-          Jogo do Dicionário
+          Jogo do Dicionário <span className="text-amber-400 font-sans text-lg sm:text-xl font-bold block sm:inline">by Fabulous</span>
         </h2>
         <p className="text-xs sm:text-sm text-stone-400 max-w-sm mx-auto">
           Invente definições convincentes, blefe com seus amigos e descubra o significado real.
@@ -202,39 +227,72 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1.5">
-              Avatar & Cor
-            </label>
-            <div className="flex flex-wrap gap-1.5 mb-2.5">
-              {AVATAR_OPTIONS.slice(0, 16).map((em) => (
-                <button
-                  key={em}
-                  type="button"
-                  onClick={() => setAvatar(em)}
-                  className={`w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all ${
-                    avatar === em
-                      ? 'bg-amber-500/20 border border-amber-400 scale-105'
-                      : 'bg-stone-950 border border-stone-800 hover:border-stone-700'
-                  }`}
-                >
-                  {em}
-                </button>
-              ))}
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider">
+                Escolha seu Personagem
+              </label>
+              <div className="flex items-center gap-1.5 text-xs text-amber-300">
+                <span className="text-[10px] text-stone-400">Prévia:</span>
+                <div
+                  className="w-3.5 h-3.5 rounded-full border border-stone-600 inline-block shadow-sm"
+                  style={{ backgroundColor: color }}
+                />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {COLOR_OPTIONS.map((c) => (
-                <button
-                  key={c.hex}
-                  type="button"
-                  onClick={() => setColor(c.hex)}
-                  title={c.name}
-                  style={{ backgroundColor: c.hex }}
-                  className={`w-5 h-5 rounded-full transition-all ${
-                    color === c.hex ? 'ring-2 ring-white scale-110' : 'opacity-60 hover:opacity-100'
-                  }`}
-                />
-              ))}
+            {/* 24 Stickman Shapes Grid (No names, pure visual forms) */}
+            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 mb-3 max-h-56 overflow-y-auto p-1.5 rounded-2xl bg-stone-950 border border-stone-800/80 scrollbar-thin">
+              {STICKMAN_PRESETS.map((preset) => {
+                const isSelected = avatar === preset.id;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => setAvatar(preset.id)}
+                    className={`h-12 rounded-xl flex items-center justify-center transition-all ${
+                      isSelected
+                        ? 'bg-amber-500/20 border-2 border-amber-400 scale-105 shadow-md shadow-amber-500/20'
+                        : 'bg-stone-900/60 border border-stone-800 hover:border-stone-700 hover:bg-stone-800'
+                    }`}
+                  >
+                    <StickmanFigure
+                      avatarId={preset.id}
+                      color={isSelected ? color : '#78716c'}
+                      size={26}
+                      state={isSelected ? 'running' : 'standing'}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Color Palette (24 bolinhas de cores para variar bem) */}
+            <div className="pt-2 border-t border-stone-800/80 space-y-2">
+              <div className="flex items-center justify-between text-[11px] text-stone-400">
+                <span>Cor do seu corredor:</span>
+                <span className="text-[10px] font-mono text-stone-500">
+                  {COLOR_OPTIONS.find((c) => c.hex.toLowerCase() === color.toLowerCase())?.name || ''}
+                </span>
+              </div>
+              <div className="grid grid-cols-8 sm:grid-cols-12 gap-2 p-2 rounded-xl bg-stone-950 border border-stone-800/80">
+                {COLOR_OPTIONS.map((c) => {
+                  const isSelected = color.toLowerCase() === c.hex.toLowerCase();
+                  return (
+                    <button
+                      key={c.hex}
+                      type="button"
+                      onClick={() => setColor(c.hex)}
+                      title={c.name}
+                      style={{ backgroundColor: c.hex }}
+                      className={`w-6 h-6 rounded-full transition-all mx-auto ${
+                        isSelected
+                          ? 'ring-2 ring-white ring-offset-2 ring-offset-stone-950 scale-110 shadow-md'
+                          : 'opacity-70 hover:opacity-100 hover:scale-110'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

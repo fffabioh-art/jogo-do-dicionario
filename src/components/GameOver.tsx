@@ -13,6 +13,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { Player } from '../types/game';
+import { StickmanFigure } from './StickmanFigure';
 
 export const GameOver: React.FC = () => {
   const { room, isHost, restartGame, leaveRoom, myPlayerId } = useGame();
@@ -89,7 +90,15 @@ export const GameOver: React.FC = () => {
     <div className="w-full max-w-2xl mx-auto space-y-6 text-center animate-fade-in">
       {/* Winner Spotlight */}
       <div className="space-y-2">
-        <div className="text-4xl">{winner?.avatar || '👑'}</div>
+        <div className="flex justify-center">
+          <StickmanFigure
+            avatarId={winner?.avatar}
+            color={winner?.color || '#F59E0B'}
+            size={56}
+            state="celebrating"
+            showCrown={true}
+          />
+        </div>
         <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400 block">
           Campeão da Partida
         </span>
@@ -105,29 +114,51 @@ export const GameOver: React.FC = () => {
       <div className="grid grid-cols-3 gap-2.5 max-w-md mx-auto items-end pt-2">
         {/* 2nd place */}
         {sortedPlayers[1] && (
-          <div className="p-3 rounded-xl bg-stone-900 border border-stone-800 space-y-1 order-1">
+          <div className="p-3 rounded-xl bg-stone-900 border border-stone-800 space-y-1.5 order-1">
             <span className="text-[10px] text-stone-500 font-mono block">2º Lugar</span>
-            <div className="text-xl">{sortedPlayers[1].avatar}</div>
+            <div className="flex justify-center">
+              <StickmanFigure
+                avatarId={sortedPlayers[1].avatar}
+                color={sortedPlayers[1].color || '#3b82f6'}
+                size={34}
+                state="standing"
+              />
+            </div>
             <p className="text-xs font-semibold text-stone-200 truncate">{sortedPlayers[1].name}</p>
             <span className="font-mono text-xs text-amber-300 font-bold">{sortedPlayers[1].score} pts</span>
           </div>
         )}
 
         {/* 1st place */}
-        <div className="p-4 rounded-xl bg-stone-900 border border-amber-500/60 shadow-md space-y-1 order-2 -translate-y-1">
+        <div className="p-4 rounded-xl bg-stone-900 border border-amber-500/60 shadow-md space-y-1.5 order-2 -translate-y-1">
           <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wider">
             1º Lugar
           </div>
-          <div className="text-2xl">{winner?.avatar}</div>
+          <div className="flex justify-center">
+            <StickmanFigure
+              avatarId={winner?.avatar}
+              color={winner?.color || '#F59E0B'}
+              size={40}
+              state="celebrating"
+              showCrown={true}
+            />
+          </div>
           <p className="text-xs font-bold text-amber-100 truncate">{winner?.name}</p>
           <span className="font-mono text-xs font-black text-amber-300">{winner?.score} pts</span>
         </div>
 
         {/* 3rd place */}
         {sortedPlayers[2] && (
-          <div className="p-3 rounded-xl bg-stone-900 border border-stone-800 space-y-1 order-3">
+          <div className="p-3 rounded-xl bg-stone-900 border border-stone-800 space-y-1.5 order-3">
             <span className="text-[10px] text-stone-500 font-mono block">3º Lugar</span>
-            <div className="text-xl">{sortedPlayers[2].avatar}</div>
+            <div className="flex justify-center">
+              <StickmanFigure
+                avatarId={sortedPlayers[2].avatar}
+                color={sortedPlayers[2].color || '#10b981'}
+                size={34}
+                state="standing"
+              />
+            </div>
             <p className="text-xs font-semibold text-stone-200 truncate">{sortedPlayers[2].name}</p>
             <span className="font-mono text-xs text-amber-300 font-bold">{sortedPlayers[2].score} pts</span>
           </div>
@@ -154,7 +185,12 @@ export const GameOver: React.FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-stone-500 w-4 text-right">{position}º</span>
-                    <span>{player.avatar}</span>
+                    <StickmanFigure
+                      avatarId={player.avatar}
+                      color={player.color || '#a8a29e'}
+                      size={20}
+                      state="standing"
+                    />
                     <span className={`font-medium ${isMe ? 'text-amber-300' : 'text-stone-300'}`}>
                       {player.name} {isMe && '(Você)'}
                     </span>
@@ -198,7 +234,12 @@ export const GameOver: React.FC = () => {
                   <div key={player.id} className="p-2.5 rounded-xl bg-stone-950 border border-stone-800 text-xs">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span>{player.avatar}</span>
+                        <StickmanFigure
+                          avatarId={player.avatar}
+                          color={player.color || '#a8a29e'}
+                          size={20}
+                          state="standing"
+                        />
                         <span className="font-medium text-stone-200">{player.name}</span>
                       </div>
 
@@ -220,8 +261,15 @@ export const GameOver: React.FC = () => {
                     {isExpanded && victims.length > 0 && (
                       <div className="mt-2 pt-1.5 border-t border-stone-800/60 text-[11px] text-stone-400 flex flex-wrap gap-1.5">
                         {victims.map((v) => (
-                          <span key={v.voterId} className="bg-stone-900 px-1.5 py-0.5 rounded text-stone-300">
-                            {v.voterAvatar} {v.voterName} ({v.count})
+                          <span key={v.voterId} className="bg-stone-900 px-2 py-0.5 rounded text-stone-300 inline-flex items-center gap-1 border border-stone-800">
+                            <StickmanFigure
+                              avatarId={v.voterAvatar}
+                              color="#d6d3d1"
+                              size={14}
+                              state="standing"
+                            />
+                            <span>{v.voterName}</span>
+                            <strong className="text-amber-400 font-mono">({v.count})</strong>
                           </span>
                         ))}
                       </div>

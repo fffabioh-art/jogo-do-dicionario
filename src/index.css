@@ -56,3 +56,104 @@
 .animate-bounce-subtle {
   animation: bounceSubtle 2.5s ease-in-out infinite;
 }
+
+/* ==========================================================================
+   STICKMAN RUNNER ANIMATIONS (BONECOS PALITO CORRENDO NA PISTA)
+   ========================================================================== */
+@keyframes stickRunBody {
+  0%, 100% {
+    transform: translateY(0px) rotate(4deg);
+  }
+  50% {
+    transform: translateY(-2.5px) rotate(7deg);
+  }
+}
+
+@keyframes stickRunArmL {
+  0%, 100% {
+    transform: rotate(-32deg);
+  }
+  50% {
+    transform: rotate(32deg);
+  }
+}
+
+@keyframes stickRunArmR {
+  0%, 100% {
+    transform: rotate(32deg);
+  }
+  50% {
+    transform: rotate(-32deg);
+  }
+}
+
+@keyframes stickRunLegL {
+  0%, 100% {
+    transform: rotate(-36deg);
+  }
+  50% {
+    transform: rotate(36deg);
+  }
+}
+
+@keyframes stickRunLegR {
+  0%, 100% {
+    transform: rotate(36deg);
+  }
+  50% {
+    transform: rotate(-36deg);
+  }
+}
+
+@keyframes stickCapeFlutter {
+  0%, 100% {
+    transform: scaleX(1) scaleY(1);
+  }
+  50% {
+    transform: scaleX(1.18) scaleY(0.92) rotate(-4deg);
+  }
+}
+
+@keyframes stickCelebrate {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
+}
+
+.stickman-runner-body {
+  transform-origin: 24px 36px;
+  animation: stickRunBody 0.38s ease-in-out infinite;
+}
+
+.stickman-arm-left {
+  transform-origin: 24px 23px;
+  animation: stickRunArmL 0.38s ease-in-out infinite;
+}
+
+.stickman-arm-right {
+  transform-origin: 24px 23px;
+  animation: stickRunArmR 0.38s ease-in-out infinite;
+}
+
+.stickman-leg-left {
+  transform-origin: 24px 36px;
+  animation: stickRunLegL 0.38s ease-in-out infinite;
+}
+
+.stickman-leg-right {
+  transform-origin: 24px 36px;
+  animation: stickRunLegR 0.38s ease-in-out infinite;
+}
+
+.stickman-cape-flutter {
+  transform-origin: 23px 22px;
+  animation: stickCapeFlutter 0.28s ease-in-out infinite;
+}
+
+.stickman-celebrate {
+  transform-origin: 24px 50px;
+  animation: stickCelebrate 0.5s ease-in-out infinite;
+}

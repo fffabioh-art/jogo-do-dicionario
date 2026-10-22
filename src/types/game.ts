@@ -110,6 +110,7 @@ export interface RoomState {
   isTieBreakActive?: boolean;
   customWords?: WordItem[];
   exclusiveCustomWords?: boolean; // When true, rounds pull solely from imported/custom words
+  usedWordIds?: string[];
 }
 
 export interface ClientAction {

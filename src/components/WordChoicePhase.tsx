@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { Search, X, Filter, ArrowLeft, Shuffle, Clock } from 'lucide-react';
+import { Search, X, ArrowLeft, Shuffle, Clock, RotateCcw } from 'lucide-react';
 import { WordItem } from '../types/game';
 import { getAllWords } from '../data/dictionary';
+import { StickmanFigure } from './StickmanFigure';
 
 const ALPHABET = ['TODAS', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
 
@@ -13,7 +14,7 @@ function getInitialLetter(word: string): string {
 }
 
 export const WordChoicePhase: React.FC = () => {
-  const { room, isLeader, selectWord } = useGame();
+  const { room, isLeader, selectWord, rerollWordChoices } = useGame();
   const [showDictionaryModal, setShowDictionaryModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLetter, setSelectedLetter] = useState<string>('TODAS');
@@ -66,7 +67,7 @@ export const WordChoicePhase: React.FC = () => {
         </h2>
         <p className="text-xs sm:text-sm text-stone-400 max-w-md mx-auto">
           {isLeader
-            ? 'Escolha um termo abaixo. O significado oficial fica oculto até o final da votação!'
+            ? 'Escolha um termo abaixo (100% aleatório). O significado oficial fica oculto até o final da votação!'
             : `${leader?.name || 'O Líder'} está escolhendo a palavra no dicionário...`}
         </p>
       </div>
@@ -78,7 +79,7 @@ export const WordChoicePhase: React.FC = () => {
             {choices.map((item: WordItem, idx: number) => (
               <div
                 key={item.id || idx}
-                className="bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 rounded-2xl p-4 flex flex-col justify-between transition-all text-center gap-3"
+                className="bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 rounded-2xl p-4 flex flex-col justify-between transition-all text-center gap-3 shadow-lg hover:shadow-amber-500/10"
               >
                 <div>
                   <span className="text-[10px] font-mono text-stone-500 uppercase block mb-1">
@@ -91,7 +92,7 @@ export const WordChoicePhase: React.FC = () => {
 
                 <button
                   onClick={() => handlePickWord(item)}
-                  className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs uppercase tracking-wider transition-all"
+                  className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95"
                 >
                   Escolher
                 </button>
@@ -99,19 +100,31 @@ export const WordChoicePhase: React.FC = () => {
             ))}
           </div>
 
-          {/* Action Row: Full Database Browser */}
-          <div className="flex items-center justify-center gap-2 pt-1 text-xs">
+          {/* Action Row: Re-roll 3 options & Full Database Browser */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
+            <button
+              onClick={rerollWordChoices}
+              type="button"
+              className="inline-flex items-center gap-1.5 py-2 px-3.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-medium transition-colors active:scale-95"
+              title="Sortear 3 opções totalmente novas e aleatórias"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Sortear Outras 3 Palavras</span>
+            </button>
+
             <button
               onClick={() => setShowDictionaryModal(true)}
-              className="inline-flex items-center gap-1.5 py-2 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-stone-300 hover:text-amber-300 transition-colors"
+              type="button"
+              className="inline-flex items-center gap-1.5 py-2 px-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-stone-300 hover:text-amber-300 transition-colors"
             >
               <Search className="w-3.5 h-3.5 text-amber-400" />
-              <span>Explorar banco completo ({allAvailableWords.length} palavras)</span>
+              <span>Explorar banco ({allAvailableWords.length})</span>
             </button>
 
             {choices.length > 0 && (
               <button
-                onClick={() => handlePickWord(choices[0])}
+                onClick={() => handlePickWord(choices[Math.floor(Math.random() * choices.length)])}
+                type="button"
                 className="inline-flex items-center gap-1 py-2 px-3 rounded-xl text-stone-400 hover:text-stone-200 hover:bg-stone-900 transition-colors"
               >
                 <Shuffle className="w-3.5 h-3.5" />
@@ -122,8 +135,16 @@ export const WordChoicePhase: React.FC = () => {
         </div>
       ) : (
         /* Non-Leader Waiting Card */
-        <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-8 text-center space-y-3 max-w-md mx-auto">
-          <div className="text-3xl">{leader?.avatar || '📖'}</div>
+        <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-8 text-center space-y-4 max-w-md mx-auto shadow-xl">
+          <div className="flex justify-center">
+            <StickmanFigure
+              avatarId={leader?.avatar || 'palito_classico'}
+              color={leader?.color || '#3b82f6'}
+              size={56}
+              state="standing"
+              showCrown={true}
+            />
+          </div>
           <div>
             <h3 className="font-bold text-base text-stone-200">
               {leader?.name} está escolhendo o termo

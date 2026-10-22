@@ -81,4 +81,19 @@ export function isLeaderBluffing(
   return false;
 }
 
+/**
+ * Formats option letters: 0 -> A, 1 -> B ... 8 -> I, 9 -> J, 10 -> K, etc.
+ * Never outputs numbers like '9'.
+ */
+export function getAlternativeLetter(index: number): string {
+  if (index < 0) return 'A';
+  if (index < 26) {
+    return String.fromCharCode(65 + index);
+  }
+  const first = String.fromCharCode(65 + Math.floor(index / 26) - 1);
+  const second = String.fromCharCode(65 + (index % 26));
+  return `${first}${second}`;
+}
+
+
 

@@ -116,6 +116,17 @@ function isLeaderBluffing(settings?: GameSettings | null, playerCount: number = 
   return false;
 }
 
+// Generates alphabetical option letters: 0 -> A, 1 -> B, ... 8 -> I, 9 -> J, 10 -> K, etc.
+function getAlternativeLetter(index: number): string {
+  if (index < 0) return 'A';
+  if (index < 26) {
+    return String.fromCharCode(65 + index);
+  }
+  const first = String.fromCharCode(65 + Math.floor(index / 26) - 1);
+  const second = String.fromCharCode(65 + (index % 26));
+  return `${first}${second}`;
+}
+
 // REST API for Administrator to upload, fetch, and manage persistent database
 app.get('/api/dictionary/custom', (_req, res) => {
   const words = loadPersistentWords();
@@ -187,6 +198,11 @@ const BOT_PRESETS = [
   { name: 'Aurélio Buarque', avatar: '📖', color: '#10B981' },
   { name: 'Guimarães Rosa', avatar: '🌿', color: '#F59E0B' },
   { name: 'O Embusteiro Bot', avatar: '🎭', color: '#3B82F6' },
+  { name: 'Carlos Drummond', avatar: '📜', color: '#06B6D4' },
+  { name: 'Cecília Meireles', avatar: '🌸', color: '#F43F5E' },
+  { name: 'Jorge Amado', avatar: '🌊', color: '#D97706' },
+  { name: 'Rachel de Queiroz', avatar: '🌾', color: '#84CC16' },
+  { name: 'Mário de Andrade', avatar: '🎨', color: '#6366F1' },
 ];
 
 function generateRoomCode(): string {
@@ -362,10 +378,9 @@ function handleStartVotingPhase(room: RoomState) {
   // Shuffle bluffs randomly
   finalBluffs.sort(() => Math.random() - 0.5);
 
-  // Assign letters A, B, C, D...
-  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  // Assign letters A, B, C, D... H, I, J, K...
   finalBluffs.forEach((b, idx) => {
-    b.letterLabel = letters[idx] || `${idx + 1}`;
+    b.letterLabel = getAlternativeLetter(idx);
   });
 
   round.bluffs = finalBluffs;
@@ -754,6 +769,17 @@ wss.on('connection', (ws: WebSocket) => {
             if (payload.color) existingPlayer.color = payload.color;
             currentPlayer = existingPlayer;
           } else {
+            // Check if room has reached maximum 10 players
+            if (room.players.length >= 10) {
+              ws.send(
+                JSON.stringify({
+                  type: 'ERROR',
+                  message: 'A sala atingiu o limite máximo de 10 participantes!',
+                })
+              );
+              return;
+            }
+
             currentPlayer = {
               id: payload.playerId || 'player_' + Date.now() + Math.random().toString(36).substring(2, 6),
               name: payload.playerName || `Jogador ${room.players.length + 1}`,
@@ -890,6 +916,9 @@ wss.on('connection', (ws: WebSocket) => {
           if (!meta) return;
           const room = rooms.get(meta.roomCode);
           if (!room || room.hostId !== meta.playerId) return;
+
+          // Limit to max 10 players in room
+          if (room.players.length >= 10) return;
 
           const currentBots = room.players.filter((p) => p.isBot).length;
           const preset = BOT_PRESETS[currentBots % BOT_PRESETS.length];

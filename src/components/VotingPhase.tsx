@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BluffEntry } from '../types/game';
 import { Clock, CheckCircle2, ShieldCheck, Users, Unlock, Volume2, Headphones } from 'lucide-react';
-import { formatConcept, isLeaderBluffing } from '../utils/textFormatting';
+import { formatConcept, isLeaderBluffing, getAlternativeLetter } from '../utils/textFormatting';
 
 export const VotingPhase: React.FC = () => {
   const { room, myPlayerId, submitVote, revealResults, isHost, isLeader } = useGame();
@@ -146,7 +146,7 @@ export const VotingPhase: React.FC = () => {
         {bluffs.map((entry: BluffEntry, index: number) => {
           const isMyOwnBluff = entry.authorId === myPlayerId;
           const isSelectedByMe = myVote === entry.id;
-          const letter = entry.letterLabel || String.fromCharCode(65 + index);
+          const letter = entry.letterLabel || getAlternativeLetter(index);
 
           return (
             <div

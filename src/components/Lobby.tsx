@@ -102,14 +102,14 @@ export const Lobby: React.FC = () => {
           <div className="flex items-center justify-between text-xs">
             <h3 className="font-semibold text-stone-300 flex items-center gap-1.5">
               <Users className="w-4 h-4 text-amber-400" />
-              <span>Jogadores ({activePlayers.length})</span>
+              <span>Jogadores ({activePlayers.length}/10)</span>
             </h3>
 
             {isHost && (
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={addBot}
-                  disabled={activePlayers.length >= 8}
+                  disabled={activePlayers.length >= 10}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-purple-300 text-xs font-medium transition-colors disabled:opacity-40"
                 >
                   <Bot className="w-3.5 h-3.5" />

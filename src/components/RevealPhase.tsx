@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
 import { BluffEntry, Player } from '../types/game';
-import { formatConcept } from '../utils/textFormatting';
+import { formatConcept, getAlternativeLetter } from '../utils/textFormatting';
 import {
   Award,
   BookOpen,
@@ -366,7 +366,7 @@ export const RevealPhase: React.FC = () => {
                         : 'bg-stone-950 text-amber-300 border border-stone-800'
                     }`}
                   >
-                    {entry.letterLabel || String.fromCharCode(65 + index)}
+                    {entry.letterLabel || getAlternativeLetter(index)}
                   </span>
 
                   {isReal ? (

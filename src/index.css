@@ -24,6 +24,17 @@
   }
 }
 
+@keyframes phaseSlideFade {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes bounceSubtle {
   0%, 100% {
     transform: translateY(0);
@@ -35,6 +46,11 @@
 
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-phase-transition {
+  animation: phaseSlideFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .animate-bounce-subtle {

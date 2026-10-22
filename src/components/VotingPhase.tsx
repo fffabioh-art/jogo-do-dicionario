@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { BluffEntry } from '../types/game';
-import { Clock, CheckCircle2, ShieldCheck, EyeOff, Users, ArrowRight, Lock, Unlock, Crown, Volume2, Headphones } from 'lucide-react';
+import { Clock, CheckCircle2, ShieldCheck, Users, Unlock, Volume2, Headphones } from 'lucide-react';
 import { formatConcept, isLeaderBluffing } from '../utils/textFormatting';
 
 export const VotingPhase: React.FC = () => {
@@ -17,7 +17,6 @@ export const VotingPhase: React.FC = () => {
   const hasVoted = Boolean(myVote);
   const leader = room.players.find((p) => p.id === round.leaderId);
 
-  // Timer countdown
   useEffect(() => {
     if (!round.deadline) {
       setTimeLeft(null);
@@ -35,10 +34,12 @@ export const VotingPhase: React.FC = () => {
   }, [round.deadline]);
 
   const leaderIsBluffing = isLeaderBluffing(room.settings, room.players.length);
+  const leaderHasBluff = bluffs.some((b) => b.authorId === round.leaderId);
+  const canLeaderVote = leaderIsBluffing || leaderHasBluff;
 
   const eligibleVoters = room.players.filter((p) => {
     if (!p.isConnected && !p.isBot) return false;
-    if (p.id === round.leaderId && !leaderIsBluffing) return false;
+    if (p.id === round.leaderId && !canLeaderVote) return false;
     return true;
   });
 
@@ -49,139 +50,99 @@ export const VotingPhase: React.FC = () => {
   const canSeeText = !isLeaderReadMode || isLeader || (leader?.isBot && isHost);
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-6 animate-fade-in">
-      {/* Word Header */}
-      <div className="bg-gradient-to-r from-stone-900 via-amber-950/40 to-stone-900 border border-amber-600/40 rounded-3xl p-5 sm:p-7 shadow-xl text-center relative overflow-hidden">
-        {/* Timer */}
-        {!allVotesReceived && (
-          timeLeft !== null ? (
-            <div
-              className={`absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-xs font-bold border transition-colors ${
-                timeLeft <= 10
-                  ? 'bg-rose-950 text-rose-300 border-rose-500 animate-pulse'
-                  : 'bg-stone-900/90 text-amber-300 border-amber-700/60'
-              }`}
-            >
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              {timeLeft}s
-            </div>
-          ) : (
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] font-semibold border bg-stone-950/80 text-amber-300/90 border-amber-700/50">
-              <Clock className="w-3 h-3 text-amber-400" />
-              Sem limite • Aguarda votos
-            </div>
-          )
+    <div className="w-full max-w-2xl mx-auto space-y-4 animate-fade-in">
+      {/* Word Header Card */}
+      <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 text-center relative">
+        {!allVotesReceived && timeLeft !== null && (
+          <div
+            className={`absolute top-3.5 right-3.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-mono text-xs font-semibold border ${
+              timeLeft <= 10
+                ? 'bg-rose-950/80 text-rose-300 border-rose-500/50'
+                : 'bg-stone-800 text-stone-300 border-stone-700'
+            }`}
+          >
+            <Clock className="w-3 h-3 text-amber-400" />
+            {timeLeft}s
+          </div>
         )}
 
-        <div className="space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 flex items-center justify-center gap-1.5">
-            <EyeOff className="w-3.5 h-3.5" />
-            Mural de Votação {isLeaderReadMode ? '• Modo Leitura em Voz Alta' : 'Anônima (Respostas em Caixa Alta)'}
-          </span>
-          <h2 className="font-serif font-black text-3xl sm:text-5xl text-amber-100 tracking-tight uppercase">
-            {word.word}
-          </h2>
-          <p className="text-xs sm:text-sm text-stone-300 max-w-lg mx-auto">
-            {isLeaderReadMode && !canSeeText
-              ? 'Ouça a leitura do Líder e vote na letra correspondente ao significado verdadeiro!'
-              : 'Qual destas opções em caixa alta é o significado autêntico do dicionário?'}
-          </p>
-        </div>
+        <span className="text-[11px] font-mono text-amber-400 uppercase tracking-wider block mb-1">
+          Votação · Rodada {round.roundNumber}
+        </span>
+        <h2 className="font-serif font-black text-3xl sm:text-4xl text-amber-100 tracking-tight uppercase">
+          {word.word}
+        </h2>
+        <p className="text-xs text-stone-400 mt-1 max-w-md mx-auto">
+          {isLeaderReadMode && !canSeeText
+            ? 'Ouça a leitura do Líder e vote na alternativa correta.'
+            : 'Qual destas opções é a definição real do dicionário?'}
+        </p>
       </div>
 
       {/* Audio / Leader Read Instruction Card */}
       {isLeaderReadMode && (
         isLeader ? (
-          <div className="p-4 rounded-2xl bg-amber-950/80 border-2 border-amber-500/80 text-amber-200 text-xs sm:text-sm space-y-1.5 shadow-xl animate-fade-in">
-            <div className="flex items-center gap-2 font-bold text-amber-300 text-sm sm:text-base">
-              <Volume2 className="w-5 h-5 text-amber-400 animate-pulse" />
-              <span>Você é o Leitor Oficial da Rodada!</span>
+          <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-600/40 text-xs space-y-1">
+            <div className="flex items-center gap-1.5 font-bold text-amber-300">
+              <Volume2 className="w-4 h-4 text-amber-400" />
+              <span>Você é o leitor oficial</span>
             </div>
-            <p className="text-stone-300 text-xs leading-relaxed">
-              <strong>Leia em voz alta para todos os jogadores</strong> o texto de cada alternativa abaixo (Alternativa A, Alternativa B...).
-              Na tela dos votantes, os enunciados estão ocultos e eles verão apenas os botões das alternativas (A, B, C...) para escolher!
+            <p className="text-stone-300">
+              Leia cada alternativa abaixo em voz alta. Na tela dos outros jogadores os textos estão ocultos.
             </p>
           </div>
         ) : (
-          <div className="p-4 rounded-2xl bg-purple-950/60 border border-purple-700/60 text-purple-200 text-xs sm:text-sm space-y-1.5 shadow-xl animate-fade-in">
-            <div className="flex items-center gap-2 font-bold text-purple-300 text-sm">
-              <Headphones className="w-4 h-4 text-purple-400" />
-              <span>Modo Áudio: O Líder Lerá as Alternativas em Voz Alta</span>
+          <div className="p-3.5 rounded-xl bg-stone-900 border border-stone-800 text-xs space-y-1">
+            <div className="flex items-center gap-1.5 font-bold text-amber-300">
+              <Headphones className="w-4 h-4 text-amber-400" />
+              <span>Modo Áudio Ativo</span>
             </div>
-            <p className="text-stone-300 text-xs leading-relaxed">
-              O Líder <strong>{leader?.name}</strong> está lendo os significados em voz alta para o grupo.
-              Ouça atentamente cada alternativa e clique no botão da letra correspondente (A, B, C...) para registrar seu voto.
+            <p className="text-stone-400">
+              Ouça o líder <strong>{leader?.name}</strong> ler as alternativas e selecione a letra correspondente.
             </p>
           </div>
         )
       )}
 
-      {/* Leader Permission Gate Banner (When all have voted) */}
+      {/* Leader Permission Gate Banner */}
       {allVotesReceived ? (
-        <div className="bg-gradient-to-r from-amber-950/90 via-stone-900 to-amber-950/90 border-2 border-amber-500 rounded-3xl p-6 sm:p-7 shadow-2xl text-center space-y-4 animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-400 flex items-center justify-center mx-auto text-2xl shadow-inner">
-            {isLeader || isHost ? <Unlock className="w-7 h-7" /> : <Lock className="w-7 h-7" />}
-          </div>
+        <div className="bg-stone-900 border border-amber-500/50 rounded-2xl p-4 text-center space-y-2.5">
+          <span className="text-xs font-semibold text-emerald-400 flex items-center justify-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Todos os {totalVotesCount} votos foram recebidos!
+          </span>
 
-          <div className="space-y-1.5">
-            <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-950 px-3 py-1 rounded-full border border-amber-700">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              Todos os {totalVotesCount} Votos Foram Computados!
-            </span>
-            <h3 className="font-serif font-bold text-xl sm:text-2xl text-amber-100">
-              {isLeader || isHost ? 'Pronto para Revelar as Respostas?' : 'Aguardando Permissão do Líder'}
-            </h3>
-            <p className="text-xs sm:text-sm text-stone-300 max-w-md mx-auto">
-              {isLeader || isHost
-                ? 'Como Líder da Rodada, clique no botão abaixo para desbloquear o mural, revelar quem votou em quem e computar os pontos:'
-                : `As respostas continuam em segredo até o Líder ${leader?.name || 'da rodada'} autorizar a revelação para todos.`}
-            </p>
-          </div>
-
-          {/* Reveal button only for Leader (or Host fallback) */}
-          {(isLeader || isHost) ? (
+          {isLeader || isHost ? (
             <button
               onClick={revealResults}
-              className="py-4 px-8 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-black text-sm sm:text-base uppercase tracking-wider shadow-xl shadow-amber-950/60 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 mx-auto"
+              className="py-2.5 px-6 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 mx-auto"
             >
-              <Unlock className="w-5 h-5 text-stone-950" />
-              Liberar e Revelar Respostas Agora
+              <Unlock className="w-4 h-4" />
+              Revelar Resultados
             </button>
           ) : (
-            <div className="flex items-center justify-center gap-2 text-xs text-amber-400 font-mono animate-pulse">
-              <Clock className="w-4 h-4 animate-spin text-amber-400" />
-              Aguardando o comando do líder {leader?.name}...
-            </div>
+            <p className="text-xs text-stone-400">
+              Aguardando o líder <strong>{leader?.name}</strong> liberar os resultados...
+            </p>
           )}
         </div>
       ) : (
-        /* Progress while still voting */
-        <div className="space-y-2">
-          {isLeader && !leaderIsBluffing && (
-            <div className="p-3 bg-amber-950/40 border border-amber-600/30 rounded-2xl text-center text-xs text-amber-200 flex items-center justify-center gap-2">
-              <Crown className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>
-                Você é o Líder da Rodada (Regra: <strong>Líder não digita / não vota</strong>). Aguardando os votos dos participantes.
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between text-xs text-stone-400 px-1">
-            <span className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-amber-400" />
-              Votos computados: <strong className="text-amber-200">{totalVotesCount} de {eligibleVoters.length}</strong>
+        /* Status while voting */
+        <div className="flex items-center justify-between text-xs text-stone-400 px-1 font-mono">
+          <span className="flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-amber-400" />
+            Votos: <strong>{totalVotesCount} de {eligibleVoters.length}</strong>
+          </span>
+          {hasVoted && (
+            <span className="text-emerald-400 flex items-center gap-1 font-sans">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Seu voto foi registrado
             </span>
-            {hasVoted && (
-              <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-4 h-4" /> Seu voto foi computado!
-              </span>
-            )}
-          </div>
+          )}
         </div>
       )}
 
       {/* Options List */}
-      <div className="grid gap-3.5">
+      <div className="grid gap-2.5">
         {bluffs.map((entry: BluffEntry, index: number) => {
           const isMyOwnBluff = entry.authorId === myPlayerId;
           const isSelectedByMe = myVote === entry.id;
@@ -190,91 +151,72 @@ export const VotingPhase: React.FC = () => {
           return (
             <div
               key={entry.id || index}
-              className={`p-4 sm:p-5 rounded-2xl border transition-all relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+              className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 ${
                 isSelectedByMe
-                  ? 'bg-amber-950/70 border-amber-400 ring-2 ring-amber-400/30 shadow-lg'
+                  ? 'bg-amber-950/40 border-amber-400'
                   : isMyOwnBluff
-                  ? 'bg-stone-950/40 border-stone-800/80 opacity-70'
-                  : 'bg-stone-900/90 border-amber-900/30 hover:border-amber-600/60 hover:bg-stone-800/80 shadow-md'
+                  ? 'bg-stone-950/40 border-stone-800/60 opacity-60'
+                  : 'bg-stone-900/80 border-stone-800 hover:border-stone-700'
               }`}
             >
-              <div className="flex items-start gap-3.5 flex-1">
-                {/* Letter badge */}
-                <div
-                  className={`w-10 h-10 rounded-xl font-mono font-black text-lg flex items-center justify-center shrink-0 shadow-inner ${
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <span
+                  className={`w-7 h-7 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 ${
                     isSelectedByMe
                       ? 'bg-amber-400 text-stone-950'
-                      : 'bg-stone-950 border border-stone-800 text-amber-300'
+                      : 'bg-stone-950 border border-stone-800 text-stone-300'
                   }`}
                 >
                   {letter}
-                </div>
+                </span>
 
-                <div className="space-y-1">
+                <div className="min-w-0">
                   {canSeeText ? (
-                    /* Leader view or Standard Visual Mode: full UPPERCASE text */
-                    <p className="text-sm sm:text-base text-stone-200 font-serif leading-relaxed uppercase font-medium">
+                    <p className="text-xs sm:text-sm text-stone-200 font-serif uppercase font-medium leading-relaxed">
                       {formatConcept(entry.text)}
                     </p>
                   ) : (
-                    /* Audio Mode for Voters: Enunciado is hidden */
-                    <div className="space-y-0.5">
-                      <span className="font-serif font-black text-base text-amber-200">
+                    <div>
+                      <span className="font-semibold text-xs text-amber-200">
                         Alternativa {letter}
                       </span>
-                      <p className="text-xs text-stone-400 italic">
-                        {isMyOwnBluff
-                          ? 'Seu próprio blefe enviado nesta rodada'
-                          : 'Texto lido em voz alta pelo líder • Enunciado oculto'}
+                      <p className="text-[11px] text-stone-500">
+                        {isMyOwnBluff ? 'Seu blefe' : 'Lido em voz alta'}
                       </p>
                     </div>
                   )}
 
                   {isMyOwnBluff && (
-                    <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">
-                      <ShieldCheck className="w-3 h-3" /> Seu próprio blefe (bloqueado para voto)
+                    <span className="inline-flex items-center gap-1 text-[10px] text-amber-400/80 mt-1">
+                      <ShieldCheck className="w-3 h-3" /> Seu blefe (bloqueado para seu voto)
                     </span>
                   )}
                 </div>
               </div>
 
               {/* Action Button */}
-              <div className="w-full sm:w-auto shrink-0 flex justify-end">
+              <div className="shrink-0">
                 {isMyOwnBluff ? (
-                  <button
-                    disabled
-                    className="py-2 px-4 rounded-xl bg-stone-950/60 text-stone-500 text-xs font-bold border border-stone-800 cursor-not-allowed"
-                  >
-                    Seu Blefe
-                  </button>
-                ) : isLeader && !leaderIsBluffing ? (
-                  <button
-                    disabled
-                    className="py-2 px-4 rounded-xl bg-stone-950/60 text-stone-400 text-xs font-bold border border-stone-800 cursor-not-allowed"
-                  >
+                  <span className="text-[11px] text-stone-500 font-medium px-2 py-1">
+                    Seu blefe
+                  </span>
+                ) : isLeader && !canLeaderVote ? (
+                  <span className="text-[11px] text-stone-500 font-medium px-2 py-1">
                     Líder não vota
-                  </button>
+                  </span>
                 ) : (
                   <button
                     onClick={() => !allVotesReceived && submitVote(entry.id)}
                     disabled={allVotesReceived || (hasVoted && isSelectedByMe)}
-                    className={`w-full sm:w-auto py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md ${
+                    className={`py-1.5 px-3 rounded-lg text-xs font-bold uppercase transition-all ${
                       isSelectedByMe
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-emerald-600 text-white cursor-default'
                         : allVotesReceived
-                        ? 'bg-stone-800 text-stone-400 cursor-not-allowed'
-                        : 'bg-amber-600 hover:bg-amber-500 text-stone-950 hover:scale-105 active:scale-95'
+                        ? 'bg-stone-800 text-stone-500 cursor-not-allowed'
+                        : 'bg-stone-800 hover:bg-amber-600 hover:text-stone-950 text-stone-200'
                     }`}
                   >
-                    {isSelectedByMe
-                      ? `Votado na Opção ${letter} ✓`
-                      : allVotesReceived
-                      ? 'Votação Encerrada'
-                      : hasVoted
-                      ? `Mudar para ${letter}`
-                      : !canSeeText
-                      ? `Votar na Alternativa ${letter}`
-                      : `Votar Nesta (${letter})`}
+                    {isSelectedByMe ? 'Votado ✓' : `Votar (${letter})`}
                   </button>
                 )}
               </div>

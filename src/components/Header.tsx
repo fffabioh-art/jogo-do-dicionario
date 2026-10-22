@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { BookOpen, Volume2, VolumeX, HelpCircle, LogOut, Copy, Check, Users, Database, FileText } from 'lucide-react';
+import { BookOpen, Volume2, VolumeX, HelpCircle, LogOut, Copy, Check, FileText } from 'lucide-react';
 
 interface HeaderProps {
   onOpenRules: () => void;
@@ -19,92 +19,83 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-amber-950/90 backdrop-blur-md border-b border-amber-900/50 text-amber-100 px-4 py-3 shadow-md">
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
-        {/* Logo and Brand */}
+    <header className="sticky top-0 z-40 bg-stone-900/90 backdrop-blur-md border-b border-stone-800 text-stone-100 px-4 py-2.5">
+      <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+        {/* Brand */}
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-amber-950 shadow-inner ring-1 ring-amber-300/30">
-            <BookOpen className="w-5 h-5 text-amber-950" />
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <BookOpen className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg sm:text-xl tracking-tight text-amber-200 leading-tight">
+            <span className="font-serif font-black text-base tracking-tight text-amber-100">
               Jogo do Dicionário
-            </h1>
-            <p className="text-[10px] sm:text-xs text-amber-400/80 font-medium tracking-wider uppercase">
-              por Fabulous
-            </p>
+            </span>
           </div>
         </div>
 
-        {/* Room Code Badge if in room (visible on mobile and desktop) */}
+        {/* Room Code Badge if in room */}
         {room && (
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-amber-900/60 border border-amber-700/60 rounded-full px-2 sm:px-3 py-1">
-            <span className="text-[10px] sm:text-xs text-amber-300/80 font-semibold uppercase tracking-wider hidden xs:inline">Sala:</span>
-            <span className="font-mono font-bold text-amber-100 tracking-widest text-xs sm:text-sm">{room.roomCode}</span>
-            <button
-              onClick={copyRoomCode}
-              title="Copiar código da sala"
-              className="text-amber-400 hover:text-amber-200 transition-colors p-1"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            </button>
-          </div>
+          <button
+            onClick={copyRoomCode}
+            title="Clique para copiar código da sala"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-stone-800/80 hover:bg-stone-800 border border-stone-700/80 text-xs transition-colors"
+          >
+            <span className="text-stone-400 font-medium">Sala:</span>
+            <span className="font-mono font-bold text-amber-300 tracking-wider">{room.roomCode}</span>
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+            ) : (
+              <Copy className="w-3.5 h-3.5 text-stone-400" />
+            )}
+          </button>
         )}
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2">
-          {/* Administrator Dictionary Button (always available when not in room OR when host) */}
+        {/* Actions */}
+        <div className="flex items-center gap-1.5">
+          {/* Admin Word Bank Button */}
           {onOpenDictionary && (!room || isHost) && (
             <button
               onClick={onOpenDictionary}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-black text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105 active:scale-95"
-              title="Painel do Administrador: Upar banco de dados via Bloco de Notas (.txt)"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-300 text-xs font-semibold border border-stone-700 transition-colors"
+              title="Banco de palavras personalizado"
             >
-              <FileText className="w-3.5 h-3.5 text-stone-950 flex-shrink-0" />
-              <span>Admin: Banco .txt</span>
+              <FileText className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Banco .txt</span>
             </button>
           )}
-
-          {/* Connection indicator */}
-          <div
-            title={`Status: ${connectionStatus === 'connected' ? 'Conectado em tempo real' : 'Conectando...'}`}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-900/40 border border-amber-800/40 text-xs"
-          >
-            <span
-              className={`w-2 h-2 rounded-full ${
-                connectionStatus === 'connected'
-                  ? 'bg-emerald-400 animate-pulse'
-                  : 'bg-amber-500 animate-ping'
-              }`}
-            />
-            <span className="text-[11px] text-amber-300/70 hidden md:inline">
-              {connectionStatus === 'connected' ? 'Ao vivo' : 'Conectando'}
-            </span>
-          </div>
 
           {/* Sound Mute Toggle */}
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className="p-2 rounded-lg bg-amber-900/50 hover:bg-amber-800/60 text-amber-300 hover:text-amber-100 transition-colors border border-amber-800/60"
+            className="p-1.5 rounded-lg text-stone-400 hover:text-stone-200 hover:bg-stone-800 transition-colors"
             title={isMuted ? 'Ativar Sons' : 'Silenciar Sons'}
           >
             {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
-          {/* Rules Modal Button */}
+          {/* Rules Button */}
           <button
             onClick={onOpenRules}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 text-amber-200 hover:text-amber-100 transition-colors border border-amber-500/40 text-xs sm:text-sm font-semibold"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-stone-300 hover:text-white hover:bg-stone-800 text-xs font-medium transition-colors"
+            title="Como Jogar"
           >
-            <HelpCircle className="w-4 h-4 text-amber-300" />
+            <HelpCircle className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Regras</span>
           </button>
+
+          {/* Live Indicator */}
+          <span
+            className={`w-2 h-2 rounded-full ${
+              connectionStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'
+            }`}
+            title={connectionStatus === 'connected' ? 'Conectado' : 'Conectando'}
+          />
 
           {/* Leave Room Button */}
           {room && (
             <button
               onClick={leaveRoom}
-              className="p-2 rounded-lg bg-rose-950/50 hover:bg-rose-900/70 text-rose-300 hover:text-rose-100 transition-colors border border-rose-800/40"
+              className="p-1.5 rounded-lg text-stone-400 hover:text-rose-400 hover:bg-stone-800 transition-colors ml-1"
               title="Sair da Sala"
             >
               <LogOut className="w-4 h-4" />

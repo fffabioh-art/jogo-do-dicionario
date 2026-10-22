@@ -158,8 +158,7 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
       .filter((w) => {
         const matchesSearch =
           w.word.toLowerCase().includes(searchFilter.toLowerCase()) ||
-          w.definition.toLowerCase().includes(searchFilter.toLowerCase()) ||
-          w.partOfSpeech.toLowerCase().includes(searchFilter.toLowerCase());
+          w.definition.toLowerCase().includes(searchFilter.toLowerCase());
 
         const initial = getInitialLetter(w.word);
         const matchesLetter =
@@ -748,9 +747,6 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                             <span className="font-serif font-black text-amber-300 whitespace-nowrap">
                               {pw.word}
                             </span>
-                            <span className="text-emerald-400/80 text-[10px] italic whitespace-nowrap">
-                              ({pw.partOfSpeech})
-                            </span>
                             <span className="text-stone-300 truncate font-serif">
                               {pw.definition}
                             </span>
@@ -807,7 +803,7 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                     type="text"
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    placeholder="Filtrar por palavra, classe ou definição..."
+                    placeholder="Filtrar por palavra ou definição..."
                     className="w-full pl-9 pr-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 placeholder-stone-500 outline-none focus:border-amber-500"
                   />
                 </div>
@@ -952,9 +948,6 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                           <span className="font-serif font-black text-amber-200 text-sm sm:text-base">
                             {w.word}
                           </span>
-                          <span className="text-[11px] text-amber-400/80 italic">
-                            ({w.partOfSpeech})
-                          </span>
                           <span className="text-[10px] bg-purple-950 border border-purple-700 text-purple-300 px-1.5 py-0.2 rounded font-mono font-bold">
                             Bloco de Notas
                           </span>
@@ -982,7 +975,7 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                 Cadastre um termo avulso para entrar no sorteio das próximas rodadas.
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div className="text-xs">
                 <div>
                   <label className="block text-stone-300 font-semibold mb-1">
                     Palavra / Termo *
@@ -994,19 +987,6 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
                     placeholder="Ex: Caturra"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500 font-medium"
                     required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-stone-300 font-semibold mb-1">
-                    Classe Gramatical
-                  </label>
-                  <input
-                    type="text"
-                    value={singlePart}
-                    onChange={(e) => setSinglePart(e.target.value)}
-                    placeholder="Ex: substantivo masculino"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-950 border border-stone-700 text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500 font-medium"
                   />
                 </div>
               </div>

@@ -359,24 +359,6 @@ function handleStartVotingPhase(room: RoomState) {
 
   const finalBluffs: BluffEntry[] = [...round.bluffs, realBluff];
 
-  // CRITICAL RULE:
-  // 1. When leader does NOT bluff ("líder não digitar"), NEVER inject automatic decoy concepts!
-  // 2. When there are 3 or more players, NEVER inject automatic decoy concepts!
-  // 3. ONLY for a 2-player game where leader bluffs and finalBluffs has fewer than 3 entries:
-  const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-  const leaderBluffs = isLeaderBluffing(room.settings, activePlayers.length);
-
-  if (leaderBluffs && activePlayers.length < 3 && room.settings.leaderBluffsRule !== 'never') {
-    if (finalBluffs.length < 3) {
-      finalBluffs.push({
-        id: 'entry_decoy_1',
-        authorId: 'BOT_DECOY',
-        text: formatConcept(getDecoyBluff(round.word, 0)),
-        isReal: false,
-      });
-    }
-  }
-
   // Shuffle bluffs randomly
   finalBluffs.sort(() => Math.random() - 0.5);
 
@@ -446,10 +428,11 @@ function handleStartRevealPhase(room: RoomState) {
     realDefinition: formatConcept(round.word.definition),
   });
 
-  // Check game over or sudden death
+  // Check game over or sudden death: DO NOT set GAME_OVER immediately!
+  // Keep phase = 'REVEAL' so all players can analyze who voted for whom, the real definition, and round results.
   const isOver = checkEndGameCondition(room);
   if (isOver) {
-    round.phase = 'GAME_OVER';
+    round.isFinalRound = true;
   }
 
   broadcastToRoom(room.roomCode, {
@@ -519,13 +502,22 @@ function checkSubmissionCompletion(room: RoomState) {
   if (!round || round.phase !== 'SUBMISSION') return;
 
   const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
-  const eligiblePlayers = room.players.filter((p) => {
+  const nonLeaders = room.players.filter((p) => {
     if (!p.isConnected && !p.isBot) return false;
-    if (p.id === round.leaderId && !leaderBluffs) return false;
-    return true;
+    return p.id !== round.leaderId;
   });
 
-  const allSubmitted = eligiblePlayers.every((p) => p.hasSubmitted);
+  const leader = room.players.find((p) => p.id === round.leaderId);
+  const allNonLeadersSubmitted = nonLeaders.every((p) => p.hasSubmitted);
+
+  let allSubmitted = false;
+  if (leaderBluffs) {
+    allSubmitted = allNonLeadersSubmitted && Boolean(leader?.hasSubmitted);
+  } else {
+    // If leader bluffing is optional/never, non-leaders submitting completes the phase
+    allSubmitted = allNonLeadersSubmitted;
+  }
+
   if (allSubmitted) {
     handleStartVotingPhase(room);
   } else {
@@ -541,9 +533,11 @@ function checkVotingCompletion(room: RoomState) {
   if (!round || round.phase !== 'VOTING') return;
 
   const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+  const leaderHasBluff = round.bluffs.some((b) => b.authorId === round.leaderId);
+
   const eligibleVoters = room.players.filter((p) => {
     if (!p.isConnected && !p.isBot) return false;
-    if (p.id === round.leaderId && !leaderBluffs) return false;
+    if (p.id === round.leaderId && !leaderBluffs && !leaderHasBluff) return false;
     return true;
   });
 
@@ -617,6 +611,18 @@ function startRoundWithWord(room: RoomState, word: any) {
 
 function prepareNextRound(room: RoomState) {
   clearRoomTimer(room.roomCode);
+
+  // If winner has been established or it's the final round, transition to GAME_OVER!
+  if (room.winnerId || room.currentRound?.isFinalRound) {
+    if (room.currentRound) {
+      room.currentRound.phase = 'GAME_OVER';
+    }
+    broadcastToRoom(room.roomCode, {
+      type: 'ROOM_UPDATE',
+      room,
+    });
+    return;
+  }
 
   // Determine next leader in round-robin fashion
   const currentIndex = room.players.findIndex((p) => p.id === room.currentRound?.leaderId);
@@ -830,14 +836,45 @@ wss.on('connection', (ws: WebSocket) => {
           if (!isHost && !isLeader) return;
 
           const targetPlayerId = payload.playerId;
-          const delta = typeof payload.delta === 'number' ? payload.delta : 0;
           const targetPlayer = room.players.find((p) => p.id === targetPlayerId);
 
           if (targetPlayer) {
-            if (payload.score !== undefined) {
-              targetPlayer.score = Math.max(0, Math.round(Number(payload.score) || 0));
+            const currentRoundDetail = room.currentRound?.scoreDetails?.find(
+              (d) => d.playerId === targetPlayerId
+            );
+
+            if (payload.roundPoints !== undefined) {
+              // Direct manual set of round points
+              const newRoundPts = Math.max(0, Math.round(Number(payload.roundPoints) || 0));
+              if (currentRoundDetail) {
+                const diff = newRoundPts - currentRoundDetail.pointsEarned;
+                currentRoundDetail.pointsEarned = newRoundPts;
+                targetPlayer.score = Math.max(0, targetPlayer.score + diff);
+              } else {
+                targetPlayer.score = Math.max(0, targetPlayer.score + newRoundPts);
+              }
+            } else if (payload.roundDelta !== undefined) {
+              // Delta adjustment to round points
+              const rDelta = Number(payload.roundDelta) || 0;
+              if (currentRoundDetail) {
+                currentRoundDetail.pointsEarned = Math.max(0, currentRoundDetail.pointsEarned + rDelta);
+              }
+              targetPlayer.score = Math.max(0, targetPlayer.score + rDelta);
+            } else if (payload.score !== undefined) {
+              // Direct manual set of total score
+              const newTotal = Math.max(0, Math.round(Number(payload.score) || 0));
+              const diff = newTotal - targetPlayer.score;
+              targetPlayer.score = newTotal;
+              if (currentRoundDetail) {
+                currentRoundDetail.pointsEarned = Math.max(0, currentRoundDetail.pointsEarned + diff);
+              }
             } else {
+              // Default delta adjustment to total score
+              const delta = typeof payload.delta === 'number' ? payload.delta : 0;
               targetPlayer.score = Math.max(0, targetPlayer.score + delta);
+              if (currentRoundDetail) {
+                currentRoundDetail.pointsEarned = Math.max(0, currentRoundDetail.pointsEarned + delta);
+              }
             }
 
             broadcastToRoom(room.roomCode, {
@@ -993,11 +1030,7 @@ wss.on('connection', (ws: WebSocket) => {
           const player = room.players.find((p) => p.id === meta.playerId);
           if (!player) return;
 
-          const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
-          if (player.id === room.currentRound.leaderId && !leaderBluffs) {
-            return;
-          }
-
+          // The leader is ALWAYS allowed to create a bluff to fool players and score points!
           let bluffText = formatConcept(payload.bluffText || '');
           if (!bluffText) return;
 
@@ -1030,8 +1063,12 @@ wss.on('connection', (ws: WebSocket) => {
           const player = room.players.find((p) => p.id === meta.playerId);
           if (!player) return;
 
+          const isLeader = player.id === room.currentRound.leaderId;
           const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
-          if (player.id === room.currentRound.leaderId && !leaderBluffs) {
+          const leaderHasBluff = room.currentRound.bluffs.some((b) => b.authorId === player.id);
+
+          // If leader is not expected to bluff and did NOT submit a bluff, leader does not vote
+          if (isLeader && !leaderBluffs && !leaderHasBluff) {
             return;
           }
 
@@ -1076,6 +1113,12 @@ wss.on('connection', (ws: WebSocket) => {
           if (!room || !room.currentRound) return;
           // Leader or Host can request next round
           if (room.currentRound.leaderId !== meta.playerId && room.hostId !== meta.playerId) return;
+
+          // If final round, leader/host clicking immediately advances to Game Over podium
+          if (room.winnerId || room.currentRound.isFinalRound) {
+            prepareNextRound(room);
+            break;
+          }
 
           room.currentRound.nextRoundRequested = true;
           room.currentRound.nextRoundRequesterId = meta.playerId;

@@ -82,6 +82,7 @@ export interface RoundData {
   startTime?: number;
   deadline?: number;
   isTieBreak?: boolean;
+  isFinalRound?: boolean;
 }
 
 export interface GameSettings {

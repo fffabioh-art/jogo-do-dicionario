@@ -51,6 +51,8 @@ interface GameContextType {
   resetDictionary: () => void;
   adjustPlayerScore: (playerId: string, delta: number) => void;
   setPlayerScore: (playerId: string, score: number) => void;
+  adjustRoundPoints: (playerId: string, delta: number) => void;
+  setRoundPoints: (playerId: string, roundPoints: number) => void;
   restartGame: () => void;
   leaveRoom: () => void;
 }
@@ -362,6 +364,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundManager.playPop();
   };
 
+  const adjustRoundPoints = (playerId: string, delta: number) => {
+    sendAction('ADJUST_PLAYER_SCORE', { playerId, roundDelta: delta });
+    soundManager.playPop();
+  };
+
+  const setRoundPoints = (playerId: string, roundPoints: number) => {
+    sendAction('ADJUST_PLAYER_SCORE', { playerId, roundPoints });
+    soundManager.playPop();
+  };
+
   const restartGame = () => {
     sendAction('RESTART_GAME');
     soundManager.playPop();
@@ -411,6 +423,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetDictionary,
         adjustPlayerScore,
         setPlayerScore,
+        adjustRoundPoints,
+        setRoundPoints,
         restartGame,
         leaveRoom,
       }}

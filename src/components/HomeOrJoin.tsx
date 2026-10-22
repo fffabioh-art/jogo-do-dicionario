@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import {
-  BookOpen,
   Users,
-  Sparkles,
   Play,
   PlusCircle,
   ArrowRight,
-  Bot,
   Target,
   Clock,
   Settings2,
   FileText,
-  CheckCircle2,
   Upload,
-  Database,
-  Shield,
-  Plus,
-  Minus,
-  Eye,
-  Volume2,
+  BookOpen,
   Trash2,
 } from 'lucide-react';
 import { WordItem } from '../types/game';
@@ -35,36 +26,16 @@ import {
 
 const AVATAR_OPTIONS = [
   '🎓', '🎭', '🦁', '🦊', '🦉', '🎩', '🐙', '🐉', '🕵️', '🧙‍♂️', '🚀', '👑',
-  '🦄', '🐼', '🐯', '🦜', '🐺', '🦹', '🧐', '📜', '🏆', '💎', '🎲', '🪐',
-  '🧠', '🦚', '🦋', '🐝', '🐬', '🦔', '🐆', '⚡', '🌟', '🔥', '📚', '🎨',
-  '🎪', '🔮', '⚔️', '🛡️', '🛸', '🦖'
+  '🦄', '🐼', '🐯', '🧐', '📜', '🏆', '💎', '🎲', '🧠', '⚡', '🔥', '🎨'
 ];
 
 const COLOR_OPTIONS = [
-  { name: 'Ouro Real', hex: '#F59E0B' },
-  { name: 'Âmbar Escuro', hex: '#D97706' },
-  { name: 'Safira Clássica', hex: '#3B82F6' },
-  { name: 'Azul Cobalto', hex: '#1D4ED8' },
-  { name: 'Azul Celeste', hex: '#0EA5E9' },
-  { name: 'Ciano Elétrico', hex: '#06B6D4' },
-  { name: 'Turquesa Marinho', hex: '#14B8A6' },
-  { name: 'Menta Tropical', hex: '#2DD4BF' },
-  { name: 'Esmeralda Nobre', hex: '#10B981' },
-  { name: 'Verde Floresta', hex: '#059669' },
-  { name: 'Verde Lima', hex: '#84CC16' },
-  { name: 'Amarelo Sol', hex: '#EAB308' },
-  { name: 'Laranja Fogo', hex: '#F97316' },
-  { name: 'Coral Solar', hex: '#FB923C' },
-  { name: 'Carmesim Real', hex: '#EF4444' },
-  { name: 'Rubi Vibrante', hex: '#E11D48' },
-  { name: 'Rosa Choque', hex: '#EC4899' },
-  { name: 'Fúcsia Neon', hex: '#D946EF' },
-  { name: 'Púrpura Imperial', hex: '#A855F7' },
-  { name: 'Ametista Violeta', hex: '#8B5CF6' },
-  { name: 'Índigo Místico', hex: '#6366F1' },
-  { name: 'Violeta Escuro', hex: '#7C3AED' },
-  { name: 'Bronze Envelhecido', hex: '#B45309' },
-  { name: 'Prata Nobre', hex: '#94A3B8' },
+  { name: 'Âmbar', hex: '#F59E0B' },
+  { name: 'Safira', hex: '#3B82F6' },
+  { name: 'Esmeralda', hex: '#10B981' },
+  { name: 'Carmesim', hex: '#EF4444' },
+  { name: 'Púrpura', hex: '#A855F7' },
+  { name: 'Ciano', hex: '#06B6D4' },
 ];
 
 interface HomeOrJoinProps {
@@ -87,29 +58,21 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
   const [readingMode, setReadingMode] = useState<'visible' | 'leader_read'>('visible');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Persistent custom words state (saved forever)
+  // Persistent custom words
   const [loadedCustomWords, setLoadedCustomWords] = useState<WordItem[]>(() => getLocalCustomWords());
-  const [loadedFileName, setLoadedFileName] = useState<string | null>(() => {
-    const saved = getLocalCustomWords();
-    return saved.length > 0 ? `Banco salvo (${saved.length} palavras)` : null;
-  });
   const [exclusivePreload, setExclusivePreload] = useState<boolean>(() => getLocalCustomWords().length > 0);
 
-  // Subscribe to persistent storage updates
   useEffect(() => {
     return subscribeToCustomWords((words) => {
       setLoadedCustomWords(words);
       if (words.length > 0) {
         setExclusivePreload(true);
-        setLoadedFileName(`Banco salvo (${words.length} palavras)`);
       } else {
-        setLoadedFileName(null);
         setExclusivePreload(false);
       }
     });
   }, []);
 
-  // Check URL params for room code e.g. ?room=ABCD
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const codeFromUrl = params.get('room');
@@ -129,9 +92,7 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
         const res = parseImportedDictionaryText(content);
         if (res.words.length > 0) {
           setLoadedCustomWords(res.words);
-          setLoadedFileName(file.name);
           setExclusivePreload(true);
-          // Persist forever in localStorage and on server disk
           saveLocalCustomWords(res.words);
           pushLocalCustomWordsToServer(res.words, true).catch(() => {});
         }
@@ -142,13 +103,12 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
 
   const handleClearSavedWords = () => {
     setLoadedCustomWords([]);
-    setLoadedFileName(null);
     setExclusivePreload(false);
     clearLocalCustomWords();
     deleteCustomWordsFromServer().catch(() => {});
   };
 
-  const handleCreate = (e?: React.FormEvent, withBots = false) => {
+  const handleCreate = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const finalName = name.trim() || 'Jogador Anônimo';
     createRoom(
@@ -175,92 +135,86 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4 py-6 sm:py-10 animate-fade-in">
-      {/* Hero Title */}
-      <div className="text-center space-y-3 mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold tracking-wider uppercase">
-          <Sparkles className="w-3.5 h-3.5" />
-          O Clássico Jogo de Blefe e Palavras Raras
-        </div>
-        <h2 className="font-serif font-black text-3xl sm:text-5xl text-amber-100 tracking-tight leading-tight">
+    <div className="w-full max-w-lg mx-auto py-4 sm:py-8 space-y-6 animate-fade-in">
+      {/* Title */}
+      <div className="text-center space-y-1.5">
+        <h2 className="font-serif font-black text-3xl sm:text-4xl text-amber-100 tracking-tight">
           Jogo do Dicionário
         </h2>
-        <p className="text-amber-300/80 text-sm sm:text-base max-w-md mx-auto">
-          Invente definições falsas convincentes, engaste seus amigos e descubra os significados mais inusitados da língua portuguesa.
+        <p className="text-xs sm:text-sm text-stone-400 max-w-sm mx-auto">
+          Invente definições convincentes, blefe com seus amigos e descubra o significado real.
         </p>
       </div>
 
-      {/* Error alert */}
       {error && (
-        <div className="mb-6 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-200 text-sm flex items-center justify-between shadow-lg">
+        <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs flex items-center justify-between">
           <span>{error}</span>
-          <button onClick={clearError} className="text-xs underline font-bold ml-2">
+          <button onClick={clearError} className="underline text-[11px] font-bold ml-2">
             Fechar
           </button>
         </div>
       )}
 
-      {/* Main Action Card */}
-      <div className="bg-stone-900/95 border border-amber-800/40 rounded-2xl p-5 sm:p-7 shadow-2xl backdrop-blur-sm">
+      {/* Main Card */}
+      <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-5">
         {/* Tab Switcher */}
-        <div className="grid grid-cols-2 p-1 bg-stone-950 rounded-xl mb-6 border border-stone-800">
+        <div className="grid grid-cols-2 p-1 bg-stone-950 rounded-xl border border-stone-800 text-xs">
           <button
             type="button"
             onClick={() => setMode('create')}
-            className={`py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
+            className={`py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 ${
               mode === 'create'
-                ? 'bg-amber-600 text-stone-950 shadow-md'
+                ? 'bg-amber-600 text-stone-950'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <PlusCircle className="w-4 h-4" />
-            Criar Nova Sala
+            <PlusCircle className="w-3.5 h-3.5" />
+            <span>Criar Sala</span>
           </button>
           <button
             type="button"
             onClick={() => setMode('join')}
-            className={`py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${
+            className={`py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 ${
               mode === 'join'
-                ? 'bg-amber-600 text-stone-950 shadow-md'
+                ? 'bg-amber-600 text-stone-950'
                 : 'text-stone-400 hover:text-stone-200'
             }`}
           >
-            <Users className="w-4 h-4" />
-            Entrar com Código
+            <Users className="w-3.5 h-3.5" />
+            <span>Entrar com Código</span>
           </button>
         </div>
 
-        {/* Profile Customization */}
-        <div className="space-y-4 mb-6">
+        {/* Profile */}
+        <div className="space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-amber-300/90 uppercase tracking-wider mb-1.5">
-              Seu Nome ou Apelido
+            <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
+              Seu Nome
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Lexicógrafo Astuto"
+              placeholder="Ex: João"
               maxLength={20}
-              className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 text-amber-100 placeholder-stone-600 outline-none transition-all font-medium text-sm sm:text-base"
+              className="w-full px-3.5 py-2 rounded-xl bg-stone-950 border border-stone-800 focus:border-amber-500 text-stone-100 placeholder-stone-600 outline-none text-sm font-medium"
             />
           </div>
 
-          {/* Avatar and Color Row */}
           <div>
-            <label className="block text-xs font-semibold text-amber-300/90 uppercase tracking-wider mb-2">
-              Escolha seu Avatar & Cor
+            <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1.5">
+              Avatar & Cor
             </label>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {AVATAR_OPTIONS.map((em) => (
+            <div className="flex flex-wrap gap-1.5 mb-2.5">
+              {AVATAR_OPTIONS.slice(0, 16).map((em) => (
                 <button
                   key={em}
                   type="button"
                   onClick={() => setAvatar(em)}
-                  className={`w-10 h-10 rounded-xl text-lg flex items-center justify-center transition-all ${
+                  className={`w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all ${
                     avatar === em
-                      ? 'bg-amber-500/30 border-2 border-amber-400 scale-110 shadow-lg'
-                      : 'bg-stone-950/60 border border-stone-800 hover:border-stone-600 hover:scale-105'
+                      ? 'bg-amber-500/20 border border-amber-400 scale-105'
+                      : 'bg-stone-950 border border-stone-800 hover:border-stone-700'
                   }`}
                 >
                   {em}
@@ -276,8 +230,8 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                   onClick={() => setColor(c.hex)}
                   title={c.name}
                   style={{ backgroundColor: c.hex }}
-                  className={`w-7 h-7 rounded-full transition-all ${
-                    color === c.hex ? 'ring-2 ring-white ring-offset-2 ring-offset-stone-900 scale-110' : 'opacity-70 hover:opacity-100'
+                  className={`w-5 h-5 rounded-full transition-all ${
+                    color === c.hex ? 'ring-2 ring-white scale-110' : 'opacity-60 hover:opacity-100'
                   }`}
                 />
               ))}
@@ -285,81 +239,96 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
           </div>
         </div>
 
-        {/* Create Mode Configurations */}
+        {/* Form Body */}
         {mode === 'create' ? (
-          <form onSubmit={(e) => handleCreate(e)} className="space-y-5">
-            {/* Target Score Selector - Editable, default 20 points */}
+          <form onSubmit={(e) => handleCreate(e)} className="space-y-4 pt-2 border-t border-stone-800">
+            {/* Target Score */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-semibold text-amber-300/90 uppercase tracking-wider flex items-center gap-1.5">
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                <span className="text-stone-300 font-medium flex items-center gap-1">
                   <Target className="w-3.5 h-3.5 text-amber-400" />
-                  Meta de Pontos para Vencer (Editável)
-                </label>
-                <span className="font-mono text-xs font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800">
-                  {targetScore} pontos {targetScore === 20 ? '(Padrão)' : ''}
+                  Meta de Pontos:
+                </span>
+                <span className="font-mono font-bold text-amber-300">
+                  {targetScore} pts
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-2 mb-2">
-                {[15, 20, 30, 40].map((pts) => (
-                  <button
-                    key={pts}
-                    type="button"
-                    onClick={() => setTargetScore(pts)}
-                    className={`py-2 rounded-xl text-xs sm:text-sm font-bold border transition-all ${
-                      targetScore === pts
-                        ? 'bg-amber-600 text-stone-950 border-amber-400 shadow-md'
-                        : 'bg-stone-950 border-stone-800 text-stone-300 hover:border-amber-800'
-                    }`}
-                  >
-                    {pts} pts {pts === 20 ? '★' : ''}
-                  </button>
-                ))}
-              </div>
-              {/* Editable Direct Custom Score Input */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-stone-950/80 border border-stone-800">
-                <span className="text-xs text-stone-400 font-medium">Ou personalize a meta:</span>
-                <input
-                  type="number"
-                  min="5"
-                  max="200"
-                  value={targetScore}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    setTargetScore(isNaN(val) ? 20 : Math.max(1, Math.min(200, val)));
-                  }}
-                  className="w-20 px-2.5 py-1 rounded-lg bg-stone-900 border border-amber-600/50 text-amber-300 font-bold text-center text-sm focus:border-amber-400 outline-none"
-                />
-                <span className="text-xs text-amber-300 font-semibold">pontos para o campeão</span>
+              <div className="space-y-1.5">
+                <div className="grid grid-cols-4 gap-1">
+                  {[15, 20, 30, 40].map((pts) => (
+                    <button
+                      key={pts}
+                      type="button"
+                      onClick={() => setTargetScore(pts)}
+                      className={`py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
+                        targetScore === pts
+                          ? 'bg-amber-600 text-stone-950 border-amber-500'
+                          : 'bg-stone-950 border-stone-800 text-stone-400 hover:text-stone-200'
+                      }`}
+                    >
+                      {pts} pts
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 pt-0.5 text-xs">
+                  <span className="text-[11px] text-stone-500">Ou digite:</span>
+                  <input
+                    type="number"
+                    min="5"
+                    max="100"
+                    value={targetScore}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val) && val > 0) setTargetScore(val);
+                    }}
+                    className="w-16 px-2 py-0.5 rounded-lg bg-stone-950 border border-stone-800 focus:border-amber-500 text-amber-300 font-mono text-xs text-center outline-none"
+                  />
+                  <span className="text-[11px] text-stone-500">pontos para vencer</span>
+                </div>
               </div>
             </div>
 
-            {/* Toggle Advanced Host Settings */}
-            <div className="pt-2">
+            {/* Advanced Settings Toggle */}
+            <div>
               <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="text-xs text-amber-400/80 hover:text-amber-300 flex items-center gap-1.5 font-medium transition-colors"
+                className="text-xs text-stone-400 hover:text-amber-300 flex items-center gap-1 font-medium transition-colors"
               >
                 <Settings2 className="w-3.5 h-3.5" />
-                {showAdvanced ? 'Ocultar configurações avançadas' : 'Configurações de tempo e regras (Tempo padrão: Sem limite)'}
+                <span>{showAdvanced ? 'Ocultar opções avançadas' : 'Opções de líder, tempo e leitura'}</span>
               </button>
 
               {showAdvanced && (
-                <div className="mt-3 p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-3 animate-fade-in text-xs">
-                  {/* Submission Time */}
+                <div className="mt-2 p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-3 text-xs animate-fade-in">
                   <div>
-                    <label className="block text-stone-300 font-semibold mb-1 flex items-center justify-between">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-amber-400" />
-                        Tempo da Rodada:
-                      </span>
-                      <span className="text-amber-400 font-mono font-bold">
-                        {submissionTimeLimit === 0 ? 'Sem limite (Apenas aguarda todos)' : `${submissionTimeLimit}s`}
-                      </span>
-                    </label>
-                    <div className="grid grid-cols-4 gap-1.5">
+                    <span className="text-stone-400 block mb-1">Líder da rodada cria blefe e pontua?</span>
+                    <div className="grid grid-cols-2 gap-1">
                       {[
-                        { label: 'Sem limite ★', val: 0 },
+                        { val: 'always', label: 'Sim (Obrigatório)' },
+                        { val: 'never', label: 'Opcional / Não' },
+                      ].map((opt) => (
+                        <button
+                          key={opt.val}
+                          type="button"
+                          onClick={() => setLeaderBluffsRule(opt.val as any)}
+                          className={`py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
+                            leaderBluffsRule === opt.val
+                              ? 'bg-amber-600 text-stone-950 font-bold'
+                              : 'bg-stone-900 border border-stone-800 text-stone-400'
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-stone-400 block mb-1">Tempo por rodada:</span>
+                    <div className="grid grid-cols-4 gap-1">
+                      {[
+                        { label: 'Livre', val: 0 },
                         { label: '45s', val: 45 },
                         { label: '60s', val: 60 },
                         { label: '90s', val: 90 },
@@ -371,10 +340,10 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                             setSubmissionTimeLimit(t.val);
                             setVotingTimeLimit(t.val);
                           }}
-                          className={`py-1.5 px-1.5 text-center text-[11px] rounded-lg font-bold border ${
+                          className={`py-1 rounded-lg text-xs font-medium ${
                             submissionTimeLimit === t.val
-                              ? 'bg-amber-500/20 border-amber-500 text-amber-300'
-                              : 'bg-stone-900 border-stone-800 text-stone-400'
+                              ? 'bg-amber-600 text-stone-950 font-bold'
+                              : 'bg-stone-900 border border-stone-800 text-stone-400'
                           }`}
                         >
                           {t.label}
@@ -383,63 +352,24 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                     </div>
                   </div>
 
-                  {/* Leader bluffing rule */}
                   <div>
-                    <label className="block text-stone-300 font-semibold mb-1">
-                      Líder da Rodada digita blefe?
-                    </label>
-                    <div className="grid grid-cols-2 gap-1.5">
+                    <span className="text-stone-400 block mb-1">Exibição na votação:</span>
+                    <div className="grid grid-cols-2 gap-1">
                       {[
-                        { id: 'never', label: 'NÃO Digita (Padrão)', desc: 'Líder não digita' },
-                        { id: 'always', label: 'Digita', desc: 'Líder digita e vota' },
-                      ].map((r) => (
-                        <button
-                          key={r.id}
-                          type="button"
-                          onClick={() => setLeaderBluffsRule(r.id as any)}
-                          className={`py-2 px-1 text-[11px] rounded-xl font-bold border transition-all flex flex-col items-center justify-center ${
-                            leaderBluffsRule === r.id
-                              ? 'bg-amber-600 text-stone-950 border-amber-400 font-black shadow-md scale-[1.02]'
-                              : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
-                          }`}
-                        >
-                          <span>{r.label}</span>
-                          <span className="text-[9px] opacity-75 font-normal">{r.desc}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Reading Mode (Visual vs Audio/Leader Read) */}
-                  <div>
-                    <label className="block text-stone-300 font-semibold mb-1">
-                      Modo de Exibição dos Significados (Votação):
-                    </label>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {[
-                        {
-                          id: 'visible',
-                          label: 'Modo Visual (Padrão)',
-                          desc: 'Enunciados visíveis na tela de todos',
-                        },
-                        {
-                          id: 'leader_read',
-                          label: 'Áudio / Leitura Líder',
-                          desc: 'Lido em voz alta; votantes só veem A, B, C...',
-                        },
+                        { id: 'visible', label: 'Visual (Padrão)' },
+                        { id: 'leader_read', label: 'Áudio / Leitura' },
                       ].map((m) => (
                         <button
                           key={m.id}
                           type="button"
                           onClick={() => setReadingMode(m.id as any)}
-                          className={`py-2 px-1.5 text-[11px] rounded-xl font-bold border transition-all flex flex-col items-center justify-center text-center ${
+                          className={`py-1 px-2 rounded-lg text-xs font-medium ${
                             readingMode === m.id
-                              ? 'bg-amber-600 text-stone-950 border-amber-400 font-black shadow-md scale-[1.02]'
-                              : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                              ? 'bg-amber-600 text-stone-950 font-bold'
+                              : 'bg-stone-900 border border-stone-800 text-stone-400'
                           }`}
                         >
-                          <span>{m.label}</span>
-                          <span className="text-[9px] opacity-75 font-normal mt-0.5">{m.desc}</span>
+                          {m.label}
                         </button>
                       ))}
                     </div>
@@ -448,113 +378,62 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
               )}
             </div>
 
-            {/* Administrator Database Panel - Visible Forever */}
-            <div className="pt-1">
-              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/40 border border-amber-500/50 shadow-md space-y-2.5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-amber-500 text-stone-950 font-black shadow-md">
-                      <FileText className="w-4 h-4 text-stone-950" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-bold text-amber-200">
-                          Banco de Dados (.txt)
-                        </span>
-                        <span className="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-700/80 px-1.5 py-0.2 rounded font-mono font-semibold">
-                          💾 Salvo Para Sempre
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-stone-400">
-                        {loadedCustomWords.length > 0 ? (
-                          <span className="text-emerald-400 font-semibold">
-                            ✓ {loadedCustomWords.length} palavras salvas permanentemente no jogo
-                          </span>
-                        ) : (
-                          <span>Upe seu Bloco de Notas para ficar gravado para todo sempre.</span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 self-start sm:self-auto flex-wrap">
-                    {onOpenDictionary && (
-                      <button
-                        type="button"
-                        onClick={() => onOpenDictionary(loadedCustomWords.length > 0 ? 'list' : 'notepad')}
-                        className="py-1.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs transition-all shadow-sm flex items-center gap-1 hover:scale-105 active:scale-95"
-                      >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>{loadedCustomWords.length > 0 ? 'Gerenciar Banco' : 'Upar .txt'}</span>
-                      </button>
-                    )}
-
-                    <label className="cursor-pointer py-1.5 px-2.5 rounded-lg bg-stone-800 hover:bg-stone-750 border border-stone-700 text-stone-300 hover:text-stone-100 font-semibold text-xs transition-all flex items-center gap-1">
-                      <span>Selecionar Arquivo</span>
-                      <input
-                        type="file"
-                        accept=".txt,.csv,.json,.tsv,text/plain"
-                        className="hidden"
-                        onChange={handleFileSelect}
-                      />
-                    </label>
-
-                    {loadedCustomWords.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={handleClearSavedWords}
-                        className="py-1.5 px-2 rounded-lg bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-300 text-xs font-bold transition-all flex items-center gap-1"
-                        title="Zerar banco de dados salvo permanentemente"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Zerar</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
+            {/* Custom Words Box */}
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 text-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-stone-300 font-medium flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-amber-400" />
+                  Banco de Palavras (.txt)
+                </span>
                 {loadedCustomWords.length > 0 && (
-                  <div className="pt-1.5 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-amber-200">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={exclusivePreload}
-                        onChange={(e) => setExclusivePreload(e.target.checked)}
-                        className="rounded border-amber-600 bg-stone-900 text-amber-500 focus:ring-0"
-                      />
-                      <span>Jogar exclusivamente com suas palavras (banco padrão oculto)</span>
-                    </label>
+                  <button
+                    type="button"
+                    onClick={handleClearSavedWords}
+                    className="text-rose-400 hover:underline text-[11px]"
+                  >
+                    Zerar ({loadedCustomWords.length})
+                  </button>
+                )}
+              </div>
 
-                    {onOpenDictionary && (
-                      <button
-                        type="button"
-                        onClick={() => onOpenDictionary('list')}
-                        className="text-amber-400 hover:text-amber-300 underline font-semibold flex items-center gap-1"
-                      >
-                        <BookOpen className="w-3 h-3" />
-                        <span>Ver todas ({loadedCustomWords.length})</span>
-                      </button>
-                    )}
-                  </div>
+              <div className="flex items-center gap-2">
+                <label className="cursor-pointer py-1.5 px-3 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-medium flex items-center gap-1.5 transition-colors">
+                  <Upload className="w-3 h-3 text-amber-400" />
+                  <span>{loadedCustomWords.length > 0 ? 'Substituir .txt' : 'Importar .txt'}</span>
+                  <input
+                    type="file"
+                    accept=".txt,.csv,.json,.tsv,text/plain"
+                    className="hidden"
+                    onChange={handleFileSelect}
+                  />
+                </label>
+
+                {onOpenDictionary && (
+                  <button
+                    type="button"
+                    onClick={() => onOpenDictionary('notepad')}
+                    className="text-stone-400 hover:text-stone-200 text-xs underline"
+                  >
+                    Bloco de notas
+                  </button>
                 )}
               </div>
             </div>
 
-            {/* Submit Create Room */}
             <button
               type="submit"
-              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black text-sm sm:text-base tracking-wide uppercase shadow-lg shadow-amber-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
             >
-              <Play className="w-5 h-5 fill-stone-950" />
-              Criar Sala & Abrir Lobby
+              <Play className="w-4 h-4 fill-stone-950" />
+              Criar Sala
             </button>
           </form>
         ) : (
-          /* Join Mode Form */
-          <form onSubmit={handleJoin} className="space-y-5">
+          /* Join Form */
+          <form onSubmit={handleJoin} className="space-y-4 pt-2 border-t border-stone-800">
             <div>
-              <label className="block text-xs font-semibold text-amber-300/90 uppercase tracking-wider mb-1.5">
-                Código da Sala (4 letras)
+              <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
+                Código da Sala
               </label>
               <input
                 type="text"
@@ -562,26 +441,20 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                 onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                 placeholder="Ex: AURE"
                 maxLength={6}
-                className="w-full px-4 py-3 rounded-xl bg-stone-950 border border-stone-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 text-amber-100 placeholder-stone-600 outline-none transition-all font-mono font-bold text-center text-xl tracking-widest uppercase"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-stone-950 border border-stone-800 focus:border-amber-500 text-amber-300 font-mono font-bold text-center text-lg tracking-widest uppercase outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={!roomCode.trim()}
-              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 disabled:opacity-50 text-stone-950 font-black text-sm sm:text-base tracking-wide uppercase shadow-lg shadow-amber-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-stone-950 font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
             >
-              <ArrowRight className="w-5 h-5" />
-              Entrar na Partida
+              <ArrowRight className="w-4 h-4" />
+              Entrar na Sala
             </button>
           </form>
         )}
-      </div>
-
-      {/* Quick Info Footer */}
-      <div className="mt-8 text-center text-xs text-stone-400 space-y-1">
-        <p>Compartilhe o código ou o link da sala para jogar com amigos em qualquer dispositivo!</p>
-        <p className="text-amber-500/80 font-medium">JOGO DO DICIONÁRIO (by Fabulous) — Versão Virtual Oficial</p>
       </div>
     </div>
   );

@@ -226,18 +226,40 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
             />
           </div>
 
+          {/* Destaque do Corredor Selecionado (Grande / Avatar em Destaque) */}
+          <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-stone-950/70 border border-stone-800/80 shadow-inner">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-stone-400 mb-2">
+              Seu Corredor
+            </span>
+            <div
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-b from-stone-900 to-stone-950 border-2 flex items-center justify-center shadow-xl transition-all duration-300 relative overflow-hidden"
+              style={{
+                borderColor: color,
+                boxShadow: `0 0 22px ${color}44`,
+              }}
+            >
+              {/* Glow ambiente com a cor selecionada */}
+              <div
+                className="absolute inset-0 opacity-20 blur-xl pointer-events-none"
+                style={{ backgroundColor: color }}
+              />
+
+              {/* Bonequinho bem maior em destaque */}
+              <StickmanFigure
+                avatarId={avatar}
+                color={color}
+                size={58}
+                state="running"
+                className="relative z-10"
+              />
+            </div>
+          </div>
+
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider">
                 Escolha seu Personagem
               </label>
-              <div className="flex items-center gap-1.5 text-xs text-amber-300">
-                <span className="text-[10px] text-stone-400">Prévia:</span>
-                <div
-                  className="w-3.5 h-3.5 rounded-full border border-stone-600 inline-block shadow-sm"
-                  style={{ backgroundColor: color }}
-                />
-              </div>
             </div>
 
             {/* 24 Stickman Shapes Grid (No names, pure visual forms) */}

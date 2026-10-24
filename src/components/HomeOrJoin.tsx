@@ -382,19 +382,19 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
               {showAdvanced && (
                 <div className="mt-2 p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-3 text-xs animate-fade-in">
                   <div>
-                    <span className="text-stone-400 block mb-1">Líder da rodada cria blefe e pontua?</span>
-                    <div className="grid grid-cols-2 gap-1">
+                    <span className="text-stone-400 block mb-1">Regra do Líder da rodada:</span>
+                    <div className="grid grid-cols-2 gap-1.5">
                       {[
-                        { val: 'always', label: 'Sim (Obrigatório)' },
-                        { val: 'never', label: 'Opcional / Não' },
+                        { val: 'never', label: 'Não escreve e não vota (Padrão)' },
+                        { val: 'always', label: 'Escreve e vota' },
                       ].map((opt) => (
                         <button
                           key={opt.val}
                           type="button"
                           onClick={() => setLeaderBluffsRule(opt.val as any)}
-                          className={`py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
+                          className={`py-2 px-2 rounded-lg text-xs font-medium text-center transition-all ${
                             leaderBluffsRule === opt.val
-                              ? 'bg-amber-600 text-stone-950 font-bold'
+                              ? 'bg-amber-600 text-stone-950 font-bold shadow-sm'
                               : 'bg-stone-900 border border-stone-800 text-stone-400'
                           }`}
                         >

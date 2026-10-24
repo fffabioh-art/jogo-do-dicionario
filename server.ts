@@ -747,6 +747,11 @@ wss.on('connection', (ws: WebSocket) => {
           break;
         }
 
+        case 'PING': {
+          ws.send(JSON.stringify({ type: 'PONG' }));
+          break;
+        }
+
         case 'JOIN_ROOM': {
           const code = (payload.roomCode || '').toUpperCase().trim();
           const room = rooms.get(code);
@@ -855,62 +860,7 @@ wss.on('connection', (ws: WebSocket) => {
         }
 
         case 'ADJUST_PLAYER_SCORE': {
-          const meta = socketMap.get(ws);
-          if (!meta) return;
-          const room = rooms.get(meta.roomCode);
-          if (!room) return;
-
-          const isHost = room.hostId === meta.playerId;
-          const isLeader = room.currentRound?.leaderId === meta.playerId;
-          if (!isHost && !isLeader) return;
-
-          const targetPlayerId = payload.playerId;
-          const targetPlayer = room.players.find((p) => p.id === targetPlayerId);
-
-          if (targetPlayer) {
-            const currentRoundDetail = room.currentRound?.scoreDetails?.find(
-              (d) => d.playerId === targetPlayerId
-            );
-
-            if (payload.roundPoints !== undefined) {
-              // Direct manual set of round points
-              const newRoundPts = Math.max(0, Math.round(Number(payload.roundPoints) || 0));
-              if (currentRoundDetail) {
-                const diff = newRoundPts - currentRoundDetail.pointsEarned;
-                currentRoundDetail.pointsEarned = newRoundPts;
-                targetPlayer.score = Math.max(0, targetPlayer.score + diff);
-              } else {
-                targetPlayer.score = Math.max(0, targetPlayer.score + newRoundPts);
-              }
-            } else if (payload.roundDelta !== undefined) {
-              // Delta adjustment to round points
-              const rDelta = Number(payload.roundDelta) || 0;
-              if (currentRoundDetail) {
-                currentRoundDetail.pointsEarned = Math.max(0, currentRoundDetail.pointsEarned + rDelta);
-              }
-              targetPlayer.score = Math.max(0, targetPlayer.score + rDelta);
-            } else if (payload.score !== undefined) {
-              // Direct manual set of total score
-              const newTotal = Math.max(0, Math.round(Number(payload.score) || 0));
-              const diff = newTotal - targetPlayer.score;
-              targetPlayer.score = newTotal;
-              if (currentRoundDetail) {
-                currentRoundDetail.pointsEarned = Math.max(0, currentRoundDetail.pointsEarned + diff);
-              }
-            } else {
-              // Default delta adjustment to total score
-              const delta = typeof payload.delta === 'number' ? payload.delta : 0;
-              targetPlayer.score = Math.max(0, targetPlayer.score + delta);
-              if (currentRoundDetail) {
-                currentRoundDetail.pointsEarned = Math.max(0, currentRoundDetail.pointsEarned + delta);
-              }
-            }
-
-            broadcastToRoom(room.roomCode, {
-              type: 'ROOM_UPDATE',
-              room,
-            });
-          }
+          // Manual score alterations are disabled by design
           break;
         }
 
@@ -1093,7 +1043,19 @@ wss.on('connection', (ws: WebSocket) => {
           const player = room.players.find((p) => p.id === meta.playerId);
           if (!player) return;
 
-          // The leader is ALWAYS allowed to create a bluff to fool players and score points!
+          // If the leader is not bluffing under room settings, reject submission
+          const isLeader = player.id === room.currentRound.leaderId;
+          const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+          if (isLeader && !leaderBluffs) {
+            ws.send(
+              JSON.stringify({
+                type: 'ERROR',
+                message: 'O líder não escreve nem vota nesta configuração!',
+              })
+            );
+            return;
+          }
+
           let bluffText = formatConcept(payload.bluffText || '');
           if (!bluffText) return;
 
@@ -1174,18 +1136,15 @@ wss.on('connection', (ws: WebSocket) => {
           if (!meta) return;
           const room = rooms.get(meta.roomCode);
           if (!room || !room.currentRound) return;
-          // Leader or Host can request next round
-          if (room.currentRound.leaderId !== meta.playerId && room.hostId !== meta.playerId) return;
 
-          // If final round, leader/host clicking immediately advances to Game Over podium
-          if (room.winnerId || room.currentRound.isFinalRound) {
-            prepareNextRound(room);
-            break;
+          if (!room.currentRound.nextRoundConfirmations) {
+            room.currentRound.nextRoundConfirmations = [];
           }
-
           room.currentRound.nextRoundRequested = true;
           room.currentRound.nextRoundRequesterId = meta.playerId;
-          room.currentRound.nextRoundConfirmations = [meta.playerId];
+          if (!room.currentRound.nextRoundConfirmations.includes(meta.playerId)) {
+            room.currentRound.nextRoundConfirmations.push(meta.playerId);
+          }
 
           // Auto-confirm bots
           const bots = room.players.filter((p) => p.isBot);
@@ -1195,9 +1154,9 @@ wss.on('connection', (ws: WebSocket) => {
             }
           });
 
-          // Check if all active players have already confirmed (e.g. 1 human or all confirmed)
+          // Check if all active players have confirmed
           const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-          const allConfirmed = activePlayers.every((p) =>
+          const allConfirmed = activePlayers.length > 0 && activePlayers.every((p) =>
             room.currentRound?.nextRoundConfirmations?.includes(p.id)
           );
 
@@ -1216,7 +1175,7 @@ wss.on('connection', (ws: WebSocket) => {
           const meta = socketMap.get(ws);
           if (!meta) return;
           const room = rooms.get(meta.roomCode);
-          if (!room || !room.currentRound || !room.currentRound.nextRoundRequested) return;
+          if (!room || !room.currentRound) return;
 
           if (!room.currentRound.nextRoundConfirmations) {
             room.currentRound.nextRoundConfirmations = [];
@@ -1226,8 +1185,16 @@ wss.on('connection', (ws: WebSocket) => {
             room.currentRound.nextRoundConfirmations.push(meta.playerId);
           }
 
+          // Auto-confirm bots
+          const bots = room.players.filter((p) => p.isBot);
+          bots.forEach((b) => {
+            if (!room.currentRound?.nextRoundConfirmations?.includes(b.id)) {
+              room.currentRound?.nextRoundConfirmations?.push(b.id);
+            }
+          });
+
           const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-          const allConfirmed = activePlayers.every((p) =>
+          const allConfirmed = activePlayers.length > 0 && activePlayers.every((p) =>
             room.currentRound?.nextRoundConfirmations?.includes(p.id)
           );
 
@@ -1243,13 +1210,7 @@ wss.on('connection', (ws: WebSocket) => {
         }
 
         case 'FORCE_NEXT_ROUND': {
-          const meta = socketMap.get(ws);
-          if (!meta) return;
-          const room = rooms.get(meta.roomCode);
-          if (!room || !room.currentRound) return;
-          if (room.hostId === meta.playerId || room.currentRound.leaderId === meta.playerId) {
-            prepareNextRound(room);
-          }
+          // Strictly disabled: advancement always requires 100% confirmation
           break;
         }
 

@@ -11,6 +11,7 @@ import { VotingPhase } from './components/VotingPhase';
 import { RevealPhase } from './components/RevealPhase';
 import { GameOver } from './components/GameOver';
 import { ScoreBoard } from './components/ScoreBoard';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function MainGameView() {
   const { room, isHost } = useGame();
@@ -124,8 +125,10 @@ function MainGameView() {
 
 export default function App() {
   return (
-    <GameProvider>
-      <MainGameView />
-    </GameProvider>
+    <ErrorBoundary>
+      <GameProvider>
+        <MainGameView />
+      </GameProvider>
+    </ErrorBoundary>
   );
 }

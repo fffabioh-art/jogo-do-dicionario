@@ -8,8 +8,6 @@ import {
   ChevronDown,
   ChevronUp,
   Users,
-  Plus,
-  Minus,
   Flame,
   Info,
 } from 'lucide-react';
@@ -17,17 +15,14 @@ import { Player, ReceivedVoteDetail } from '../types/game';
 import { StickmanFigure } from './StickmanFigure';
 
 export const ScoreBoard: React.FC = () => {
-  const { room, myPlayerId, isHost, isLeader, adjustPlayerScore, setPlayerScore } = useGame();
+  const { room, myPlayerId } = useGame();
   const [activeTab, setActiveTab] = useState<'standings' | 'votes'>('standings');
   const [expandedPlayerIds, setExpandedPlayerIds] = useState<Record<string, boolean>>({});
-  const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
-  const [editScoreValue, setEditScoreValue] = useState<string>('');
 
   if (!room || room.players.length === 0) return null;
 
   const targetScore = room.settings.targetScore;
   const sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
-  const canManageScores = isHost || isLeader;
 
   const togglePlayerExpanded = (playerId: string) => {
     setExpandedPlayerIds((prev) => ({
@@ -68,20 +63,6 @@ export const ScoreBoard: React.FC = () => {
     (acc, p) => acc + (p.totalVotesReceived || p.receivedVotesHistory?.length || 0),
     0
   );
-
-  const startEditScore = (player: Player) => {
-    if (!canManageScores) return;
-    setEditingPlayerId(player.id);
-    setEditScoreValue(String(player.score));
-  };
-
-  const saveEditScore = (playerId: string) => {
-    const val = parseInt(editScoreValue, 10);
-    if (!isNaN(val) && val >= 0) {
-      setPlayerScore(playerId, val);
-    }
-    setEditingPlayerId(null);
-  };
 
   return (
     <div className="w-full bg-stone-900/90 border border-stone-800 rounded-2xl p-3.5 sm:p-5 shadow-lg space-y-4">
@@ -140,12 +121,6 @@ export const ScoreBoard: React.FC = () => {
       {/* TAB 1: STANDINGS */}
       {activeTab === 'standings' && (
         <div className="space-y-2 animate-fade-in">
-          {canManageScores && (
-            <div className="text-[11px] text-stone-400 flex items-center justify-between px-1">
-              <span>Host/Líder: Use os botões <strong>- / +</strong> ou clique no número para definir a pontuação manualmente.</span>
-            </div>
-          )}
-
           {sortedPlayers.map((player, index) => {
             const isMe = player.id === myPlayerId;
             const percentage = Math.min(100, Math.round((player.score / targetScore) * 100));
@@ -204,58 +179,11 @@ export const ScoreBoard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Right: Score and Manual Stepper/Input */}
+                  {/* Right: Score */}
                   <div className="flex items-center gap-2 shrink-0">
-                    {canManageScores ? (
-                      <div className="flex items-center gap-1 bg-stone-900 px-1.5 py-0.5 rounded-lg border border-stone-800">
-                        <button
-                          onClick={() => adjustPlayerScore(player.id, -1)}
-                          disabled={player.score <= 0}
-                          className="w-6 h-6 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 disabled:opacity-20 text-stone-300 hover:text-amber-300 transition-colors"
-                          title="Diminuir 1 ponto (-1)"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-
-                        {editingPlayerId === player.id ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="999"
-                            value={editScoreValue}
-                            onChange={(e) => setEditScoreValue(e.target.value)}
-                            onBlur={() => saveEditScore(player.id)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') saveEditScore(player.id);
-                              if (e.key === 'Escape') setEditingPlayerId(null);
-                            }}
-                            autoFocus
-                            className="w-12 text-center font-mono font-bold text-amber-300 bg-stone-950 border border-amber-500 rounded text-xs py-0.5 outline-none"
-                          />
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => startEditScore(player)}
-                            className="font-mono font-bold text-amber-200 text-xs min-w-[28px] text-center px-1 hover:text-amber-400 hover:underline"
-                            title="Clique para digitar a pontuação manualmente"
-                          >
-                            {player.score} pts
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => adjustPlayerScore(player.id, 1)}
-                          className="w-6 h-6 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-300 transition-colors"
-                          title="Aumentar 1 ponto (+1)"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="font-mono font-bold text-amber-200 text-xs">
-                        {player.score} <span className="text-stone-500 font-normal">pts</span>
-                      </span>
-                    )}
+                    <span className="font-mono font-bold text-amber-200 text-xs">
+                      {player.score} <span className="text-stone-500 font-normal">pts</span>
+                    </span>
                   </div>
                 </div>
 

@@ -15,9 +15,6 @@ import {
   UserX,
   Bell,
   Check,
-  FastForward,
-  Plus,
-  Minus,
 } from 'lucide-react';
 import { StickmanFigure } from './StickmanFigure';
 
@@ -27,16 +24,11 @@ export const RevealPhase: React.FC = () => {
     myPlayerId,
     isLeader,
     isHost,
-    adjustPlayerScore,
-    setPlayerScore,
-    adjustRoundPoints,
-    setRoundPoints,
     requestNextRound,
     confirmNextRound,
-    forceNextRound,
   } = useGame();
 
-  if (!room || !room.currentRound) return null;
+  if (!room || !room.currentRound || !room.currentRound.word) return null;
 
   const round = room.currentRound;
   const word = round.word;
@@ -93,11 +85,6 @@ export const RevealPhase: React.FC = () => {
   const hasConfirmed = confirmations.includes(myPlayerId);
   const requester = room.players.find((p) => p.id === round.nextRoundRequesterId) || leader;
 
-  const [editingRoundPtsPlayerId, setEditingRoundPtsPlayerId] = React.useState<string | null>(null);
-  const [editRoundPtsValue, setEditRoundPtsValue] = React.useState<string>('');
-  const [editingTotalScorePlayerId, setEditingTotalScorePlayerId] = React.useState<string | null>(null);
-  const [editTotalScoreValue, setEditTotalScoreValue] = React.useState<string>('');
-
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-6 animate-fade-in">
       {/* Top Banner: Celebrates round or final victory */}
@@ -142,52 +129,22 @@ export const RevealPhase: React.FC = () => {
 
       {/* ACTION BANNER (TOP) */}
       <div className="sticky top-2 z-20">
-        {isFinalRound ? (
-          /* FINAL ROUND PROMINENT CALL TO ACTION */
-          <div className="p-4 sm:p-5 rounded-2xl border-2 border-amber-400 bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-left w-full sm:w-auto">
-              <div className="p-2.5 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/40 shrink-0">
-                <Trophy className="w-6 h-6 text-amber-400 animate-bounce" />
-              </div>
-              <div>
-                <h4 className="font-serif font-black text-amber-100 text-base">
-                  Meta Atingida! Fim de Partida
-                </h4>
-                <p className="text-xs text-stone-300">
-                  Analise os votos desta rodada e avance para o pódio com a classificação final.
-                </p>
-              </div>
-            </div>
-
-            {isLeader || isHost ? (
-              <button
-                onClick={requestNextRound}
-                className="w-full sm:w-auto py-3 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shrink-0 border border-amber-300"
-              >
-                <Trophy className="w-4 h-4 fill-stone-950" />
-                <span>Ver Pódio e Classificação Final</span>
-              </button>
-            ) : (
-              <div className="text-xs text-amber-300 font-medium bg-amber-950/80 px-3.5 py-2 rounded-xl border border-amber-800 shrink-0 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                <span>Aguardando o Líder ({leader?.name}) abrir o pódio final...</span>
-              </div>
-            )}
-          </div>
-        ) : !nextRoundRequested ? (
-          /* STANDARD ADVANCE BANNER */
+        {!nextRoundRequested ? (
+          /* WAITING FOR LEADER OR HOST TO REQUEST ADVANCE */
           isLeader || isHost ? (
             <div className="p-3.5 sm:p-4 rounded-2xl border border-amber-600/40 bg-stone-900/95 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-3 text-left w-full sm:w-auto">
                 <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
-                  <Bell className="w-5 h-5" />
+                  {isFinalRound ? <Trophy className="w-5 h-5 text-amber-400" /> : <Bell className="w-5 h-5" />}
                 </div>
                 <div>
                   <h4 className="font-serif font-bold text-amber-100 text-sm">
                     {isLeader ? 'Você é o Líder da Rodada' : 'Você é o Host da Sala'}
                   </h4>
                   <p className="text-xs text-stone-400">
-                    Clique para convocar os jogadores para a próxima rodada.
+                    {isFinalRound
+                      ? 'Convoque todos os participantes para confirmar e ver o pódio final.'
+                      : 'Convoque todos os participantes para a próxima rodada (avanço requer confirmação de todos).'}
                   </p>
                 </div>
               </div>
@@ -196,26 +153,32 @@ export const RevealPhase: React.FC = () => {
                 onClick={requestNextRound}
                 className="w-full sm:w-auto py-2.5 px-5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs uppercase tracking-wider shadow-md transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
               >
-                <Bell className="w-4 h-4" />
-                <span>Solicitar Próxima Rodada</span>
+                {isFinalRound ? <Trophy className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                <span>{isFinalRound ? 'Convocar para Pódio Final' : 'Solicitar Próxima Rodada'}</span>
               </button>
             </div>
           ) : (
             <div className="p-3 rounded-xl bg-stone-950/90 border border-stone-800 text-center text-xs text-amber-300/90 flex items-center justify-center gap-2 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              <span>Aguardando o Líder ({leader?.name || 'da rodada'}) solicitar a próxima rodada...</span>
+              <span>
+                {isFinalRound
+                  ? `Aguardando o Líder (${leader?.name || 'da rodada'}) convocar para o pódio final...`
+                  : `Aguardando o Líder (${leader?.name || 'da rodada'}) solicitar a próxima rodada...`}
+              </span>
             </div>
           )
         ) : (
-          /* CONFIRMATION READY STATE */
+          /* MANDATORY 100% PLAYER CONFIRMATION BANNER */
           <div className="bg-stone-900/95 border-2 border-amber-500 rounded-2xl p-4 shadow-xl text-center space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2.5 text-left">
                 <Bell className="w-4 h-4 text-amber-400 animate-bounce" />
                 <div>
-                  <h4 className="font-bold text-amber-100 text-sm">Próxima Rodada Solicitada</h4>
+                  <h4 className="font-bold text-amber-100 text-sm">
+                    {isFinalRound ? 'Confirmação para o Pódio Final' : 'Confirmação para a Próxima Rodada'}
+                  </h4>
                   <p className="text-xs text-stone-400">
-                    O líder {requester?.name} chamou. Confirme se está pronto:
+                    O avanço só ocorre quando <strong>100% dos jogadores</strong> confirmarem.
                   </p>
                 </div>
               </div>
@@ -237,11 +200,11 @@ export const RevealPhase: React.FC = () => {
                         : 'bg-stone-950 border-stone-800 text-stone-400'
                     }`}
                   >
-                    <span className="truncate">{p.avatar} {p.name} {isMe && '(Você)'}</span>
+                    <span className="truncate">{p.name} {isMe && '(Você)'}</span>
                     {isReady ? (
-                      <span className="text-emerald-400 font-bold">✓</span>
+                      <span className="text-emerald-400 font-bold">✓ Pronto</span>
                     ) : (
-                      <span className="text-stone-500">...</span>
+                      <span className="text-amber-500/70 font-mono text-[10px]">Aguardando...</span>
                     )}
                   </div>
                 );
@@ -254,22 +217,12 @@ export const RevealPhase: React.FC = () => {
                 className="py-2.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 mx-auto"
               >
                 <Check className="w-4 h-4" />
-                <span>Estou Pronto! Continuar</span>
+                <span>{isFinalRound ? '✓ Estou Pronto! Ver Pódio Final' : '✓ Estou Pronto para a Próxima Rodada'}</span>
               </button>
             ) : (
-              <div className="text-xs text-emerald-400 font-medium">
-                ✓ Você confirmou! Aguardando os demais jogadores ({confirmations.length}/{activePlayers.length})...
+              <div className="text-xs text-emerald-400 font-medium py-1">
+                ✓ Sua confirmação foi registrada! Aguardando os demais participantes ({confirmations.length} de {activePlayers.length})...
               </div>
-            )}
-
-            {isHost && confirmations.length < activePlayers.length && (
-              <button
-                onClick={forceNextRound}
-                className="inline-flex items-center gap-1 text-[11px] text-stone-400 hover:text-amber-300 transition-colors underline pt-1"
-              >
-                <FastForward className="w-3 h-3 text-amber-400" />
-                Forçar início imediato (Host)
-              </button>
             )}
           </div>
         )}
@@ -455,11 +408,6 @@ export const RevealPhase: React.FC = () => {
             <Award className="w-4 h-4 text-amber-400" />
             Pontuação da Rodada & Placar Atual
           </h3>
-          {(isHost || isLeader) && (
-            <span className="text-[10px] text-amber-400/90 font-medium">
-              Definição manual liberada (Host/Líder) · Use - / + ou clique nos números
-            </span>
-          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -467,7 +415,6 @@ export const RevealPhase: React.FC = () => {
             const player = room.players.find((p) => p.id === detail.playerId);
             if (!player) return null;
             const isMe = player.id === myPlayerId;
-            const canEdit = isHost || isLeader;
 
             return (
               <div
@@ -490,127 +437,15 @@ export const RevealPhase: React.FC = () => {
 
                 <div className="flex items-center justify-between pt-1 border-t border-stone-900 font-mono text-xs gap-2 flex-wrap">
                   {/* Pontos da Rodada */}
-                  <div className="flex items-center gap-1 bg-stone-900/80 px-2 py-1 rounded-lg border border-stone-800" title="Pontos obtidos nesta rodada">
+                  <div className="flex items-center gap-1.5 bg-stone-900/80 px-2.5 py-1 rounded-lg border border-stone-800" title="Pontos obtidos nesta rodada">
                     <span className="text-[10px] text-stone-400 font-sans mr-0.5">Rodada:</span>
-                    {canEdit ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => adjustRoundPoints(player.id, -1)}
-                          disabled={detail.pointsEarned <= 0}
-                          className="w-5 h-5 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 disabled:opacity-20 text-stone-300 hover:text-emerald-300 text-[10px]"
-                          title="Diminuir pontos da rodada (-1)"
-                        >
-                          <Minus className="w-2.5 h-2.5" />
-                        </button>
-                        {editingRoundPtsPlayerId === player.id ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="99"
-                            value={editRoundPtsValue}
-                            onChange={(e) => setEditRoundPtsValue(e.target.value)}
-                            onBlur={() => {
-                              const v = parseInt(editRoundPtsValue, 10);
-                              if (!isNaN(v) && v >= 0) setRoundPoints(player.id, v);
-                              setEditingRoundPtsPlayerId(null);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                const v = parseInt(editRoundPtsValue, 10);
-                                if (!isNaN(v) && v >= 0) setRoundPoints(player.id, v);
-                                setEditingRoundPtsPlayerId(null);
-                              }
-                              if (e.key === 'Escape') setEditingRoundPtsPlayerId(null);
-                            }}
-                            autoFocus
-                            className="w-9 text-center font-mono font-bold text-emerald-300 bg-stone-950 border border-emerald-500 rounded text-xs py-0.5 outline-none"
-                          />
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingRoundPtsPlayerId(player.id);
-                              setEditRoundPtsValue(String(detail.pointsEarned));
-                            }}
-                            className="font-mono font-bold text-emerald-400 text-xs min-w-[24px] text-center hover:underline"
-                            title="Clique para definir manualmente os pontos da rodada"
-                          >
-                            +{detail.pointsEarned}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => adjustRoundPoints(player.id, 1)}
-                          className="w-5 h-5 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-emerald-300 text-[10px]"
-                          title="Aumentar pontos da rodada (+1)"
-                        >
-                          <Plus className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-emerald-400 font-bold">+{detail.pointsEarned} pts</span>
-                    )}
+                    <span className="text-emerald-400 font-bold">+{detail.pointsEarned} pts</span>
                   </div>
 
                   {/* Placar Total */}
-                  <div className="flex items-center gap-1 bg-stone-900/80 px-2 py-1 rounded-lg border border-stone-800" title="Placar Total Acumulado">
+                  <div className="flex items-center gap-1.5 bg-stone-900/80 px-2.5 py-1 rounded-lg border border-stone-800" title="Placar Total Acumulado">
                     <span className="text-[10px] text-stone-400 font-sans mr-0.5">Total:</span>
-                    {canEdit ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => adjustPlayerScore(player.id, -1)}
-                          disabled={player.score <= 0}
-                          className="w-5 h-5 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 disabled:opacity-20 text-stone-300 hover:text-amber-300 text-[10px]"
-                          title="Diminuir total (-1)"
-                        >
-                          <Minus className="w-2.5 h-2.5" />
-                        </button>
-                        {editingTotalScorePlayerId === player.id ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="999"
-                            value={editTotalScoreValue}
-                            onChange={(e) => setEditTotalScoreValue(e.target.value)}
-                            onBlur={() => {
-                              const v = parseInt(editTotalScoreValue, 10);
-                              if (!isNaN(v) && v >= 0) setPlayerScore(player.id, v);
-                              setEditingTotalScorePlayerId(null);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                const v = parseInt(editTotalScoreValue, 10);
-                                if (!isNaN(v) && v >= 0) setPlayerScore(player.id, v);
-                                setEditingTotalScorePlayerId(null);
-                              }
-                              if (e.key === 'Escape') setEditingTotalScorePlayerId(null);
-                            }}
-                            autoFocus
-                            className="w-10 text-center font-mono font-bold text-amber-300 bg-stone-950 border border-amber-500 rounded text-xs py-0.5 outline-none"
-                          />
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingTotalScorePlayerId(player.id);
-                              setEditTotalScoreValue(String(player.score));
-                            }}
-                            className="font-mono font-bold text-amber-300 text-xs min-w-[24px] text-center hover:underline"
-                            title="Clique para definir o total manualmente"
-                          >
-                            {player.score} pts
-                          </button>
-                        )}
-                        <button
-                          onClick={() => adjustPlayerScore(player.id, 1)}
-                          className="w-5 h-5 rounded flex items-center justify-center bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-amber-300 text-[10px]"
-                          title="Aumentar total (+1)"
-                        >
-                          <Plus className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-amber-300 font-bold">{player.score} pts</span>
-                    )}
+                    <span className="text-amber-300 font-bold">{player.score} pts</span>
                   </div>
                 </div>
               </div>

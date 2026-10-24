@@ -8,7 +8,7 @@ export const BluffPhase: React.FC = () => {
   const [bluffText, setBluffText] = useState('');
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
-  if (!room || !room.currentRound) return null;
+  if (!room || !room.currentRound || !room.currentRound.word) return null;
 
   const round = room.currentRound;
   const word = round.word;
@@ -74,7 +74,27 @@ export const BluffPhase: React.FC = () => {
       </div>
 
       {/* Main Action Area */}
-      {hasSubmitted ? (
+      {isLeader && !leaderIsBluffing ? (
+        /* Strict Leader Waiting Card when rule is "Não escreve e não vota" */
+        <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-6 text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-amber-950/80 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto text-xl">
+            👑
+          </div>
+          <div>
+            <h3 className="font-bold text-base text-stone-100">
+              Você é o Líder da Rodada
+            </h3>
+            <p className="text-xs text-stone-400 mt-1 max-w-md mx-auto">
+              Nesta partida, o líder não escreve nem vota. Aguarde os outros participantes enviarem seus blefes para prosseguir para a votação.
+            </p>
+          </div>
+
+          <div className="text-xs text-amber-400 font-mono flex items-center justify-center gap-1.5 pt-2">
+            <Users className="w-3.5 h-3.5" />
+            <span>Respostas recebidas: <strong>{submittedCount} de {eligiblePlayers.length}</strong></span>
+          </div>
+        </div>
+      ) : hasSubmitted ? (
         /* Submitted Confirmation Card */
         <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-6 text-center space-y-3">
           <div className="w-10 h-10 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
@@ -101,7 +121,7 @@ export const BluffPhase: React.FC = () => {
           </div>
         </div>
       ) : (
-        /* Submission Form (available for everyone, including Leader) */
+        /* Submission Form */
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="bg-stone-900/90 border border-stone-800 rounded-2xl p-4 sm:p-5 space-y-3">
             {isLeader && (
@@ -115,7 +135,7 @@ export const BluffPhase: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-stone-300 text-[11px]">
-                  Crie um significado falso para enganar os outros e pontuar! {!leaderIsBluffing && '(Opcional: se não quiser blefar nesta rodada, apenas aguarde os outros enviarem)'}
+                  Você também escreve e vota nesta rodada! Crie um significado falso convincente para pontuar.
                 </p>
               </div>
             )}
@@ -148,7 +168,7 @@ export const BluffPhase: React.FC = () => {
               className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-stone-950 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
             >
               <Send className="w-3.5 h-3.5" />
-              {isLeader ? 'Enviar Blefe do Líder e Tentar Pontuar' : 'Enviar Blefe'}
+              {isLeader ? 'Enviar Blefe do Líder' : 'Enviar Blefe'}
             </button>
           </div>
 

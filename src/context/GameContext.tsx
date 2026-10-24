@@ -147,6 +147,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             break;
 
           case 'ROOM_UPDATE':
+            if (data.room?.roomCode) {
+              currentRoomCodeRef.current = data.room.roomCode;
+              localStorage.setItem(STORAGE_KEYS.LAST_ROOM, data.room.roomCode);
+            }
             if (data.room && Array.isArray(data.room.customWords) && data.room.customWords.length > 0) {
               saveLocalCustomWords(data.room.customWords);
             }
@@ -165,6 +169,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
             break;
 
+          case 'PONG':
+            // Heartbeat response acknowledged
+            break;
+
           case 'ERROR':
             setError(data.message);
             break;
@@ -180,10 +188,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ws.onclose = () => {
       setConnectionStatus('disconnected');
       socketRef.current = null;
-      // Auto reconnect after 2 seconds
+      // Auto reconnect after 1.5 seconds
+      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = setTimeout(() => {
         connectSocket();
-      }, 2000);
+      }, 1500);
     };
 
     ws.onerror = (err) => {
@@ -193,11 +202,50 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     connectSocket();
+
+    // Heartbeat ping interval every 12 seconds to prevent mobile TCP idle timeouts
+    const pingInterval = setInterval(() => {
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        try {
+          socketRef.current.send(JSON.stringify({ type: 'PING' }));
+        } catch {}
+      } else if (!socketRef.current || socketRef.current.readyState === WebSocket.CLOSED) {
+        connectSocket();
+      }
+    }, 12000);
+
+    // Reconnection triggers on tab focus / mobile resume / network restored
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const lastRoom = currentRoomCodeRef.current || localStorage.getItem(STORAGE_KEYS.LAST_ROOM);
+        if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
+          connectSocket();
+        } else if (lastRoom && myPlayerId) {
+          socketRef.current.send(
+            JSON.stringify({
+              type: 'RECONNECT',
+              payload: { roomCode: lastRoom, playerId: myPlayerId },
+            })
+          );
+        }
+      }
+    };
+
+    const handleOnline = () => {
+      connectSocket();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('online', handleOnline);
+
     return () => {
+      clearInterval(pingInterval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('online', handleOnline);
       if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
       if (socketRef.current) socketRef.current.close();
     };
-  }, [connectSocket]);
+  }, [connectSocket, myPlayerId]);
 
   const sendAction = useCallback((type: string, payload: any = {}) => {
     if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {

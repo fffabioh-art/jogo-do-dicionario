@@ -247,21 +247,21 @@ export const Lobby: React.FC = () => {
             {/* Leader Bluffing Setting */}
             <div className="pt-2 border-t border-stone-800/60">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-stone-400">Líder cria blefe e pontua?</span>
+                <span className="text-stone-400">Regra do Líder da Rodada:</span>
                 <span className="font-medium text-amber-300">
-                  {room.settings.leaderBluffsRule === 'always' ? 'Sim' : 'Opcional'}
+                  {room.settings.leaderBluffsRule === 'always' ? 'Escreve e vota' : 'Não escreve e não vota'}
                 </span>
               </div>
               {isHost ? (
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-2 gap-1.5">
                   {[
-                    { val: 'always', label: 'Sim (Obrigatório)' },
-                    { val: 'never', label: 'Opcional / Não' },
+                    { val: 'never', label: 'Não escreve e não vota (Padrão)' },
+                    { val: 'always', label: 'Escreve e vota' },
                   ].map((opt) => (
                     <button
                       key={opt.val}
                       onClick={() => updateSettings({ leaderBluffsRule: opt.val as any })}
-                      className={`py-1 px-2 rounded-lg text-[11px] font-medium transition-all ${
+                      className={`py-1.5 px-2 rounded-lg text-[11px] font-medium text-center transition-all ${
                         (room.settings.leaderBluffsRule || 'never') === opt.val
                           ? 'bg-amber-600 text-stone-950 font-bold'
                           : 'bg-stone-950 border border-stone-800 text-stone-400 hover:text-stone-200'
@@ -274,8 +274,8 @@ export const Lobby: React.FC = () => {
               ) : (
                 <p className="text-stone-500 text-[11px]">
                   {room.settings.leaderBluffsRule === 'always'
-                    ? 'O líder da rodada também cria um blefe e tenta pontuar'
-                    : 'O líder pode optar por blefar ou apenas mediar'}
+                    ? 'O líder escreve um blefe e participa da votação'
+                    : 'O líder não escreve blefe e não vota (apenas media a rodada)'}
                 </p>
               )}
             </div>

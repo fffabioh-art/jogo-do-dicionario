@@ -27,6 +27,7 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 app.use(express.json());
+app.use(express.static(path.resolve(__dirname, 'public')));
 
 // Persistent disk storage file for custom words (database uploaded by admin)
 const PERSISTENT_WORDS_FILE = path.join(__dirname, 'persistent_custom_words.json');

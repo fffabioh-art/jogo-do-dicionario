@@ -3,7 +3,7 @@ import { WordItem } from '../types/game';
 const STORAGE_KEY = 'jdd_persistent_custom_words';
 const EVENT_NAME = 'jdd_custom_words_updated';
 
-// Read saved words from localStorage
+// Read saved words from localStorage (100% client-side, zero backend dependency)
 export function getLocalCustomWords(): WordItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -35,59 +35,6 @@ export function clearLocalCustomWords(): void {
     window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: [] }));
   } catch (err) {
     console.error('Error clearing custom words from localStorage:', err);
-  }
-}
-
-// Sync with server persistent storage (API)
-export async function syncCustomWordsWithServer(): Promise<WordItem[]> {
-  try {
-    const res = await fetch('/api/dictionary/custom');
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data.words)) {
-        const localWords = getLocalCustomWords();
-        // If server has words, store them locally
-        if (data.words.length > 0) {
-          saveLocalCustomWords(data.words);
-          return data.words;
-        } else if (localWords.length > 0) {
-          // If local has words but server doesn't, push local to server
-          await pushLocalCustomWordsToServer(localWords);
-          return localWords;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('Could not sync custom words with server, using local storage:', err);
-  }
-  return getLocalCustomWords();
-}
-
-// Push local words to server to persist on server disk
-export async function pushLocalCustomWordsToServer(words: WordItem[], replaceAll = true): Promise<boolean> {
-  try {
-    const res = await fetch('/api/dictionary/custom', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ words, replaceAll }),
-    });
-    return res.ok;
-  } catch (err) {
-    console.warn('Error pushing custom words to server:', err);
-    return false;
-  }
-}
-
-// Delete words from server disk
-export async function deleteCustomWordsFromServer(): Promise<boolean> {
-  try {
-    const res = await fetch('/api/dictionary/custom', {
-      method: 'DELETE',
-    });
-    return res.ok;
-  } catch (err) {
-    console.warn('Error deleting custom words from server:', err);
-    return false;
   }
 }
 

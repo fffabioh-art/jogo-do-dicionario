@@ -7,8 +7,6 @@ import {
   getLocalCustomWords,
   saveLocalCustomWords,
   clearLocalCustomWords,
-  pushLocalCustomWordsToServer,
-  deleteCustomWordsFromServer,
   subscribeToCustomWords,
 } from '../utils/persistentStorage';
 import {
@@ -243,7 +241,6 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
         }
       }
       saveLocalCustomWords(current);
-      pushLocalCustomWordsToServer(current, replaceAll).catch(() => {});
     }
 
     if (replaceAll) {
@@ -273,10 +270,9 @@ export const DictionaryAdminModal: React.FC<DictionaryAdminModalProps> = ({
       resetDictionary();
     } else {
       clearLocalCustomWords();
-      deleteCustomWordsFromServer().catch(() => {});
     }
     setShowConfirmReset(false);
-    setImportSuccessMsg('🗑️ BANCO DE DADOS ZERADO! Todas as palavras foram apagadas no navegador e no servidor. Agora você pode upar o novo arquivo.');
+    setImportSuccessMsg('🗑️ BANCO DE DADOS ZERADO! Todas as palavras personalizadas foram apagadas no navegador. Agora você pode carregar o novo arquivo.');
     setActiveTab('notepad');
     setTimeout(() => {
       setImportSuccessMsg(null);
@@ -367,7 +363,6 @@ Zaragata: Grande confusão ruidosa, briga desordenada ou motim com gritaria.
     const current = getLocalCustomWords();
     current.push(newWordItem);
     saveLocalCustomWords(current);
-    pushLocalCustomWordsToServer([newWordItem], false).catch(() => {});
 
     setSingleWord('');
     setSingleDef('');

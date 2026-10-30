@@ -1,9 +1,12 @@
-import { WordItem } from '../types/game';
+import { WordItem, DicionarioJsonItem } from '../types/game';
 import { removeAccentsKeepCedilla, ensureConceptPeriod, formatConcept } from '../utils/textFormatting';
+import dicionarioStaticJson from './dicionario.json';
 
 export { removeAccentsKeepCedilla, ensureConceptPeriod, formatConcept };
 
-export const DICTIONARY_WORDS: WordItem[] = [
+export const DICIONARIO_JSON_ITEMS: DicionarioJsonItem[] = dicionarioStaticJson;
+
+const BASE_DICTIONARY_WORDS: WordItem[] = [
   {
     id: 'w1',
     word: 'Abelhudice',
@@ -646,6 +649,39 @@ export const DICTIONARY_WORDS: WordItem[] = [
   }
 ];
 
+// Merge static dicionario.json ("palavra", "correta", "falsas") with the base dictionary
+const jsonMap = new Map<string, DicionarioJsonItem>();
+for (const entry of DICIONARIO_JSON_ITEMS) {
+  jsonMap.set(entry.palavra.toLowerCase().trim(), entry);
+}
+
+const mergedBase: WordItem[] = BASE_DICTIONARY_WORDS.map((item) => {
+  const match = jsonMap.get(item.word.toLowerCase().trim());
+  if (match) {
+    jsonMap.delete(item.word.toLowerCase().trim());
+    return {
+      ...item,
+      definition: match.correta,
+      falsas: match.falsas,
+    };
+  }
+  return item;
+});
+
+let extraIdx = 1;
+for (const leftover of jsonMap.values()) {
+  mergedBase.unshift({
+    id: `json_${extraIdx++}`,
+    word: leftover.palavra,
+    partOfSpeech: 'substantivo',
+    definition: leftover.correta,
+    falsas: leftover.falsas,
+    difficulty: 'dificil',
+  });
+}
+
+export const DICTIONARY_WORDS: WordItem[] = mergedBase;
+
 // Combined words helper (supports playing exclusively with the imported database)
 // All definitions are normalized via formatConcept (removing accents/tildes, keeping Ç, UPPERCASE, and single period)
 export function getAllWords(customWords?: WordItem[], exclusiveCustomWords?: boolean): WordItem[] {
@@ -661,11 +697,12 @@ export function getAllWords(customWords?: WordItem[], exclusiveCustomWords?: boo
   return list.map((w) => ({
     ...w,
     definition: formatConcept(w.definition),
+    falsas: w.falsas ? w.falsas.map((f) => formatConcept(f)) : undefined,
   }));
 }
 
 // Pure uniform Fisher-Yates shuffle
-function fisherYatesShuffle<T>(array: T[]): T[] {
+export function fisherYatesShuffle<T>(array: T[]): T[] {
   const result = [...array];
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -713,13 +750,18 @@ export function parseImportedDictionaryText(rawText: string): { words: WordItem[
         const words: WordItem[] = [];
         for (let i = 0; i < parsed.length; i++) {
           const item = parsed[i];
-          if (item && item.word && item.definition) {
+          const rawWord = item?.word || item?.palavra;
+          const rawDef = item?.definition || item?.correta;
+          if (item && rawWord && rawDef) {
             words.push({
               id: item.id || `custom_${Date.now()}_${i}`,
-              word: String(item.word).replace(/^[*"']+|[*"']+$/g, '').trim(),
+              word: String(rawWord).replace(/^[*"']+|[*"']+$/g, '').trim(),
               definition: formatConcept(
-                String(item.definition).replace(/^[*"']+|[*"']+$/g, '').trim()
+                String(rawDef).replace(/^[*"']+|[*"']+$/g, '').trim()
               ),
+              falsas: Array.isArray(item.falsas)
+                ? item.falsas.map((f: string) => formatConcept(String(f)))
+                : undefined,
               partOfSpeech: item.partOfSpeech ? String(item.partOfSpeech).trim() : 'substantivo',
               exampleSentence: item.exampleSentence ? String(item.exampleSentence).trim() : undefined,
               difficulty: item.difficulty || 'medio',
@@ -881,7 +923,16 @@ export const DECOY_BLUFF_TEMPLATES: Record<string, string[]> = {
 };
 
 export function getDecoyBluff(word: WordItem, index = 0): string {
+  if (word.falsas && word.falsas.length > 0) {
+    return formatConcept(word.falsas[index % word.falsas.length]);
+  }
+  const match = DICIONARIO_JSON_ITEMS.find(
+    (entry) => entry.palavra.toLowerCase().trim() === word.word.toLowerCase().trim()
+  );
+  if (match && match.falsas.length > 0) {
+    return formatConcept(match.falsas[index % match.falsas.length]);
+  }
   const templates = DECOY_BLUFF_TEMPLATES.default;
   const pick = templates[(word.word.length + index * 3) % templates.length];
-  return pick;
+  return formatConcept(pick);
 }

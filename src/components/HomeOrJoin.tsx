@@ -19,8 +19,6 @@ import {
   getLocalCustomWords,
   saveLocalCustomWords,
   clearLocalCustomWords,
-  pushLocalCustomWordsToServer,
-  deleteCustomWordsFromServer,
   subscribeToCustomWords,
 } from '../utils/persistentStorage';
 import { STICKMAN_PRESETS, StickmanFigure } from './StickmanFigure';
@@ -119,7 +117,6 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
           setLoadedCustomWords(res.words);
           setExclusivePreload(true);
           saveLocalCustomWords(res.words);
-          pushLocalCustomWordsToServer(res.words, true).catch(() => {});
         }
       }
     };
@@ -130,7 +127,6 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
     setLoadedCustomWords([]);
     setExclusivePreload(false);
     clearLocalCustomWords();
-    deleteCustomWordsFromServer().catch(() => {});
   };
 
   const handleCreate = (e?: React.FormEvent) => {

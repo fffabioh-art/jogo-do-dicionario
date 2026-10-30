@@ -31,11 +31,18 @@ export interface Player {
   receivedVotesHistory?: ReceivedVoteDetail[];
 }
 
+export interface DicionarioJsonItem {
+  palavra: string;
+  correta: string;
+  falsas: string[];
+}
+
 export interface WordItem {
   id: string;
   word: string;
   definition: string;
   partOfSpeech: string; // e.g. "substantivo masculino", "adjetivo"
+  falsas?: string[]; // 3 convincing fake definitions from dicionario.json
   etymology?: string;
   exampleSentence?: string;
   difficulty?: 'facil' | 'medio' | 'dificil' | 'insano';

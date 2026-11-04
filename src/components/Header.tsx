@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { BookOpen, Volume2, VolumeX, HelpCircle, LogOut, Copy, Check, FileText } from 'lucide-react';
+import { BookOpen, Volume2, VolumeX, HelpCircle, LogOut, Copy, Check } from 'lucide-react';
 
 interface HeaderProps {
   onOpenRules: () => void;
-  onOpenDictionary?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary }) => {
-  const { room, isHost, isMuted, setIsMuted, leaveRoom, connectionStatus } = useGame();
+export const Header: React.FC<HeaderProps> = ({ onOpenRules }) => {
+  const { room, isMuted, setIsMuted, leaveRoom, connectionStatus } = useGame();
   const [copied, setCopied] = useState(false);
 
   const copyRoomCode = () => {
@@ -19,16 +18,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-stone-900/90 backdrop-blur-md border-b border-stone-800 text-stone-100 px-4 py-2.5">
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 bg-stone-900/95 backdrop-blur-md border-b border-stone-800 text-stone-100 px-3 sm:px-4 py-2.5">
+      <div className="max-w-5xl mx-auto flex items-center justify-between gap-2">
         {/* Brand */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
             <BookOpen className="w-4 h-4" />
           </div>
-          <div>
-            <span className="font-serif font-black text-base tracking-tight text-amber-100">
-              Jogo do Dicionário <span className="text-amber-400 font-sans text-xs font-semibold tracking-normal">by Fabulous</span>
+          <div className="min-w-0">
+            <span className="font-serif font-black text-sm sm:text-base tracking-tight text-amber-100 block truncate">
+              Jogo do Dicionário{' '}
+              <span className="text-amber-400 font-sans text-[11px] sm:text-xs font-semibold tracking-normal">
+                by Fabulous
+              </span>
             </span>
           </div>
         </div>
@@ -36,11 +38,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
         {/* Room Code Badge if in room */}
         {room && (
           <button
+            type="button"
             onClick={copyRoomCode}
             title="Clique para copiar código da sala"
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-stone-800/80 hover:bg-stone-800 border border-stone-700/80 text-xs transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-800/80 hover:bg-stone-800 border border-stone-700/80 text-xs transition-colors shrink-0"
           >
-            <span className="text-stone-400 font-medium">Sala:</span>
+            <span className="text-stone-400 font-medium hidden xs:inline">Sala:</span>
             <span className="font-mono font-bold text-amber-300 tracking-wider">{room.roomCode}</span>
             {copied ? (
               <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -51,21 +54,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-1.5">
-          {/* Admin Word Bank Button */}
-          {onOpenDictionary && (!room || isHost) && (
-            <button
-              onClick={onOpenDictionary}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-300 text-xs font-semibold border border-stone-700 transition-colors"
-              title="Banco de palavras personalizado"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Banco .txt</span>
-            </button>
-          )}
-
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Sound Mute Toggle */}
           <button
+            type="button"
             onClick={() => setIsMuted(!isMuted)}
             className="p-1.5 rounded-lg text-stone-400 hover:text-stone-200 hover:bg-stone-800 transition-colors"
             title={isMuted ? 'Ativar Sons' : 'Silenciar Sons'}
@@ -75,8 +67,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
 
           {/* Rules Button */}
           <button
+            type="button"
             onClick={onOpenRules}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-stone-300 hover:text-white hover:bg-stone-800 text-xs font-medium transition-colors"
+            className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-stone-800 text-xs font-medium transition-colors"
             title="Como Jogar"
           >
             <HelpCircle className="w-3.5 h-3.5" />
@@ -85,20 +78,22 @@ export const Header: React.FC<HeaderProps> = ({ onOpenRules, onOpenDictionary })
 
           {/* Live Indicator */}
           <span
-            className={`w-2 h-2 rounded-full ${
+            className={`w-2 h-2 rounded-full shrink-0 ${
               connectionStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'
             }`}
             title={connectionStatus === 'connected' ? 'Conectado' : 'Conectando'}
           />
 
-          {/* Leave Room Button */}
+          {/* Prominent Leave Room Button (Mobile & Desktop) */}
           {room && (
             <button
+              type="button"
               onClick={leaveRoom}
-              className="p-1.5 rounded-lg text-stone-400 hover:text-rose-400 hover:bg-stone-800 transition-colors ml-1"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-950/90 hover:bg-rose-900 border border-rose-500/40 text-rose-200 text-xs font-bold transition-colors ml-0.5 shrink-0 active:scale-95"
               title="Sair da Sala"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 text-rose-300" />
+              <span>Sair</span>
             </button>
           )}
         </div>

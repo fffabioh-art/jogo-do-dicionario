@@ -165,6 +165,11 @@ export const ScoreBoard: React.FC = () => {
                         {isCurrentLeader && (
                           <Crown className="w-3 h-3 text-amber-400 shrink-0" />
                         )}
+                        {!player.isConnected && !player.isBot && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950/80 border border-amber-700/50 text-amber-300 font-normal shrink-0">
+                            Reconectando (pts salvos)
+                          </span>
+                        )}
                       </div>
                       {totalVotes > 0 && (
                         <button

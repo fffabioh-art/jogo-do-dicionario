@@ -6,21 +6,11 @@ import {
   PlusCircle,
   ArrowRight,
   Target,
-  Clock,
   Settings2,
-  FileText,
-  Upload,
-  BookOpen,
-  Trash2,
+  RotateCcw,
+  ShieldCheck,
+  X,
 } from 'lucide-react';
-import { WordItem } from '../types/game';
-import { parseImportedDictionaryText } from '../data/dictionary';
-import {
-  getLocalCustomWords,
-  saveLocalCustomWords,
-  clearLocalCustomWords,
-  subscribeToCustomWords,
-} from '../utils/persistentStorage';
 import { STICKMAN_PRESETS, StickmanFigure } from './StickmanFigure';
 
 const COLOR_OPTIONS = [
@@ -61,17 +51,25 @@ const COLOR_OPTIONS = [
   { name: 'Grafite', hex: '#94A3B8' },
 ];
 
-interface HomeOrJoinProps {
-  onOpenDictionary?: (tab?: 'notepad' | 'list') => void;
-}
-
-export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
-  const { createRoom, joinRoom, error, clearError } = useGame();
+export const HomeOrJoin: React.FC = () => {
+  const {
+    createRoom,
+    joinRoom,
+    error,
+    clearError,
+    savedReconnectInfo,
+    rejoinSavedRoom,
+    clearSavedReconnectInfo,
+  } = useGame();
 
   const [mode, setMode] = useState<'create' | 'join'>('create');
   const [name, setName] = useState<string>(() => localStorage.getItem('jdd_player_name') || '');
-  const [avatar, setAvatar] = useState<string>(() => localStorage.getItem('jdd_player_avatar') || 'palito_classico');
-  const [color, setColor] = useState<string>(() => localStorage.getItem('jdd_player_color') || '#F59E0B');
+  const [avatar, setAvatar] = useState<string>(
+    () => localStorage.getItem('jdd_player_avatar') || 'palito_classico'
+  );
+  const [color, setColor] = useState<string>(
+    () => localStorage.getItem('jdd_player_color') || '#F59E0B'
+  );
   const [roomCode, setRoomCode] = useState<string>('');
 
   const [targetScore, setTargetScore] = useState<number>(20);
@@ -80,21 +78,6 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
   const [leaderBluffsRule, setLeaderBluffsRule] = useState<'always' | 'never'>('never');
   const [readingMode, setReadingMode] = useState<'visible' | 'leader_read'>('visible');
   const [showAdvanced, setShowAdvanced] = useState(false);
-
-  // Persistent custom words
-  const [loadedCustomWords, setLoadedCustomWords] = useState<WordItem[]>(() => getLocalCustomWords());
-  const [exclusivePreload, setExclusivePreload] = useState<boolean>(() => getLocalCustomWords().length > 0);
-
-  useEffect(() => {
-    return subscribeToCustomWords((words) => {
-      setLoadedCustomWords(words);
-      if (words.length > 0) {
-        setExclusivePreload(true);
-      } else {
-        setExclusivePreload(false);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -105,47 +88,16 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
     }
   }, []);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      if (content) {
-        const res = parseImportedDictionaryText(content);
-        if (res.words.length > 0) {
-          setLoadedCustomWords(res.words);
-          setExclusivePreload(true);
-          saveLocalCustomWords(res.words);
-        }
-      }
-    };
-    reader.readAsText(file);
-  };
-
-  const handleClearSavedWords = () => {
-    setLoadedCustomWords([]);
-    setExclusivePreload(false);
-    clearLocalCustomWords();
-  };
-
   const handleCreate = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const finalName = name.trim() || 'Jogador Anônimo';
-    createRoom(
-      finalName,
-      avatar,
-      color,
-      {
-        targetScore,
-        submissionTimeLimit,
-        votingTimeLimit,
-        leaderBluffsRule,
-        readingMode,
-      },
-      loadedCustomWords || undefined,
-      exclusivePreload
-    );
+    createRoom(finalName, avatar, color, {
+      targetScore,
+      submissionTimeLimit,
+      votingTimeLimit,
+      leaderBluffsRule,
+      readingMode,
+    });
   };
 
   const handleJoin = (e: React.FormEvent) => {
@@ -156,16 +108,69 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto py-4 sm:py-8 space-y-6 animate-fade-in">
+    <div className="w-full max-w-lg mx-auto py-4 sm:py-8 space-y-5 animate-fade-in">
       {/* Title */}
       <div className="text-center space-y-1.5">
         <h2 className="font-serif font-black text-3xl sm:text-4xl text-amber-100 tracking-tight">
-          Jogo do Dicionário <span className="text-amber-400 font-sans text-lg sm:text-xl font-bold block sm:inline">by Fabulous</span>
+          Jogo do Dicionário{' '}
+          <span className="text-amber-400 font-sans text-lg sm:text-xl font-bold block sm:inline">
+            by Fabulous
+          </span>
         </h2>
         <p className="text-xs sm:text-sm text-stone-400 max-w-sm mx-auto">
           Invente definições convincentes, blefe com seus amigos e descubra o significado real.
         </p>
       </div>
+
+      {/* Quick Reconnect Card (For players who disconnected / fell out of the room) */}
+      {savedReconnectInfo && (
+        <div className="p-4 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 shadow-lg space-y-3 animate-fade-in">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-11 h-11 rounded-xl bg-stone-950 border flex items-center justify-center shrink-0"
+                style={{ borderColor: savedReconnectInfo.color || '#10B981' }}
+              >
+                <StickmanFigure
+                  avatarId={savedReconnectInfo.avatar || 'palito_classico'}
+                  color={savedReconnectInfo.color || '#10B981'}
+                  size={28}
+                  state="running"
+                />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold block">
+                  Caiu da partida? Volte com seus pontos!
+                </span>
+                <h3 className="text-sm font-bold text-stone-100">
+                  Sala <span className="font-mono text-amber-300">{savedReconnectInfo.roomCode}</span> ·{' '}
+                  {savedReconnectInfo.playerName}
+                </h3>
+                <p className="text-[11px] text-emerald-200/80">
+                  Pontos preservados: <strong className="font-mono">{savedReconnectInfo.score} pts</strong>
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={clearSavedReconnectInfo}
+              className="p-1 text-stone-400 hover:text-stone-200 rounded-lg"
+              title="Dispensar"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={rejoinSavedRoom}
+            className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md active:scale-98"
+          >
+            <RotateCcw className="w-4 h-4" />
+            <span>Voltar à Sala {savedReconnectInfo.roomCode} (Pontos Preservados)</span>
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs flex items-center justify-between">
@@ -325,9 +330,7 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
                   <Target className="w-3.5 h-3.5 text-amber-400" />
                   Meta de Pontos:
                 </span>
-                <span className="font-mono font-bold text-amber-300">
-                  {targetScore} pts
-                </span>
+                <span className="font-mono font-bold text-amber-300">{targetScore} pts</span>
               </div>
               <div className="space-y-1.5">
                 <div className="grid grid-cols-4 gap-1">
@@ -454,48 +457,6 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
               )}
             </div>
 
-            {/* Custom Words Box */}
-            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-stone-300 font-medium flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-amber-400" />
-                  Banco de Palavras (.txt)
-                </span>
-                {loadedCustomWords.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={handleClearSavedWords}
-                    className="text-rose-400 hover:underline text-[11px]"
-                  >
-                    Zerar ({loadedCustomWords.length})
-                  </button>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <label className="cursor-pointer py-1.5 px-3 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-medium flex items-center gap-1.5 transition-colors">
-                  <Upload className="w-3 h-3 text-amber-400" />
-                  <span>{loadedCustomWords.length > 0 ? 'Substituir .txt' : 'Importar .txt'}</span>
-                  <input
-                    type="file"
-                    accept=".txt,.csv,.json,.tsv,text/plain"
-                    className="hidden"
-                    onChange={handleFileSelect}
-                  />
-                </label>
-
-                {onOpenDictionary && (
-                  <button
-                    type="button"
-                    onClick={() => onOpenDictionary('notepad')}
-                    className="text-stone-400 hover:text-stone-200 text-xs underline"
-                  >
-                    Bloco de notas
-                  </button>
-                )}
-              </div>
-            </div>
-
             <button
               type="submit"
               className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
@@ -521,13 +482,20 @@ export const HomeOrJoin: React.FC<HomeOrJoinProps> = ({ onOpenDictionary }) => {
               />
             </div>
 
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800/90 flex items-start gap-2.5 text-[11px] text-stone-300">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-emerald-300">Proteção contra queda:</strong> Se você caiu da sala, basta digitar o código acima e usar o <strong>mesmo nome</strong> para recuperar seu lugar e todos os seus pontos!
+              </span>
+            </div>
+
             <button
               type="submit"
               disabled={!roomCode.trim()}
               className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-stone-950 font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
             >
               <ArrowRight className="w-4 h-4" />
-              Entrar na Sala
+              Entrar / Reconectar na Sala
             </button>
           </form>
         )}

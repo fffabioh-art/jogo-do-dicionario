@@ -34,7 +34,7 @@ export interface Player {
 export interface DicionarioJsonItem {
   palavra: string;
   correta: string;
-  falsas: string[];
+  falsas?: string[];
 }
 
 export interface WordItem {

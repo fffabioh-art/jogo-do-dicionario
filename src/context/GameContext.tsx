@@ -19,11 +19,15 @@ import {
   getAlternativeLetter,
 } from '../utils/textFormatting';
 import { soundManager } from '../utils/soundEffects';
-import {
-  getLocalCustomWords,
-  saveLocalCustomWords,
-  clearLocalCustomWords,
-} from '../utils/persistentStorage';
+
+export interface SavedReconnectInfo {
+  roomCode: string;
+  playerName: string;
+  avatar: string;
+  color: string;
+  score: number;
+  timestamp: number;
+}
 
 interface GameContextType {
   room: RoomState | null;
@@ -36,6 +40,9 @@ interface GameContextType {
   isMuted: boolean;
   setIsMuted: (muted: boolean) => void;
   clearError: () => void;
+  savedReconnectInfo: SavedReconnectInfo | null;
+  rejoinSavedRoom: () => void;
+  clearSavedReconnectInfo: () => void;
 
   // Actions
   createRoom: (
@@ -81,6 +88,7 @@ const STORAGE_KEYS = {
   PLAYER_AVATAR: 'jdd_player_avatar',
   PLAYER_COLOR: 'jdd_player_color',
   LAST_ROOM: 'jdd_last_room',
+  RECONNECT_INFO: 'jdd_reconnect_info_v1',
   ROOMS_DB: 'jdd_client_rooms_v1',
 };
 
@@ -98,6 +106,42 @@ const BOT_PRESETS = [
   { name: 'Graciliano Ramos', avatar: 'palito_chifrinho', color: '#DC2626' },
   { name: 'Monteiro Lobato', avatar: 'palito_chef', color: '#14B8A6' },
 ];
+
+function normalizePlayerName(name: string): string {
+  return (name || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
+function migratePlayerIdInRoom(room: RoomState, oldId: string, newId: string) {
+  if (oldId === newId) return;
+  if (room.hostId === oldId) room.hostId = newId;
+  if (room.winnerId === oldId) room.winnerId = newId;
+  const round = room.currentRound;
+  if (round) {
+    if (round.leaderId === oldId) round.leaderId = newId;
+    if (round.nextRoundRequesterId === oldId) round.nextRoundRequesterId = newId;
+    if (round.nextRoundConfirmations) {
+      round.nextRoundConfirmations = round.nextRoundConfirmations.map((id) =>
+        id === oldId ? newId : id
+      );
+    }
+    round.bluffs.forEach((b) => {
+      if (b.authorId === oldId) b.authorId = newId;
+    });
+    if (round.votes[oldId] !== undefined) {
+      round.votes[newId] = round.votes[oldId];
+      delete round.votes[oldId];
+    }
+    if (round.scoreDetails) {
+      round.scoreDetails.forEach((sd) => {
+        if (sd.playerId === oldId) sd.playerId = newId;
+      });
+    }
+  }
+}
 
 function generateRoomCode(existingCodes: Set<string>): string {
   const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -127,6 +171,28 @@ function saveRoomToStorage(room: RoomState) {
   } catch (err) {
     console.warn('Failed to persist room in localStorage:', err);
   }
+}
+
+function loadSavedReconnectInfo(): SavedReconnectInfo | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.RECONNECT_INFO);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.roomCode) return parsed;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function persistReconnectInfo(info: SavedReconnectInfo | null) {
+  try {
+    if (!info) {
+      localStorage.removeItem(STORAGE_KEYS.RECONNECT_INFO);
+    } else {
+      localStorage.setItem(STORAGE_KEYS.RECONNECT_INFO, JSON.stringify(info));
+    }
+  } catch {}
 }
 
 function computeRoundPoints(room: RoomState): {
@@ -257,9 +323,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return created;
   });
 
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connected');
   const [error, setError] = useState<string | null>(null);
   const [isMuted, setIsMutedState] = useState<boolean>(() => soundManager.getMuted());
+  const [savedReconnectInfo, setSavedReconnectInfo] = useState<SavedReconnectInfo | null>(() =>
+    loadSavedReconnectInfo()
+  );
 
+  const wsRef = useRef<WebSocket | null>(null);
+  const wsAvailableRef = useRef<boolean>(false);
   const roomRef = useRef<RoomState | null>(room);
   roomRef.current = room;
 
@@ -285,40 +357,170 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearError = () => setError(null);
 
-  // Commit room state locally, persist to localStorage, and broadcast across browser tabs
-  const commitRoom = useCallback((updated: RoomState | null, playPhaseSound = true) => {
-    const prevPhase = roomRef.current?.currentRound?.phase;
-    const nextPhase = updated?.currentRound?.phase;
-
-    if (playPhaseSound && prevPhase !== nextPhase) {
-      if (nextPhase === 'VOTING') {
-        soundManager.playPop();
-      } else if (nextPhase === 'REVEAL') {
-        soundManager.playCorrect();
-      } else if (nextPhase === 'GAME_OVER') {
-        soundManager.playFanfare();
-      }
-    }
-
-    roomRef.current = updated;
-    setRoom(updated ? { ...updated } : null);
-
-    if (updated) {
-      localStorage.setItem(STORAGE_KEYS.LAST_ROOM, updated.roomCode);
-      saveRoomToStorage(updated);
-      if (updated.customWords && updated.customWords.length > 0) {
-        saveLocalCustomWords(updated.customWords);
-      }
-      try {
-        channelRef.current?.postMessage({
-          type: 'ROOM_SYNC',
-          room: updated,
-        });
-      } catch {}
-    }
+  const clearSavedReconnectInfo = useCallback(() => {
+    persistReconnectInfo(null);
+    setSavedReconnectInfo(null);
   }, []);
 
-  // Setup multi-tab BroadcastChannel & storage listener (100% browser-native)
+  // Commit room state locally, persist to localStorage, and update reconnect info
+  const commitRoom = useCallback(
+    (updated: RoomState | null, playPhaseSound = true) => {
+      const prevPhase = roomRef.current?.currentRound?.phase;
+      const nextPhase = updated?.currentRound?.phase;
+
+      if (playPhaseSound && prevPhase !== nextPhase) {
+        if (nextPhase === 'VOTING') {
+          soundManager.playPop();
+        } else if (nextPhase === 'REVEAL') {
+          soundManager.playCorrect();
+        } else if (nextPhase === 'GAME_OVER') {
+          soundManager.playFanfare();
+        }
+      }
+
+      roomRef.current = updated;
+      setRoom(updated ? { ...updated } : null);
+
+      if (updated) {
+        localStorage.setItem(STORAGE_KEYS.LAST_ROOM, updated.roomCode);
+        saveRoomToStorage(updated);
+
+        const me = updated.players.find((p) => p.id === myPlayerId);
+        if (me) {
+          const info: SavedReconnectInfo = {
+            roomCode: updated.roomCode,
+            playerName: me.name,
+            avatar: me.avatar,
+            color: me.color,
+            score: me.score,
+            timestamp: Date.now(),
+          };
+          persistReconnectInfo(info);
+          setSavedReconnectInfo(info);
+        }
+
+        try {
+          channelRef.current?.postMessage({
+            type: 'ROOM_SYNC',
+            room: updated,
+          });
+        } catch {}
+      }
+    },
+    [myPlayerId]
+  );
+
+  // WebSocket connection for multi-device play (with automatic fallback to client-side mode on static hosts like Vercel)
+  useEffect(() => {
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    let pingInterval: ReturnType<typeof setInterval> | null = null;
+    let isUnmounted = false;
+
+    const connectWs = () => {
+      if (isUnmounted) return;
+      try {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws-game`;
+        const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+          if (isUnmounted) return;
+          wsAvailableRef.current = true;
+          setConnectionStatus('connected');
+
+          const activeRoomCode = localStorage.getItem(STORAGE_KEYS.LAST_ROOM);
+          const savedName = localStorage.getItem(STORAGE_KEYS.PLAYER_NAME) || '';
+          if (activeRoomCode) {
+            ws.send(
+              JSON.stringify({
+                type: 'RECONNECT',
+                payload: {
+                  roomCode: activeRoomCode,
+                  playerId: myPlayerId,
+                  playerName: savedName,
+                },
+              })
+            );
+          }
+
+          if (pingInterval) clearInterval(pingInterval);
+          pingInterval = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'PING' }));
+            }
+          }, 20000);
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'ROOM_UPDATE' && data.payload) {
+              commitRoom(data.payload, true);
+            } else if (data.type === 'ERROR' && data.payload?.message) {
+              setError(data.payload.message);
+            }
+          } catch {}
+        };
+
+        ws.onclose = () => {
+          if (isUnmounted) return;
+          if (pingInterval) clearInterval(pingInterval);
+          if (wsAvailableRef.current) {
+            // Reconnect automatically if we had a WS server
+            reconnectTimeout = setTimeout(connectWs, 2500);
+          } else {
+            // Static host (Vercel) — stay connected in client-side mode
+            setConnectionStatus('connected');
+          }
+        };
+
+        ws.onerror = () => {
+          // Silent fallback to client-side mode when hosted statically on Vercel
+          setConnectionStatus('connected');
+        };
+      } catch {
+        setConnectionStatus('connected');
+      }
+    };
+
+    connectWs();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          const activeRoomCode = localStorage.getItem(STORAGE_KEYS.LAST_ROOM);
+          const savedName = localStorage.getItem(STORAGE_KEYS.PLAYER_NAME) || '';
+          if (activeRoomCode) {
+            wsRef.current.send(
+              JSON.stringify({
+                type: 'RECONNECT',
+                payload: {
+                  roomCode: activeRoomCode,
+                  playerId: myPlayerId,
+                  playerName: savedName,
+                },
+              })
+            );
+          }
+        } else if (wsAvailableRef.current) {
+          connectWs();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      isUnmounted = true;
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+      if (pingInterval) clearInterval(pingInterval);
+      wsRef.current?.close();
+    };
+  }, [myPlayerId, commitRoom]);
+
+  // Multi-tab BroadcastChannel & storage listener for static/client-side mode
   useEffect(() => {
     if (typeof BroadcastChannel !== 'undefined') {
       const bc = new BroadcastChannel('jdd_local_sync_v1');
@@ -356,7 +558,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [clearTimers]);
 
-  // Transition to REVEAL phase
+  const sendWs = (type: string, payload?: any): boolean => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type, payload }));
+      return true;
+    }
+    return false;
+  };
+
+  // --- Client-Side Fallback Engine (used when running 100% static on Vercel without WS server) ---
+
   const handleStartRevealPhase = useCallback(
     (targetRoom: RoomState) => {
       clearTimers();
@@ -383,7 +594,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [clearTimers, commitRoom]
   );
 
-  // Check if all eligible voters have voted
   const checkVotingCompletion = useCallback(
     (targetRoom: RoomState) => {
       const round = targetRoom.currentRound;
@@ -424,7 +634,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [commitRoom, handleStartRevealPhase]
   );
 
-  // Simulate Bot Votes
   const handleBotVotes = useCallback(
     (targetRoom: RoomState) => {
       const round = targetRoom.currentRound;
@@ -455,7 +664,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [checkVotingCompletion]
   );
 
-  // Transition to VOTING phase (shuffling true definition + false definitions from players/bots/dicionario.json)
   const handleStartVotingPhase = useCallback(
     (targetRoom: RoomState) => {
       clearTimers();
@@ -476,7 +684,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...existingBluffs.map((b) => formatConcept(b.text)),
       ]);
 
-      // Ensure at least 3 convincing false options using the word's "falsas" array from dicionario.json
       let decoyIdx = 0;
       while (existingBluffs.length < 3 && decoyIdx < 6) {
         const candidate = formatConcept(getDecoyBluff(round.word, decoyIdx));
@@ -492,9 +699,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         decoyIdx++;
       }
 
-      // Shuffle true option with false options using uniform Fisher-Yates shuffle
       const finalBluffs: BluffEntry[] = fisherYatesShuffle([...existingBluffs, realBluff]);
-
       finalBluffs.forEach((b, idx) => {
         b.letterLabel = getAlternativeLetter(idx);
       });
@@ -544,7 +749,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [clearTimers, commitRoom, handleBotVotes, handleStartRevealPhase]
   );
 
-  // Check if all eligible players have submitted bluffs
   const checkSubmissionCompletion = useCallback(
     (targetRoom: RoomState) => {
       const round = targetRoom.currentRound;
@@ -572,7 +776,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [commitRoom, handleStartVotingPhase]
   );
 
-  // Simulate Bot Bluff Submissions using the word's "falsas" from dicionario.json
   const handleBotSubmissions = useCallback(
     (targetRoom: RoomState) => {
       const round = targetRoom.currentRound;
@@ -604,7 +807,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [checkSubmissionCompletion]
   );
 
-  // Start round once leader selects a word
   const startRoundWithWord = useCallback(
     (targetRoom: RoomState, word: WordItem) => {
       clearTimers();
@@ -645,7 +847,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [clearTimers, commitRoom, handleBotSubmissions, handleStartVotingPhase]
   );
 
-  // Prepare next round without repeating words in the same match
   const prepareNextRound = useCallback(
     (targetRoom: RoomState) => {
       clearTimers();
@@ -665,12 +866,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const nextLeader = targetRoom.players[nextIndex] || targetRoom.players[0];
 
       const roundNumber = (targetRoom.currentRound?.roundNumber || 0) + 1;
-      const rawChoices = getRandomWordChoices(
-        3,
-        targetRoom.usedWordIds || [],
-        targetRoom.customWords,
-        targetRoom.exclusiveCustomWords
-      );
+      const rawChoices = getRandomWordChoices(3, targetRoom.usedWordIds || []);
 
       const wordChoices = rawChoices.map((w) => ({
         ...w,
@@ -715,18 +911,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     name: string,
     avatar: string,
     color: string,
-    settings?: Partial<GameSettings>,
-    customWords?: WordItem[],
-    exclusiveCustomWords?: boolean
+    settings?: Partial<GameSettings>
   ) => {
     localStorage.setItem(STORAGE_KEYS.PLAYER_NAME, name);
     localStorage.setItem(STORAGE_KEYS.PLAYER_AVATAR, avatar);
     localStorage.setItem(STORAGE_KEYS.PLAYER_COLOR, color);
 
-    const saved = getLocalCustomWords();
-    const finalCustomWords =
-      Array.isArray(customWords) && customWords.length > 0 ? customWords : saved;
-    const isExclusive = finalCustomWords.length > 0 ? true : Boolean(exclusiveCustomWords);
+    if (
+      sendWs('CREATE_ROOM', {
+        playerId: myPlayerId,
+        playerName: name,
+        avatar,
+        color,
+        settings,
+      })
+    ) {
+      soundManager.playPop();
+      return;
+    }
 
     const allRooms = loadRoomsFromStorage();
     const roomCode = generateRoomCode(new Set(Object.keys(allRooms)));
@@ -741,7 +943,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isConnected: true,
     };
 
-    // Add 3 literary bots by default so the player can start immediately (or customize in Lobby)
     const defaultBots: Player[] = BOT_PRESETS.slice(0, 3).map((preset, idx) => ({
       id: `bot_init_${idx}_${Date.now()}`,
       name: preset.name,
@@ -770,8 +971,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       currentRound: null,
       roundHistory: [],
       isTieBreakActive: false,
-      customWords: finalCustomWords,
-      exclusiveCustomWords: isExclusive,
       usedWordIds: [],
     };
 
@@ -785,16 +984,40 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.PLAYER_COLOR, color);
 
     const code = roomCode.toUpperCase().trim();
+
+    if (
+      sendWs('JOIN_ROOM', {
+        roomCode: code,
+        playerId: myPlayerId,
+        playerName: name,
+        avatar,
+        color,
+      })
+    ) {
+      soundManager.playPop();
+      return;
+    }
+
     const allRooms = loadRoomsFromStorage();
     const existingRoom = allRooms[code];
 
     if (!existingRoom) {
-      setError('Sala não encontrada neste navegador. Crie uma nova sala para jogar!');
+      setError('Sala não encontrada. Verifique o código digitado!');
       return;
     }
 
-    const existingPlayer = existingRoom.players.find((p) => p.id === myPlayerId);
+    const normTarget = normalizePlayerName(name);
+    let existingPlayer = existingRoom.players.find((p) => p.id === myPlayerId);
+    if (!existingPlayer && normTarget) {
+      existingPlayer = existingRoom.players.find(
+        (p) => !p.isBot && normalizePlayerName(p.name) === normTarget
+      );
+    }
+
     if (existingPlayer) {
+      const oldId = existingPlayer.id;
+      existingPlayer.id = myPlayerId;
+      migratePlayerIdInRoom(existingRoom, oldId, myPlayerId);
       existingPlayer.isConnected = true;
       existingPlayer.name = name || existingPlayer.name;
       existingPlayer.avatar = avatar || existingPlayer.avatar;
@@ -819,7 +1042,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundManager.playPop();
   };
 
+  const rejoinSavedRoom = () => {
+    const info = loadSavedReconnectInfo();
+    if (!info) return;
+    joinRoom(info.roomCode, info.playerName, info.avatar, info.color);
+  };
+
   const updateSettings = (settings: Partial<GameSettings>) => {
+    if (sendWs('UPDATE_SETTINGS', settings)) return;
     if (!roomRef.current) return;
     const next = {
       ...roomRef.current,
@@ -832,6 +1062,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addBot = () => {
+    if (sendWs('ADD_BOT')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current) return;
     const next = { ...roomRef.current, players: [...roomRef.current.players] };
     if (next.players.length >= 10) return;
@@ -855,6 +1089,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const removeBot = () => {
+    if (sendWs('REMOVE_BOT')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current) return;
     const next = { ...roomRef.current, players: [...roomRef.current.players] };
     const botIndex = next.players.map((p) => p.isBot).lastIndexOf(true);
@@ -866,6 +1104,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const kickPlayer = (playerId: string) => {
+    if (sendWs('KICK_PLAYER', { playerId })) return;
     if (!roomRef.current) return;
     const next = {
       ...roomRef.current,
@@ -877,13 +1116,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const startGame = () => {
+    if (sendWs('START_GAME')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current) return;
     const next = {
       ...roomRef.current,
       players: [...roomRef.current.players],
     };
 
-    // Ensure at least 2 participants (if user removed all bots, add 1 bot opponent)
     if (next.players.length < 2) {
       const preset = BOT_PRESETS[0];
       next.players.push({
@@ -912,7 +1154,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     next.usedWordIds = [];
 
     const leader = next.players[0];
-    const rawChoices = getRandomWordChoices(3, [], next.customWords, next.exclusiveCustomWords);
+    const rawChoices = getRandomWordChoices(3, []);
     const wordChoices = rawChoices.map((w) => ({
       ...w,
       definition: '',
@@ -945,15 +1187,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const rerollWordChoices = () => {
+    if (sendWs('REROLL_WORDS')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current || !roomRef.current.currentRound) return;
     const next = { ...roomRef.current, currentRound: { ...roomRef.current.currentRound } };
     const currentIds = (next.currentRound.wordChoices || []).map((w) => w.id);
-    const rawChoices = getRandomWordChoices(
-      3,
-      [...(next.usedWordIds || []), ...currentIds],
-      next.customWords,
-      next.exclusiveCustomWords
-    );
+    const rawChoices = getRandomWordChoices(3, [...(next.usedWordIds || []), ...currentIds]);
     next.currentRound.wordChoices = rawChoices.map((w) => ({
       ...w,
       definition: '',
@@ -963,33 +1204,34 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const selectWord = (selectedWord: WordItem) => {
+    if (sendWs('SELECT_WORD', { word: selectedWord })) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current || !roomRef.current.currentRound) return;
     const next = { ...roomRef.current, currentRound: { ...roomRef.current.currentRound } };
 
-    let authenticWord = (next.customWords || []).find(
-      (w) =>
-        w.id === selectedWord.id ||
-        w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
-    );
-    if (!authenticWord) {
-      authenticWord = DICTIONARY_WORDS.find(
+    const authenticWord =
+      DICTIONARY_WORDS.find(
         (w) =>
           w.id === selectedWord.id ||
           w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
-      );
-    }
+      ) || selectedWord;
 
-    const finalWord = authenticWord || selectedWord;
     if (!next.usedWordIds) next.usedWordIds = [];
-    if (!next.usedWordIds.includes(finalWord.id)) {
-      next.usedWordIds.push(finalWord.id);
+    if (!next.usedWordIds.includes(authenticWord.id)) {
+      next.usedWordIds.push(authenticWord.id);
     }
 
     soundManager.playPop();
-    startRoundWithWord(next, finalWord);
+    startRoundWithWord(next, authenticWord);
   };
 
   const submitBluff = (text: string) => {
+    if (sendWs('SUBMIT_BLUFF', { text })) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current || !roomRef.current.currentRound) return;
     if (roomRef.current.currentRound.phase !== 'SUBMISSION') return;
 
@@ -1035,6 +1277,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const submitVote = (optionId: string) => {
+    if (sendWs('SUBMIT_VOTE', { optionId })) {
+      soundManager.playVote();
+      return;
+    }
     if (!roomRef.current || !roomRef.current.currentRound) return;
     if (roomRef.current.currentRound.phase !== 'VOTING') return;
 
@@ -1071,11 +1317,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const revealResults = () => {
+    if (sendWs('REVEAL_RESULTS')) return;
     if (!roomRef.current || !roomRef.current.currentRound) return;
     handleStartRevealPhase({ ...roomRef.current });
   };
 
   const requestNextRound = () => {
+    if (sendWs('REQUEST_NEXT_ROUND')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current || !roomRef.current.currentRound) return;
     const next = {
       ...roomRef.current,
@@ -1093,7 +1344,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       next.currentRound.nextRoundConfirmations!.push(myPlayerId);
     }
 
-    // Auto-confirm bots
     next.players
       .filter((p) => p.isBot)
       .forEach((b) => {
@@ -1120,6 +1370,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const confirmNextRound = () => {
+    if (sendWs('CONFIRM_NEXT_ROUND')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current || !roomRef.current.currentRound) return;
     const next = {
       ...roomRef.current,
@@ -1156,94 +1410,21 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const forceNextRound = () => {
-    // Strictly requires 100% confirmation
-  };
-
-  const addCustomWord = (word: Partial<WordItem>) => {
-    if (!word.word || !word.definition) return;
-    const newItem: WordItem = {
-      id: word.id || `custom_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      word: String(word.word).trim(),
-      definition: formatConcept(String(word.definition).trim()),
-      partOfSpeech: word.partOfSpeech ? String(word.partOfSpeech).trim() : 'substantivo',
-      exampleSentence: word.exampleSentence ? String(word.exampleSentence).trim() : undefined,
-      difficulty: word.difficulty || 'medio',
-      isCustom: true,
-    };
-
-    if (roomRef.current) {
-      const next = {
-        ...roomRef.current,
-        customWords: [...(roomRef.current.customWords || []), newItem],
-      };
-      commitRoom(next, false);
-    }
-    soundManager.playPop();
-  };
-
-  const importDictionary = (
-    words: WordItem[],
-    replaceAll = false,
-    exclusiveCustomWords?: boolean
-  ) => {
-    const current = replaceAll ? [] : getLocalCustomWords();
-    const seen = new Set(current.map((w) => w.word.toLowerCase()));
-    for (const w of words) {
-      if (w && w.word && !seen.has(w.word.toLowerCase())) {
-        seen.add(w.word.toLowerCase());
-        current.push({
-          ...w,
-          definition: formatConcept(w.definition),
-          isCustom: true,
-        });
-      }
-    }
-    saveLocalCustomWords(current);
-
-    if (roomRef.current) {
-      const next = {
-        ...roomRef.current,
-        customWords: current,
-        exclusiveCustomWords:
-          exclusiveCustomWords !== undefined
-            ? Boolean(exclusiveCustomWords)
-            : roomRef.current.exclusiveCustomWords,
-      };
-      commitRoom(next, false);
-    }
-    soundManager.playPop();
-  };
-
-  const setExclusiveCustomWords = (exclusive: boolean) => {
-    if (!roomRef.current) return;
-    const next = {
-      ...roomRef.current,
-      exclusiveCustomWords: Boolean(exclusive),
-    };
-    commitRoom(next, false);
-    soundManager.playPop();
-  };
-
-  const resetDictionary = () => {
-    clearLocalCustomWords();
-    if (roomRef.current) {
-      const next = {
-        ...roomRef.current,
-        customWords: [],
-        exclusiveCustomWords: false,
-      };
-      commitRoom(next, false);
-    }
-    soundManager.playPop();
-  };
-
+  const forceNextRound = () => {};
+  const addCustomWord = () => {};
+  const importDictionary = () => {};
+  const setExclusiveCustomWords = () => {};
+  const resetDictionary = () => {};
   const adjustPlayerScore = () => {};
   const setPlayerScore = () => {};
   const adjustRoundPoints = () => {};
   const setRoundPoints = () => {};
 
   const restartGame = () => {
+    if (sendWs('RESTART_GAME')) {
+      soundManager.playPop();
+      return;
+    }
     if (!roomRef.current) return;
     clearTimers();
     const next: RoomState = {
@@ -1264,8 +1445,33 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const leaveRoom = () => {
     clearTimers();
+    // Save reconnect info before leaving so the player can return with preserved points if needed
+    if (roomRef.current) {
+      const me = roomRef.current.players.find((p) => p.id === myPlayerId);
+      if (me) {
+        const info: SavedReconnectInfo = {
+          roomCode: roomRef.current.roomCode,
+          playerName: me.name,
+          avatar: me.avatar,
+          color: me.color,
+          score: me.score,
+          timestamp: Date.now(),
+        };
+        persistReconnectInfo(info);
+        setSavedReconnectInfo(info);
+      }
+    }
+
+    sendWs('LEAVE_ROOM');
     localStorage.removeItem(STORAGE_KEYS.LAST_ROOM);
-    commitRoom(null, false);
+
+    // Clean any ?room=XXXX parameter from the browser URL so mobile users aren't trapped in the room
+    if (typeof window !== 'undefined' && window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    roomRef.current = null;
+    setRoom(null);
   };
 
   const myPlayer = room?.players.find((p) => p.id === myPlayerId);
@@ -1280,11 +1486,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         myPlayer,
         isHost,
         isLeader,
-        connectionStatus: 'connected',
+        connectionStatus,
         error,
         isMuted,
         setIsMuted,
         clearError,
+        savedReconnectInfo,
+        rejoinSavedRoom,
+        clearSavedReconnectInfo,
         createRoom,
         joinRoom,
         updateSettings,

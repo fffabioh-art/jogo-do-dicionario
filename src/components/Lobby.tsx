@@ -1,33 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import QRCode from 'qrcode';
-import { DictionaryAdminModal } from './DictionaryAdminModal';
 import { StickmanFigure } from './StickmanFigure';
 import {
   Copy,
   Check,
   QrCode as QrCodeIcon,
-  Crown,
   Bot,
   Play,
   Users,
   Target,
-  Clock,
   UserX,
-  FileText,
-  BookOpen,
-  Trash2,
+  LogOut,
+  WifiOff,
 } from 'lucide-react';
 
 export const Lobby: React.FC = () => {
-  const { room, isHost, myPlayerId, updateSettings, addBot, removeBot, kickPlayer, startGame, resetDictionary } = useGame();
+  const { room, isHost, myPlayerId, updateSettings, addBot, removeBot, kickPlayer, startGame, leaveRoom } =
+    useGame();
 
   const [copied, setCopied] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [showQrModal, setShowQrModal] = useState(false);
-  const [showDictAdmin, setShowDictAdmin] = useState(false);
-  const [dictTab, setDictTab] = useState<'notepad' | 'list'>('notepad');
-  const [showConfirmResetLobby, setShowConfirmResetLobby] = useState(false);
 
   const roomCode = room?.roomCode || '';
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/?room=${roomCode}` : '';
@@ -62,36 +56,49 @@ export const Lobby: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto space-y-5 animate-fade-in">
       {/* Room Header Card */}
       <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
+        <div className="text-center sm:text-left">
           <span className="text-[11px] font-mono text-amber-400 uppercase tracking-wider block">
             Sala de Jogo
           </span>
-          <h2 className="font-serif font-black text-2xl text-stone-100">
-            Lobby de Espera
-          </h2>
+          <h2 className="font-serif font-black text-2xl text-stone-100">Lobby de Espera</h2>
           <p className="text-xs text-stone-400 mt-0.5">
             Compartilhe o código para os outros jogadores entrarem.
           </p>
         </div>
 
         {/* Room Code + Actions */}
-        <div className="flex items-center gap-2 bg-stone-950 p-2 rounded-xl border border-stone-800">
+        <div className="flex flex-wrap items-center justify-center gap-2 bg-stone-950 p-2 rounded-xl border border-stone-800">
           <span className="font-mono font-black text-2xl tracking-widest text-amber-300 px-2">
             {roomCode}
           </span>
           <button
+            type="button"
             onClick={copyInviteLink}
             className="flex items-center gap-1 py-1.5 px-3 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-medium transition-colors"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-stone-400" />}
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+            ) : (
+              <Copy className="w-3.5 h-3.5 text-stone-400" />
+            )}
             <span>{copied ? 'Copiado!' : 'Copiar'}</span>
           </button>
           <button
+            type="button"
             onClick={() => setShowQrModal(true)}
             className="p-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition-colors"
             title="Ver QR Code"
           >
             <QrCodeIcon className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={leaveRoom}
+            className="flex items-center gap-1 py-1.5 px-3 rounded-lg bg-rose-950/90 hover:bg-rose-900 border border-rose-500/40 text-rose-200 text-xs font-bold transition-colors"
+            title="Sair da Sala"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sair da Sala</span>
           </button>
         </div>
       </div>
@@ -109,6 +116,7 @@ export const Lobby: React.FC = () => {
             {isHost && (
               <div className="flex items-center gap-1.5">
                 <button
+                  type="button"
                   onClick={addBot}
                   disabled={activePlayers.length >= 10}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-purple-300 text-xs font-medium transition-colors disabled:opacity-40"
@@ -118,6 +126,7 @@ export const Lobby: React.FC = () => {
                 </button>
                 {activePlayers.some((p) => p.isBot) && (
                   <button
+                    type="button"
                     onClick={removeBot}
                     className="text-stone-400 hover:text-rose-400 text-xs px-2 py-1"
                   >
@@ -131,10 +140,13 @@ export const Lobby: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {activePlayers.map((player) => {
               const isMe = player.id === myPlayerId;
+              const isOffline = !player.isConnected && !player.isBot;
               return (
                 <div
                   key={player.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-stone-900/80 border border-stone-800 group"
+                  className={`flex items-center justify-between p-3 rounded-xl bg-stone-900/80 border border-stone-800 group ${
+                    isOffline ? 'opacity-75' : ''
+                  }`}
                   style={{
                     borderLeftColor: player.color || '#F59E0B',
                     borderLeftWidth: '3px',
@@ -155,22 +167,25 @@ export const Lobby: React.FC = () => {
                         <span className="font-medium text-xs text-stone-200 truncate">
                           {player.name}
                         </span>
-                        {isMe && (
-                          <span className="text-[10px] text-amber-400">
-                            (Você)
+                        {isMe && <span className="text-[10px] text-amber-400">(Você)</span>}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-stone-500">
+                        <span>{player.isHost ? 'Host' : player.isBot ? 'Bot' : 'Jogador'}</span>
+                        {isOffline && (
+                          <span className="inline-flex items-center gap-0.5 text-amber-400 text-[10px]">
+                            <WifiOff className="w-2.5 h-2.5" />
+                            Reconectando ({player.score} pts)
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-stone-500">
-                        {player.isHost ? 'Host' : player.isBot ? 'Bot' : 'Jogador'}
-                      </span>
                     </div>
                   </div>
 
                   {isHost && !player.isHost && (
                     <button
+                      type="button"
                       onClick={() => kickPlayer(player.id)}
-                      className="opacity-0 group-hover:opacity-100 text-stone-500 hover:text-rose-400 p-1 transition-all"
+                      className="text-stone-500 hover:text-rose-400 p-1 transition-all"
                       title="Remover jogador"
                     >
                       <UserX className="w-3.5 h-3.5" />
@@ -210,6 +225,7 @@ export const Lobby: React.FC = () => {
                     {[15, 20, 30, 40].map((pts) => (
                       <button
                         key={pts}
+                        type="button"
                         onClick={() => updateSettings({ targetScore: pts })}
                         className={`py-1 rounded-lg font-mono text-xs font-bold transition-all ${
                           room.settings.targetScore === pts
@@ -249,7 +265,9 @@ export const Lobby: React.FC = () => {
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-stone-400">Regra do Líder da Rodada:</span>
                 <span className="font-medium text-amber-300">
-                  {room.settings.leaderBluffsRule === 'always' ? 'Escreve e vota' : 'Não escreve e não vota'}
+                  {room.settings.leaderBluffsRule === 'always'
+                    ? 'Escreve e vota'
+                    : 'Não escreve e não vota'}
                 </span>
               </div>
               {isHost ? (
@@ -260,6 +278,7 @@ export const Lobby: React.FC = () => {
                   ].map((opt) => (
                     <button
                       key={opt.val}
+                      type="button"
                       onClick={() => updateSettings({ leaderBluffsRule: opt.val as any })}
                       className={`py-1.5 px-2 rounded-lg text-[11px] font-medium text-center transition-all ${
                         (room.settings.leaderBluffsRule || 'never') === opt.val
@@ -285,7 +304,9 @@ export const Lobby: React.FC = () => {
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-stone-400">Tempo de Resposta:</span>
                 <span className="font-mono text-stone-300">
-                  {room.settings.submissionTimeLimit === 0 ? 'Sem limite' : `${room.settings.submissionTimeLimit}s`}
+                  {room.settings.submissionTimeLimit === 0
+                    ? 'Sem limite'
+                    : `${room.settings.submissionTimeLimit}s`}
                 </span>
               </div>
               {isHost && (
@@ -298,6 +319,7 @@ export const Lobby: React.FC = () => {
                   ].map((t) => (
                     <button
                       key={t.val}
+                      type="button"
                       onClick={() =>
                         updateSettings({
                           submissionTimeLimit: t.val,
@@ -322,7 +344,9 @@ export const Lobby: React.FC = () => {
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-stone-400">Exibição:</span>
                 <span className="text-stone-300 font-medium">
-                  {room.settings.readingMode === 'leader_read' ? 'Áudio (Lido pelo líder)' : 'Visual'}
+                  {room.settings.readingMode === 'leader_read'
+                    ? 'Áudio (Lido pelo líder)'
+                    : 'Visual'}
                 </span>
               </div>
               {isHost && (
@@ -333,6 +357,7 @@ export const Lobby: React.FC = () => {
                   ].map((m) => (
                     <button
                       key={m.id}
+                      type="button"
                       onClick={() => updateSettings({ readingMode: m.id as any })}
                       className={`py-1.5 px-2 rounded-lg text-[11px] font-medium transition-all ${
                         (room.settings.readingMode || 'visible') === m.id
@@ -346,40 +371,12 @@ export const Lobby: React.FC = () => {
                 </div>
               )}
             </div>
-
-            {/* Custom Words Info for Host */}
-            {isHost && (
-              <div className="pt-2 border-t border-stone-800/60 space-y-1.5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDictTab('notepad');
-                    setShowDictAdmin(true);
-                  }}
-                  className="w-full py-2 px-3 rounded-xl bg-stone-950 hover:bg-stone-800 border border-stone-800 text-amber-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Importar Banco (.txt)</span>
-                </button>
-
-                {room.customWords && room.customWords.length > 0 && (
-                  <div className="flex items-center justify-between text-[11px] text-stone-400 px-1 pt-1">
-                    <span>{room.customWords.length} palavras ativas</span>
-                    <button
-                      onClick={() => setShowConfirmResetLobby(true)}
-                      className="text-rose-400 hover:underline"
-                    >
-                      Zerar
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Start Button */}
           {isHost ? (
             <button
+              type="button"
               onClick={startGame}
               disabled={!canStart}
               className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-stone-950 font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm"
@@ -405,9 +402,7 @@ export const Lobby: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
             className="bg-stone-900 border border-stone-800 rounded-2xl p-5 max-w-xs w-full text-center space-y-3"
           >
-            <h3 className="font-bold text-sm text-stone-200">
-              QR Code da Sala
-            </h3>
+            <h3 className="font-bold text-sm text-stone-200">QR Code da Sala</h3>
             {qrCodeUrl && (
               <img
                 src={qrCodeUrl}
@@ -415,10 +410,9 @@ export const Lobby: React.FC = () => {
                 className="w-48 h-48 mx-auto rounded-xl p-2 bg-stone-100"
               />
             )}
-            <p className="font-mono font-bold text-amber-300 text-sm">
-              Código: {roomCode}
-            </p>
+            <p className="font-mono font-bold text-amber-300 text-sm">Código: {roomCode}</p>
             <button
+              type="button"
               onClick={() => setShowQrModal(false)}
               className="w-full py-2 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium hover:bg-stone-700"
             >
@@ -426,44 +420,6 @@ export const Lobby: React.FC = () => {
             </button>
           </div>
         </div>
-      )}
-
-      {/* Reset confirmation modal */}
-      {showConfirmResetLobby && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-stone-900 border border-stone-800 rounded-2xl p-5 max-w-sm w-full space-y-3">
-            <h4 className="font-bold text-sm text-stone-200">Zerar banco de palavras?</h4>
-            <p className="text-xs text-stone-400">
-              Isso removerá as {room.customWords?.length || 0} palavras cadastradas da sala.
-            </p>
-            <div className="flex items-center gap-2 pt-2">
-              <button
-                onClick={() => setShowConfirmResetLobby(false)}
-                className="flex-1 py-2 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => {
-                  resetDictionary();
-                  setShowConfirmResetLobby(false);
-                }}
-                className="flex-1 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold"
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Dictionary Modal */}
-      {isHost && (
-        <DictionaryAdminModal
-          isOpen={showDictAdmin}
-          defaultTab={dictTab}
-          onClose={() => setShowDictAdmin(false)}
-        />
       )}
     </div>
   );

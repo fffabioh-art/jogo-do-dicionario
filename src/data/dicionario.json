@@ -1,227 +1,8334 @@
 [
   {
-    "palavra": "Abelhudice",
-    "correta": "Qualidade ou conduta de quem se intromete em assuntos alheios; indiscrição, bisbilhotice.",
-    "falsas": [
-      "Técnica apícola colonial usada para extrair cera virgem sem espantar o enxame.",
-      "Pequena ferramenta de bronze utilizada por relojoeiros para ajustar engrenagens.",
-      "Doce tradicional conventual preparado com gemas, mel silvestre e amêndoas."
-    ]
+    "palavra": "Abadir",
+    "correta": "Pedra mitológica."
+  },
+  {
+    "palavra": "Abagualado",
+    "correta": "Rústico."
+  },
+  {
+    "palavra": "Abalroamento",
+    "correta": "Choque entre embarcações."
+  },
+  {
+    "palavra": "Abantesma",
+    "correta": "Assombração medonha."
+  },
+  {
+    "palavra": "Abarbetar",
+    "correta": "Içar a âncora até a altura da barbeta."
+  },
+  {
+    "palavra": "Abarregado",
+    "correta": "Amasiado."
+  },
+  {
+    "palavra": "Abarticular",
+    "correta": "Fora da junta."
+  },
+  {
+    "palavra": "Abasia",
+    "correta": "Incapacidade de andar."
+  },
+  {
+    "palavra": "Abatocar",
+    "correta": "Fechar um barril com batoque."
+  },
+  {
+    "palavra": "Abderítico",
+    "correta": "Relativo a Abdera ou a seus habitantes."
+  },
+  {
+    "palavra": "Abditivo",
+    "correta": "Que oculta."
+  },
+  {
+    "palavra": "Abditório",
+    "correta": "Esconderijo."
+  },
+  {
+    "palavra": "Abegão",
+    "correta": "Capataz de fazenda."
+  },
+  {
+    "palavra": "Abegoaria",
+    "correta": "Alojamento para o gado."
+  },
+  {
+    "palavra": "Abespinhado",
+    "correta": "Zangado."
+  },
+  {
+    "palavra": "Abespinhar",
+    "correta": "Irritar ou melindrar."
+  },
+  {
+    "palavra": "Abetumado",
+    "correta": "Triste e calado."
+  },
+  {
+    "palavra": "Abicar",
+    "correta": "Encostar a proa do barco na praia."
+  },
+  {
+    "palavra": "Abigeato",
+    "correta": "Roubo de gado."
+  },
+  {
+    "palavra": "Abigeu",
+    "correta": "Ladrão de gado."
+  },
+  {
+    "palavra": "Abimento",
+    "correta": "Ato antigo de partir ou ir embora."
+  },
+  {
+    "palavra": "Abintestado",
+    "correta": "Sem deixar testamento."
+  },
+  {
+    "palavra": "Abiscoitar",
+    "correta": "Lucrar sem esforço."
+  },
+  {
+    "palavra": "Abjugar",
+    "correta": "Soltar do jugo."
+  },
+  {
+    "palavra": "Ablaquear",
+    "correta": "Escavar a terra ao redor das raízes."
+  },
+  {
+    "palavra": "Ablegação",
+    "correta": "Exílio forçado."
+  },
+  {
+    "palavra": "Ablução",
+    "correta": "Banho ritual."
+  },
+  {
+    "palavra": "Abneto",
+    "correta": "Filho do bisneto."
+  },
+  {
+    "palavra": "Aboiar",
+    "correta": "Entoar o canto com que se conduz o gado."
+  },
+  {
+    "palavra": "Aboiz",
+    "correta": "Armadilha de laço."
+  },
+  {
+    "palavra": "Abolorecer",
+    "correta": "Mofar."
+  },
+  {
+    "palavra": "Abonançar",
+    "correta": "Acalmar o mar."
+  },
+  {
+    "palavra": "Aborcar",
+    "correta": "Virar de boca para baixo."
+  },
+  {
+    "palavra": "Aborçar",
+    "correta": "Vomitar ou regurgitar."
+  },
+  {
+    "palavra": "Abordoada",
+    "correta": "Paulada forte."
+  },
+  {
+    "palavra": "Abordoado",
+    "correta": "Apoiado em bastão."
+  },
+  {
+    "palavra": "Abordoar",
+    "correta": "Andar com cajado."
+  },
+  {
+    "palavra": "Aborrido",
+    "correta": "Entediado."
+  },
+  {
+    "palavra": "Abotocado",
+    "correta": "Com botoque nos lábios ou atarracado."
+  },
+  {
+    "palavra": "Abraquia",
+    "correta": "Ausência dos braços."
+  },
+  {
+    "palavra": "Abrenúncio",
+    "correta": "Expressão de repulsa ou esconjuro."
+  },
+  {
+    "palavra": "Abreptício",
+    "correta": "Endemoninhado."
+  },
+  {
+    "palavra": "Abroquelar",
+    "correta": "Proteger com escudo."
+  },
+  {
+    "palavra": "Abscisão",
+    "correta": "Corte cirúrgico."
+  },
+  {
+    "palavra": "Absconso",
+    "correta": "Escondido."
+  },
+  {
+    "palavra": "Abside",
+    "correta": "Recinto geralmente semicircular no fundo de uma igreja."
+  },
+  {
+    "palavra": "Absintismo",
+    "correta": "Intoxicação pelo consumo de absinto."
+  },
+  {
+    "palavra": "Absonante",
+    "correta": "Dissonante."
+  },
+  {
+    "palavra": "Abstergente",
+    "correta": "Que limpa."
+  },
+  {
+    "palavra": "Abstersão",
+    "correta": "Ato de limpar."
+  },
+  {
+    "palavra": "Abstrusão",
+    "correta": "Qualidade do que é difícil de compreender."
+  },
+  {
+    "palavra": "Abstruso",
+    "correta": "Difícil de entender."
+  },
+  {
+    "palavra": "Abufelado",
+    "correta": "Carrancudo."
+  },
+  {
+    "palavra": "Abulia",
+    "correta": "Falta de vontade."
+  },
+  {
+    "palavra": "Abúlico",
+    "correta": "Apático."
+  },
+  {
+    "palavra": "Abulomania",
+    "correta": "Enfraquecimento da vontade e da capacidade de decidir."
+  },
+  {
+    "palavra": "Açacalado",
+    "correta": "Polido e brilhante."
+  },
+  {
+    "palavra": "Açacalar",
+    "correta": "Polir armas."
+  },
+  {
+    "palavra": "Acaçapar",
+    "correta": "Abaixar-se rente ao chão."
+  },
+  {
+    "palavra": "Açafate",
+    "correta": "Cestinho de vime."
+  },
+  {
+    "palavra": "Acafelado",
+    "correta": "Rebocado."
+  },
+  {
+    "palavra": "Acafelar",
+    "correta": "Rebocar uma parede."
+  },
+  {
+    "palavra": "Açafroa",
+    "correta": "Flor de tingir."
+  },
+  {
+    "palavra": "Acairelar",
+    "correta": "Debruar chapéu."
+  },
+  {
+    "palavra": "Acamar",
+    "correta": "Dispor em camadas ou cair de cama."
+  },
+  {
+    "palavra": "Acampanado",
+    "correta": "Em forma de sino."
+  },
+  {
+    "palavra": "Acantoar",
+    "correta": "Relegar a um canto."
+  },
+  {
+    "palavra": "Acapachado",
+    "correta": "Humilde demais."
+  },
+  {
+    "palavra": "Acárpico",
+    "correta": "Que não produz frutos."
+  },
+  {
+    "palavra": "Acatalepsia",
+    "correta": "Impossibilidade de alcançar um conhecimento seguro."
+  },
+  {
+    "palavra": "Acataléptico",
+    "correta": "Que não se pode compreender plenamente."
+  },
+  {
+    "palavra": "Acatitado",
+    "correta": "Bonitinho."
+  },
+  {
+    "palavra": "Acaudilhar",
+    "correta": "Liderar um grupo."
+  },
+  {
+    "palavra": "Acaule",
+    "correta": "Que não possui caule aparente."
+  },
+  {
+    "palavra": "Acédia",
+    "correta": "Preguiça espiritual."
+  },
+  {
+    "palavra": "Acefalismo",
+    "correta": "Falta de líder."
+  },
+  {
+    "palavra": "Acendrar",
+    "correta": "Purificar."
+  },
+  {
+    "palavra": "Acepilhar",
+    "correta": "Aparelhar madeira."
+  },
+  {
+    "palavra": "Acepipe",
+    "correta": "Petisco saboroso."
+  },
+  {
+    "palavra": "Acerbo",
+    "correta": "Amargo e áspero."
+  },
+  {
+    "palavra": "Acetábulo",
+    "correta": "Cavidade do quadril onde se articula o fêmur."
+  },
+  {
+    "palavra": "Acetre",
+    "correta": "Vasilha para água benta."
+  },
+  {
+    "palavra": "Achavascado",
+    "correta": "Rude e malfeito."
+  },
+  {
+    "palavra": "Achincalhe",
+    "correta": "Zombaria humilhante."
+  },
+  {
+    "palavra": "Acicate",
+    "correta": "Espora ou estímulo."
+  },
+  {
+    "palavra": "Acicular",
+    "correta": "Fino como agulha."
+  },
+  {
+    "palavra": "Aciganado",
+    "correta": "Jeito de cigano."
+  },
+  {
+    "palavra": "Acinesia",
+    "correta": "Imobilidade."
+  },
+  {
+    "palavra": "Acipreste",
+    "correta": "Cipreste."
+  },
+  {
+    "palavra": "Acirologia",
+    "correta": "Palavra mal empregada."
+  },
+  {
+    "palavra": "Acoimar",
+    "correta": "Aplicar multa."
+  },
+  {
+    "palavra": "Acônito",
+    "correta": "Planta venenosa azul."
+  },
+  {
+    "palavra": "Acoria",
+    "correta": "Fome sem fim."
+  },
+  {
+    "palavra": "Acoroçoar",
+    "correta": "Dar coragem."
+  },
+  {
+    "palavra": "Acourelar",
+    "correta": "Dividir um terreno em parcelas."
+  },
+  {
+    "palavra": "Acrasia",
+    "correta": "Falta de autocontrole."
+  },
+  {
+    "palavra": "Ácrata",
+    "correta": "Anarquista."
+  },
+  {
+    "palavra": "Acrimônia",
+    "correta": "Aspereza no trato."
+  },
+  {
+    "palavra": "Acroamatismo",
+    "correta": "Ensino secreto oral."
+  },
+  {
+    "palavra": "Acroase",
+    "correta": "Lição ou exposição oral."
+  },
+  {
+    "palavra": "Acrocefalia",
+    "correta": "Formação do crânio com topo anormalmente elevado."
+  },
+  {
+    "palavra": "Acromia",
+    "correta": "Ausência de pigmentação."
+  },
+  {
+    "palavra": "Acrostólio",
+    "correta": "Proa recurvada antiga."
+  },
+  {
+    "palavra": "Acrotério",
+    "correta": "Adorno de fachada."
+  },
+  {
+    "palavra": "Actínia",
+    "correta": "Anêmona-do-mar."
+  },
+  {
+    "palavra": "Actinomorfo",
+    "correta": "Que apresenta simetria radial."
+  },
+  {
+    "palavra": "Açular",
+    "correta": "Atiçar cães."
+  },
+  {
+    "palavra": "Aculeado",
+    "correta": "Cheio de espinhos."
+  },
+  {
+    "palavra": "Acúleo",
+    "correta": "Espinho ou ferrão."
+  },
+  {
+    "palavra": "Acuminado",
+    "correta": "Pontudo."
+  },
+  {
+    "palavra": "Adagiário",
+    "correta": "Livro de provérbios."
+  },
+  {
+    "palavra": "Adail",
+    "correta": "Chefe militar antigo."
+  },
+  {
+    "palavra": "Adamado",
+    "correta": "Modos de dama."
+  },
+  {
+    "palavra": "Adamantino",
+    "correta": "Duro como diamante."
+  },
+  {
+    "palavra": "Adarga",
+    "correta": "Escudo de couro."
+  },
+  {
+    "palavra": "Adargueiro",
+    "correta": "Soldado armado de adarga."
+  },
+  {
+    "palavra": "Adejar",
+    "correta": "Esvoaçar."
+  },
+  {
+    "palavra": "Adelgaçar",
+    "correta": "Tornar mais fino."
+  },
+  {
+    "palavra": "Ademane",
+    "correta": "Gesto afetado."
+  },
+  {
+    "palavra": "Adergar",
+    "correta": "Acertar por acaso."
+  },
+  {
+    "palavra": "Adernar",
+    "correta": "Virar de lado."
+  },
+  {
+    "palavra": "Adiáforo",
+    "correta": "Indiferente."
+  },
+  {
+    "palavra": "Adinamia",
+    "correta": "Fraqueza muscular extrema."
+  },
+  {
+    "palavra": "Adinâmico",
+    "correta": "Sem forças físicas."
+  },
+  {
+    "palavra": "Adipe",
+    "correta": "Gordura animal."
+  },
+  {
+    "palavra": "Adipsia",
+    "correta": "Ausência de sede."
+  },
+  {
+    "palavra": "Ádito",
+    "correta": "Câmara secreta."
+  },
+  {
+    "palavra": "Adjutório",
+    "correta": "Ajuda ou auxílio."
+  },
+  {
+    "palavra": "Admoestar",
+    "correta": "Advertir ou repreender."
+  },
+  {
+    "palavra": "Adrede",
+    "correta": "De propósito."
+  },
+  {
+    "palavra": "Adstrito",
+    "correta": "Vinculado a uma obrigação ou condição."
+  },
+  {
+    "palavra": "Aduchar",
+    "correta": "Enrolar cabos."
+  },
+  {
+    "palavra": "Aduela",
+    "correta": "Cada tábua curva que forma o corpo de um barril."
+  },
+  {
+    "palavra": "Adufe",
+    "correta": "Pandeiro quadrado."
+  },
+  {
+    "palavra": "Adulçorar",
+    "correta": "Adoçar."
+  },
+  {
+    "palavra": "Adulterino",
+    "correta": "Falsificado."
+  },
+  {
+    "palavra": "Adumbrar",
+    "correta": "Sombrear desenho."
+  },
+  {
+    "palavra": "Aduncidade",
+    "correta": "Forma de gancho."
+  },
+  {
+    "palavra": "Adunco",
+    "correta": "Curvo como gancho."
+  },
+  {
+    "palavra": "Adurir",
+    "correta": "Queimar."
+  },
+  {
+    "palavra": "Adustão",
+    "correta": "Queimadura."
+  },
+  {
+    "palavra": "Adusto",
+    "correta": "Tostado de sol."
+  },
+  {
+    "palavra": "Adveção",
+    "correta": "Transporte de calor ou de outras propriedades pelo movimento de um fluido."
+  },
+  {
+    "palavra": "Adveio",
+    "correta": "Surgiu depois."
+  },
+  {
+    "palavra": "Ádvena",
+    "correta": "Forasteiro recém-chegado."
+  },
+  {
+    "palavra": "Adventício",
+    "correta": "Que vem de fora ou surge em local incomum."
+  },
+  {
+    "palavra": "Aedo",
+    "correta": "Poeta cantor grego."
+  },
+  {
+    "palavra": "Aeróstato",
+    "correta": "Aparelho que se sustenta no ar graças a um gás mais leve."
+  },
+  {
+    "palavra": "Afaimado",
+    "correta": "Faminto."
+  },
+  {
+    "palavra": "Afazendar",
+    "correta": "Acumular fazendas."
+  },
+  {
+    "palavra": "Afélio",
+    "correta": "Ponto da órbita mais distante do Sol."
+  },
+  {
+    "palavra": "Aférese",
+    "correta": "Supressão de som ou sílaba no início da palavra."
+  },
+  {
+    "palavra": "Afistulado",
+    "correta": "Cheio de fístulas."
+  },
+  {
+    "palavra": "Aflante",
+    "correta": "Ofegante."
+  },
+  {
+    "palavra": "Aflar",
+    "correta": "Soprar brisa leve."
+  },
+  {
+    "palavra": "Afofamento",
+    "correta": "Amaciar a terra."
+  },
+  {
+    "palavra": "Afoiteza",
+    "correta": "Ousadia."
+  },
+  {
+    "palavra": "Aforar",
+    "correta": "Arrendar terreno."
+  },
+  {
+    "palavra": "Aforense",
+    "correta": "Taxa de terreno."
+  },
+  {
+    "palavra": "Aformosear",
+    "correta": "Embelezar."
+  },
+  {
+    "palavra": "Afótico",
+    "correta": "Sem luz."
+  },
+  {
+    "palavra": "Afracar",
+    "correta": "Perder o vigor."
+  },
+  {
+    "palavra": "Afuroar",
+    "correta": "Caçar com furão."
+  },
+  {
+    "palavra": "Afusar",
+    "correta": "Afinar como fuso."
+  },
+  {
+    "palavra": "Agaloado",
+    "correta": "Cheio de galões."
+  },
+  {
+    "palavra": "Agapanto",
+    "correta": "Flor azul-clara."
+  },
+  {
+    "palavra": "Agareno",
+    "correta": "Mouro antigo."
+  },
+  {
+    "palavra": "Agarrotar",
+    "correta": "Estrangular com corda."
+  },
+  {
+    "palavra": "Ágata",
+    "correta": "Variedade de calcedônia, geralmente listrada."
+  },
+  {
+    "palavra": "Agatanhar",
+    "correta": "Arranhar com unhas."
+  },
+  {
+    "palavra": "Agelasto",
+    "correta": "Quem nunca ri."
+  },
+  {
+    "palavra": "Agenesia",
+    "correta": "Ausência de formação de um órgão ou tecido."
+  },
+  {
+    "palavra": "Agerasia",
+    "correta": "Velhice com aparência juvenil."
+  },
+  {
+    "palavra": "Agibilibus",
+    "correta": "Astúcia para negócios."
+  },
+  {
+    "palavra": "Agiofobia",
+    "correta": "Medo de santos."
+  },
+  {
+    "palavra": "Agiológio",
+    "correta": "Vida dos santos."
+  },
+  {
+    "palavra": "Agnação",
+    "correta": "Parentesco pelo pai."
+  },
+  {
+    "palavra": "Agnado",
+    "correta": "Parente paterno."
+  },
+  {
+    "palavra": "Agnato",
+    "correta": "Vertebrado aquático sem mandíbulas."
+  },
+  {
+    "palavra": "Agnelinas",
+    "correta": "Lã de cordeiro."
+  },
+  {
+    "palavra": "Agnição",
+    "correta": "Reconhecimento de uma identidade antes ignorada."
+  },
+  {
+    "palavra": "Agnomen",
+    "correta": "Sobrenome romano antigo."
+  },
+  {
+    "palavra": "Agnosia",
+    "correta": "Incapacidade de reconhecer estímulos apesar da preservação dos sentidos."
+  },
+  {
+    "palavra": "Agomia",
+    "correta": "Faca curva mourisca."
+  },
+  {
+    "palavra": "Agonística",
+    "correta": "Lutas de arena."
+  },
+  {
+    "palavra": "Ágora",
+    "correta": "Praça grega antiga."
+  },
+  {
+    "palavra": "Agorentar",
+    "correta": "Encurtar ou aparar em volta."
+  },
+  {
+    "palavra": "Agrafia",
+    "correta": "Incapacidade de escrever."
+  },
+  {
+    "palavra": "Agrilhoado",
+    "correta": "Preso em ferros."
+  },
+  {
+    "palavra": "Agriote",
+    "correta": "Cereja brava azeda."
+  },
+  {
+    "palavra": "Agripnia",
+    "correta": "Insônia."
+  },
+  {
+    "palavra": "Água-furtada",
+    "correta": "Sótão de telhado."
+  },
+  {
+    "palavra": "Aguadeiro",
+    "correta": "Vendedor de água."
+  },
+  {
+    "palavra": "Aguieiro",
+    "correta": "Viga do telhado."
+  },
+  {
+    "palavra": "Águila",
+    "correta": "Madeira perfumada oriental."
+  },
+  {
+    "palavra": "Aguilhada",
+    "correta": "Vara de boiadeiro."
+  },
+  {
+    "palavra": "Aguilhão",
+    "correta": "Ponta usada para tanger o gado."
+  },
+  {
+    "palavra": "Aguizal",
+    "correta": "Terreno alagado."
+  },
+  {
+    "palavra": "Ai-jesus",
+    "correta": "Filho muito mimado."
+  },
+  {
+    "palavra": "Aia",
+    "correta": "Dama de companhia."
+  },
+  {
+    "palavra": "Aicmofobia",
+    "correta": "Medo de agulhas ou objetos pontiagudos."
+  },
+  {
+    "palavra": "Aio",
+    "correta": "Tutor de nobres."
+  },
+  {
+    "palavra": "Airela",
+    "correta": "Frutinha silvestre."
+  },
+  {
+    "palavra": "Ajarretar",
+    "correta": "Cortar os tendões."
+  },
+  {
+    "palavra": "Ajoujar",
+    "correta": "Atrelar animais juntos."
+  },
+  {
+    "palavra": "Ajoujo",
+    "correta": "Correia de cães."
+  },
+  {
+    "palavra": "Alabarda",
+    "correta": "Arma de haste que combina ponta de lança e lâmina de machado."
+  },
+  {
+    "palavra": "Alabardeiro",
+    "correta": "Guarda de alabarda."
+  },
+  {
+    "palavra": "Alacranado",
+    "correta": "Vermelho como lacre."
+  },
+  {
+    "palavra": "Alacridade",
+    "correta": "Alegria muito viva."
+  },
+  {
+    "palavra": "Alalia",
+    "correta": "Incapacidade de falar."
+  },
+  {
+    "palavra": "Alamar",
+    "correta": "Cordão de farda."
+  },
+  {
+    "palavra": "Alancear",
+    "correta": "Ferir com lança."
+  },
+  {
+    "palavra": "Alandroal",
+    "correta": "Mata de loendros."
+  },
+  {
+    "palavra": "Alapado",
+    "correta": "Agachado ou escondido."
+  },
+  {
+    "palavra": "Alarife",
+    "correta": "Mestre de obras."
+  },
+  {
+    "palavra": "Alarve",
+    "correta": "Sujeito muito bruto."
+  },
+  {
+    "palavra": "Alavão",
+    "correta": "Rebanho de ovelhas leiteiras."
+  },
+  {
+    "palavra": "Albarda",
+    "correta": "Sela de burro."
+  },
+  {
+    "palavra": "Albardão",
+    "correta": "Sela de tropeiro."
+  },
+  {
+    "palavra": "Albardar",
+    "correta": "Pôr sela rústica."
+  },
+  {
+    "palavra": "Albarrã",
+    "correta": "Torre da muralha."
+  },
+  {
+    "palavra": "Albarrada",
+    "correta": "Muro de pedra."
+  },
+  {
+    "palavra": "Albergaria",
+    "correta": "Hospedaria antiga."
+  },
+  {
+    "palavra": "Albicante",
+    "correta": "Esbranquiçado."
+  },
+  {
+    "palavra": "Albisque",
+    "correta": "Pequeno lucro."
+  },
+  {
+    "palavra": "Albo",
+    "correta": "Branco."
+  },
+  {
+    "palavra": "Albor",
+    "correta": "Primeira luz."
+  },
+  {
+    "palavra": "Alborecer",
+    "correta": "Amanhecer."
+  },
+  {
+    "palavra": "Alborgue",
+    "correta": "Casaco antigo."
+  },
+  {
+    "palavra": "Albricoque",
+    "correta": "Damasco."
+  },
+  {
+    "palavra": "Albufeira",
+    "correta": "Lagoa do litoral."
+  },
+  {
+    "palavra": "Albugem",
+    "correta": "Mancha no olho."
+  },
+  {
+    "palavra": "Albugíneo",
+    "correta": "Branco como clara de ovo."
+  },
+  {
+    "palavra": "Alburno",
+    "correta": "Camada externa e geralmente mais clara da madeira."
+  },
+  {
+    "palavra": "Alcaidaria",
+    "correta": "Cargo de alcaide."
+  },
+  {
+    "palavra": "Alcaide",
+    "correta": "Governador do castelo."
+  },
+  {
+    "palavra": "Alcaiote",
+    "correta": "Alcoviteiro."
+  },
+  {
+    "palavra": "Alcamonia",
+    "correta": "Doce de mel e farinha torrada."
+  },
+  {
+    "palavra": "Alcandorar",
+    "correta": "Subir às alturas."
+  },
+  {
+    "palavra": "Alcantil",
+    "correta": "Penhasco íngreme."
+  },
+  {
+    "palavra": "Alcantilado",
+    "correta": "Escarpado."
+  },
+  {
+    "palavra": "Alcanzia",
+    "correta": "Granada de barro."
+  },
+  {
+    "palavra": "Alcaravão",
+    "correta": "Ave pernalta."
+  },
+  {
+    "palavra": "Alcaravia",
+    "correta": "Cominho aromático."
+  },
+  {
+    "palavra": "Alcarrada",
+    "correta": "Cantoria com vinho."
+  },
+  {
+    "palavra": "Alcatifa",
+    "correta": "Tapete grande."
+  },
+  {
+    "palavra": "Alcatruz",
+    "correta": "Recipiente de uma nora para tirar água."
+  },
+  {
+    "palavra": "Alcatruzar",
+    "correta": "Encurvar."
+  },
+  {
+    "palavra": "Alcaxas",
+    "correta": "Listras do navio."
+  },
+  {
+    "palavra": "Alcear",
+    "correta": "Levantar do chão."
+  },
+  {
+    "palavra": "Alchavão",
+    "correta": "Fechadura antiga."
+  },
+  {
+    "palavra": "Alcíneo",
+    "correta": "Martim-pescador."
+  },
+  {
+    "palavra": "Alcíone",
+    "correta": "Ave do mar."
+  },
+  {
+    "palavra": "Alcorça",
+    "correta": "Pasta de açúcar."
+  },
+  {
+    "palavra": "Alcornoque",
+    "correta": "Árvore de cortiça."
+  },
+  {
+    "palavra": "Alcouce",
+    "correta": "Casa de tolerância."
+  },
+  {
+    "palavra": "Alcovitar",
+    "correta": "Fazer fuxico amoroso."
+  },
+  {
+    "palavra": "Alcravista",
+    "correta": "Artesão que fazia cravos para ferraduras."
+  },
+  {
+    "palavra": "Aldeagar",
+    "correta": "Vaguear."
+  },
+  {
+    "palavra": "Aldraba",
+    "correta": "Batedor de porta."
+  },
+  {
+    "palavra": "Aldrabão",
+    "correta": "Enrolador mentiroso."
+  },
+  {
+    "palavra": "Aldrabar",
+    "correta": "Enganar ou fazer um trabalho malfeito."
+  },
+  {
+    "palavra": "Alealdar",
+    "correta": "Liberar na alfândega."
+  },
+  {
+    "palavra": "Aleive",
+    "correta": "Calúnia covarde."
+  },
+  {
+    "palavra": "Aleivosia",
+    "correta": "Falsidade traiçoeira."
+  },
+  {
+    "palavra": "Aleivoso",
+    "correta": "Traidor."
+  },
+  {
+    "palavra": "Aleli",
+    "correta": "Goivo de jardim."
+  },
+  {
+    "palavra": "Alétheia",
+    "correta": "No pensamento grego, verdade entendida como desvelamento."
+  },
+  {
+    "palavra": "Aleuromancia",
+    "correta": "Adivinhação com farinha."
+  },
+  {
+    "palavra": "Alfageme",
+    "correta": "Mestre espadeiro."
+  },
+  {
+    "palavra": "Alfaia",
+    "correta": "Paramento ou joia."
+  },
+  {
+    "palavra": "Alfange",
+    "correta": "Sabre curvo árabe."
+  },
+  {
+    "palavra": "Alfarje",
+    "correta": "Teto lavrado mourisco."
+  },
+  {
+    "palavra": "Alfarrábio",
+    "correta": "Livro muito antigo."
+  },
+  {
+    "palavra": "Alfarrabista",
+    "correta": "Comerciante de livros antigos ou usados."
+  },
+  {
+    "palavra": "Alfeire",
+    "correta": "Chiqueiro ou curral."
+  },
+  {
+    "palavra": "Alfenim",
+    "correta": "Doce de açúcar."
+  },
+  {
+    "palavra": "Alfim",
+    "correta": "Finalmente."
+  },
+  {
+    "palavra": "Alfitete",
+    "correta": "Guisado temperado."
+  },
+  {
+    "palavra": "Alfoufe",
+    "correta": "Horta pequena."
+  },
+  {
+    "palavra": "Alfurja",
+    "correta": "Beco escuro."
+  },
+  {
+    "palavra": "Algália",
+    "correta": "Perfume de almíscar."
+  },
+  {
+    "palavra": "Algar",
+    "correta": "Cavidade natural e profunda no solo ou na rocha."
+  },
+  {
+    "palavra": "Algaravia",
+    "correta": "Língua incompreensível."
+  },
+  {
+    "palavra": "Algarez",
+    "correta": "Gritaria de guerra."
+  },
+  {
+    "palavra": "Algibe",
+    "correta": "Cisterna de pedra."
+  },
+  {
+    "palavra": "Algibeira",
+    "correta": "Bolso da roupa."
+  },
+  {
+    "palavra": "Algidez",
+    "correta": "Gelidez."
+  },
+  {
+    "palavra": "Álgido",
+    "correta": "Gelado."
+  },
+  {
+    "palavra": "Algofobia",
+    "correta": "Pavor de dor."
+  },
+  {
+    "palavra": "Alguergue",
+    "correta": "Pedra do lagar."
+  },
+  {
+    "palavra": "Alhada",
+    "correta": "Encrenca grande."
+  },
+  {
+    "palavra": "Alheta",
+    "correta": "Fuga apressada."
+  },
+  {
+    "palavra": "Alhures",
+    "correta": "Em outra parte."
+  },
+  {
+    "palavra": "Aliá",
+    "correta": "Elefanta asiática."
+  },
+  {
+    "palavra": "Alibã",
+    "correta": "Corrente de presos."
+  },
+  {
+    "palavra": "Alicantina",
+    "correta": "Fraude astuta."
+  },
+  {
+    "palavra": "Alidade",
+    "correta": "Régua óptica."
+  },
+  {
+    "palavra": "Alifafe",
+    "correta": "Doença de velhice."
+  },
+  {
+    "palavra": "Alígero",
+    "correta": "Rápido com asas."
+  },
+  {
+    "palavra": "Alijar",
+    "correta": "Jogar carga fora."
+  },
+  {
+    "palavra": "Alimária",
+    "correta": "Besta de carga."
+  },
+  {
+    "palavra": "Alimpadeira",
+    "correta": "Peneira para limpar cereais."
+  },
+  {
+    "palavra": "Alípede",
+    "correta": "Que tem asas nos pés."
+  },
+  {
+    "palavra": "Aljamia",
+    "correta": "Escrita mourisca."
+  },
+  {
+    "palavra": "Aljôfar",
+    "correta": "Pérola pequena."
+  },
+  {
+    "palavra": "Aljofre",
+    "correta": "Gota de orvalho."
+  },
+  {
+    "palavra": "Aljuba",
+    "correta": "Túnica mourisca."
+  },
+  {
+    "palavra": "Aljube",
+    "correta": "Prisão eclesiástica."
+  },
+  {
+    "palavra": "Almadia",
+    "correta": "Canoa de tronco."
+  },
+  {
+    "palavra": "Almalho",
+    "correta": "Novilho manso."
+  },
+  {
+    "palavra": "Almanjarra",
+    "correta": "Trave de moinho."
+  },
+  {
+    "palavra": "Almece",
+    "correta": "Soro do queijo."
+  },
+  {
+    "palavra": "Almedina",
+    "correta": "Cidade murada."
+  },
+  {
+    "palavra": "Almenara",
+    "correta": "Fogo de aviso."
+  },
+  {
+    "palavra": "Almo",
+    "correta": "Puro e santo."
+  },
+  {
+    "palavra": "Almocafre",
+    "correta": "Enxadinha de mão."
+  },
+  {
+    "palavra": "Almocavar",
+    "correta": "Cemitério mourisco."
+  },
+  {
+    "palavra": "Almocreve",
+    "correta": "Tropeiro de mulas."
+  },
+  {
+    "palavra": "Almoeda",
+    "correta": "Leilão público."
+  },
+  {
+    "palavra": "Almofaça",
+    "correta": "Escova de cavalo."
+  },
+  {
+    "palavra": "Almofariz",
+    "correta": "Pilão de bronze."
+  },
+  {
+    "palavra": "Almogávar",
+    "correta": "Soldado de fronteira."
+  },
+  {
+    "palavra": "Almojábana",
+    "correta": "Bolo de queijo."
+  },
+  {
+    "palavra": "Almorreimas",
+    "correta": "Inflamação hemorroidal."
+  },
+  {
+    "palavra": "Almotaçaria",
+    "correta": "Fiscalização de pesos."
+  },
+  {
+    "palavra": "Almotacel",
+    "correta": "Fiscal de feira."
+  },
+  {
+    "palavra": "Almotolia",
+    "correta": "Recipiente de bico estreito para azeite ou óleo."
+  },
+  {
+    "palavra": "Almude",
+    "correta": "Medida de vinho."
+  },
+  {
+    "palavra": "Alocução",
+    "correta": "Discurso curto."
+  },
+  {
+    "palavra": "Alodial",
+    "correta": "Livre de foro."
+  },
+  {
+    "palavra": "Aloedário",
+    "correta": "Purgante de babosa."
+  },
+  {
+    "palavra": "Alombado",
+    "correta": "De costas curvas."
+  },
+  {
+    "palavra": "Alomorfia",
+    "correta": "Variação na forma de um mesmo morfema."
+  },
+  {
+    "palavra": "Alorpado",
+    "correta": "Tolo grandalhão."
+  },
+  {
+    "palavra": "Alotriofagia",
+    "correta": "Ingestão persistente de substâncias que não são alimentos."
+  },
+  {
+    "palavra": "Alotrópico",
+    "correta": "Relativo às diferentes formas estruturais de um elemento químico."
+  },
+  {
+    "palavra": "Alousar",
+    "correta": "Cobrir com lousa."
+  },
+  {
+    "palavra": "Alparca",
+    "correta": "Sandália de couro."
+  },
+  {
+    "palavra": "Alperce",
+    "correta": "Damasco maduro."
+  },
+  {
+    "palavra": "Alpilha",
+    "correta": "Palha miúda."
+  },
+  {
+    "palavra": "Alpondras",
+    "correta": "Pedras no riacho."
+  },
+  {
+    "palavra": "Alporcar",
+    "correta": "Estimular o enraizamento de um ramo ainda ligado à planta."
+  },
+  {
+    "palavra": "Alporque",
+    "correta": "Ramo enraizado antes de ser separado da planta."
+  },
+  {
+    "palavra": "Alporquento",
+    "correta": "Inchado no pescoço."
+  },
+  {
+    "palavra": "Alquebrado",
+    "correta": "Velho e curvado."
+  },
+  {
+    "palavra": "Alqueivar",
+    "correta": "Preparar a terra e deixá-la em pousio."
+  },
+  {
+    "palavra": "Alqueive",
+    "correta": "Terra em descanso."
+  },
+  {
+    "palavra": "Alquilar",
+    "correta": "Alugar montaria."
+  },
+  {
+    "palavra": "Alquilé",
+    "correta": "Aluguel de mula."
+  },
+  {
+    "palavra": "Alquime",
+    "correta": "Ouro falso."
+  },
+  {
+    "palavra": "Alrotar",
+    "correta": "Fazer escárnio."
+  },
+  {
+    "palavra": "Altanaria",
+    "correta": "Caça com falcão."
+  },
+  {
+    "palavra": "Altiloquente",
+    "correta": "De estilo pomposo."
+  },
+  {
+    "palavra": "Altissonante",
+    "correta": "De som elevado."
+  },
+  {
+    "palavra": "Aludel",
+    "correta": "Vaso sublimatório."
+  },
+  {
+    "palavra": "Aludião",
+    "correta": "Queda de barreira."
+  },
+  {
+    "palavra": "Aluir",
+    "correta": "Desabar ou fazer desabar."
+  },
+  {
+    "palavra": "Alúmen",
+    "correta": "Sal adstringente."
+  },
+  {
+    "palavra": "Alvanel",
+    "correta": "Pedreiro antigo."
+  },
+  {
+    "palavra": "Alvar",
+    "correta": "Meio abobado."
+  },
+  {
+    "palavra": "Alvedrio",
+    "correta": "Livre escolha."
+  },
+  {
+    "palavra": "Alveitar",
+    "correta": "Veterinário antigo."
+  },
+  {
+    "palavra": "Alveitaria",
+    "correta": "Antiga arte de tratar doenças dos animais, sobretudo dos cavalos."
+  },
+  {
+    "palavra": "Alverca",
+    "correta": "Terreno alagadiço ou vala de drenagem."
+  },
+  {
+    "palavra": "Alvião",
+    "correta": "Picareta de lavoura."
+  },
+  {
+    "palavra": "Alvinitente",
+    "correta": "De um branco brilhante."
   },
   {
     "palavra": "Alvíssaras",
-    "correta": "Prêmio ou recompensa que se dava a quem trazia boas notícias ou achava algo perdido; expressão de regozijo.",
-    "falsas": [
-      "Flores brancas de aroma adocicado que desabrocham apenas após geadas intensas.",
-      "Vestimenta litúrgica de linho puro usada por noviços no século XVII.",
-      "Conjunto de cordas suplementares que sustentam a vela menor de uma caravela."
-    ]
+    "correta": "Recompensa."
+  },
+  {
+    "palavra": "Amadrinhar",
+    "correta": "Guiar cavalo novo."
+  },
+  {
+    "palavra": "Amagar",
+    "correta": "Ameaçar golpe."
+  },
+  {
+    "palavra": "Amalhar",
+    "correta": "Guardar no curral."
+  },
+  {
+    "palavra": "Amalhoar",
+    "correta": "Cercar presa."
+  },
+  {
+    "palavra": "Amanhar",
+    "correta": "Cultivar a terra."
+  },
+  {
+    "palavra": "Amanho",
+    "correta": "Preparo ou cultivo da terra."
+  },
+  {
+    "palavra": "Amanuense",
+    "correta": "Copista de cartório."
+  },
+  {
+    "palavra": "Amarar",
+    "correta": "Pousar no mar."
+  },
+  {
+    "palavra": "Amarfanhar",
+    "correta": "Amassar roupa."
+  },
+  {
+    "palavra": "Amarinhar",
+    "correta": "Subir mastros."
+  },
+  {
+    "palavra": "Amartelado",
+    "correta": "Cego de paixão."
+  },
+  {
+    "palavra": "Amarujar",
+    "correta": "Adquirir sabor salgado."
+  },
+  {
+    "palavra": "Amarulento",
+    "correta": "Amargo."
+  },
+  {
+    "palavra": "Amatilhar",
+    "correta": "Juntar a matilha."
+  },
+  {
+    "palavra": "Amavios",
+    "correta": "Feitiço."
+  },
+  {
+    "palavra": "Ambages",
+    "correta": "Rodeios na fala."
+  },
+  {
+    "palavra": "Ambissinistro",
+    "correta": "Muito desajeitado."
+  },
+  {
+    "palavra": "Ambliopia",
+    "correta": "Vista enfraquecida."
+  },
+  {
+    "palavra": "Amecha",
+    "correta": "Fresta de muralha."
+  },
+  {
+    "palavra": "Ameia",
+    "correta": "Dente da muralha."
+  },
+  {
+    "palavra": "Ameigar",
+    "correta": "Fazer carinhos."
+  },
+  {
+    "palavra": "Amenta",
+    "correta": "Reza pelos mortos."
+  },
+  {
+    "palavra": "Amentar",
+    "correta": "Encomendar almas."
+  },
+  {
+    "palavra": "Amículo",
+    "correta": "Véu de ombros."
+  },
+  {
+    "palavra": "Amieiro",
+    "correta": "Árvore que costuma crescer junto a cursos d’água."
+  },
+  {
+    "palavra": "Amiudar",
+    "correta": "Repetir sempre."
+  },
+  {
+    "palavra": "Amiúde",
+    "correta": "Frequentemente."
+  },
+  {
+    "palavra": "Amnistia",
+    "correta": "Perdão geral."
+  },
+  {
+    "palavra": "Amocambado",
+    "correta": "Refugiado no mato."
+  },
+  {
+    "palavra": "Amoedar",
+    "correta": "Fabricar moedas."
+  },
+  {
+    "palavra": "Amojar",
+    "correta": "Encher de leite o úbere."
+  },
+  {
+    "palavra": "Amolegar",
+    "correta": "Amassar com dedos."
+  },
+  {
+    "palavra": "Amolgar",
+    "correta": "Amassar."
+  },
+  {
+    "palavra": "Amontado",
+    "correta": "Fugido no mato."
+  },
+  {
+    "palavra": "Amouco",
+    "correta": "Guerreiro suicida."
+  },
+  {
+    "palavra": "Amplexo",
+    "correta": "Abraço fraterno."
+  },
+  {
+    "palavra": "Amurada",
+    "correta": "Borda do navio."
+  },
+  {
+    "palavra": "Anabaptista",
+    "correta": "Seguidor de corrente cristã que pratica o batismo de quem professa a fé."
+  },
+  {
+    "palavra": "Anábase",
+    "correta": "Expedição militar rumo ao interior."
+  },
+  {
+    "palavra": "Anabiose",
+    "correta": "Retomada da atividade vital após um período de latência."
+  },
+  {
+    "palavra": "Anaclise",
+    "correta": "Apoio emocional excessivo em outra pessoa."
+  },
+  {
+    "palavra": "Anacoluto",
+    "correta": "Quebra na estrutura da frase."
+  },
+  {
+    "palavra": "Anacorese",
+    "correta": "Vida isolada no deserto."
+  },
+  {
+    "palavra": "Anacoreta",
+    "correta": "Eremita."
+  },
+  {
+    "palavra": "Anadema",
+    "correta": "Enfeite de flores para a cabeça."
+  },
+  {
+    "palavra": "Anadiplose",
+    "correta": "Repetição, no início de uma frase ou verso, do termo que encerra o anterior."
+  },
+  {
+    "palavra": "Anádromo",
+    "correta": "Que sobe os rios para desovar, como o salmão."
+  },
+  {
+    "palavra": "Anafaia",
+    "correta": "Primeiro fio que o bicho-da-seda tece."
+  },
+  {
+    "palavra": "Anafar",
+    "correta": "Engordar e alisar o pelo do cavalo."
+  },
+  {
+    "palavra": "Anaglifo",
+    "correta": "Imagem que parece tridimensional quando vista com filtros de cores diferentes."
+  },
+  {
+    "palavra": "Anagogia",
+    "correta": "Elevação mística da alma."
+  },
+  {
+    "palavra": "Anagógico",
+    "correta": "Espiritual."
+  },
+  {
+    "palavra": "Analecto",
+    "correta": "Coletânea de trechos escolhidos."
+  },
+  {
+    "palavra": "Analepto",
+    "correta": "Tônico que recupera as forças."
+  },
+  {
+    "palavra": "Ananico",
+    "correta": "Muito baixinho."
+  },
+  {
+    "palavra": "Anaptixe",
+    "correta": "Inserção de uma vogal entre consoantes."
+  },
+  {
+    "palavra": "Anasarca",
+    "correta": "Inchaço generalizado do corpo."
+  },
+  {
+    "palavra": "Anastilose",
+    "correta": "Reconstrução de um monumento em ruínas com seus elementos originais."
+  },
+  {
+    "palavra": "Anástrofe",
+    "correta": "Inversão na ordem normal das palavras."
+  },
+  {
+    "palavra": "Anátema",
+    "correta": "Excomunhão."
+  },
+  {
+    "palavra": "Anatematizar",
+    "correta": "Amaldiçoar ou excomungar."
+  },
+  {
+    "palavra": "Anatocismo",
+    "correta": "Cobrança de juros sobre juros."
+  },
+  {
+    "palavra": "Anciar",
+    "correta": "Respirar com aflição."
+  },
+  {
+    "palavra": "Ancilose",
+    "correta": "Perda da mobilidade de uma articulação."
+  },
+  {
+    "palavra": "Andaço",
+    "correta": "Surto de doença que se espalha por uma região."
+  },
+  {
+    "palavra": "Andejo",
+    "correta": "Que gosta de perambular."
+  },
+  {
+    "palavra": "Andilhas",
+    "correta": "Sela antiga com apoio para mulheres."
+  },
+  {
+    "palavra": "Andrajo",
+    "correta": "Trapo velho e rasgado."
+  },
+  {
+    "palavra": "Androceu",
+    "correta": "Conjunto dos estames de uma flor."
+  },
+  {
+    "palavra": "Androfobia",
+    "correta": "Medo intenso de homens."
+  },
+  {
+    "palavra": "Anemofilia",
+    "correta": "Polinização pelo vento."
+  },
+  {
+    "palavra": "Anemógrafo",
+    "correta": "Instrumento que registra dados sobre o vento."
+  },
+  {
+    "palavra": "Anete",
+    "correta": "Argola grande da âncora."
+  },
+  {
+    "palavra": "Anexim",
+    "correta": "Ditado popular curto."
+  },
+  {
+    "palavra": "Anfibólio",
+    "correta": "Sentido duplo e duvidoso."
+  },
+  {
+    "palavra": "Anfibologia",
+    "correta": "Duplo sentido."
+  },
+  {
+    "palavra": "Anfictião",
+    "correta": "Deputado das antigas cidades gregas."
+  },
+  {
+    "palavra": "Anfipróstilo",
+    "correta": "Templo com colunas nas fachadas dianteira e traseira."
+  },
+  {
+    "palavra": "Anfíscio",
+    "correta": "Habitante da zona tropical."
+  },
+  {
+    "palavra": "Anfractuosidade",
+    "correta": "Sinuosidade ou reentrância irregular."
+  },
+  {
+    "palavra": "Anfractuoso",
+    "correta": "Cheio de curvas e buracos."
+  },
+  {
+    "palavra": "Angelim",
+    "correta": "Árvore de madeira muito dura."
+  },
+  {
+    "palavra": "Angiposto",
+    "correta": "Beco estreito entre casas."
+  },
+  {
+    "palavra": "Anguiforme",
+    "correta": "Em forma de serpente."
+  },
+  {
+    "palavra": "Anhanguera",
+    "correta": "Diabo velho em tupi."
+  },
+  {
+    "palavra": "Anho",
+    "correta": "Cordeiro novo."
+  },
+  {
+    "palavra": "Anidrose",
+    "correta": "Falta anormal de suor."
+  },
+  {
+    "palavra": "Ânima",
+    "correta": "Alma vital."
+  },
+  {
+    "palavra": "Animadversão",
+    "correta": "Antipatia forte ou repreensão."
+  },
+  {
+    "palavra": "Anisar",
+    "correta": "Temperar com erva-doce."
+  },
+  {
+    "palavra": "Anisocoria",
+    "correta": "Pupilas de tamanhos diferentes."
+  },
+  {
+    "palavra": "Anojo",
+    "correta": "Bezerro de um ano."
+  },
+  {
+    "palavra": "Anomia",
+    "correta": "Ausência ou enfraquecimento das normas sociais."
+  },
+  {
+    "palavra": "Anoso",
+    "correta": "Idoso."
+  },
+  {
+    "palavra": "Anquilosado",
+    "correta": "Rígido ou sem mobilidade."
+  },
+  {
+    "palavra": "Ansar",
+    "correta": "Ganso bravo."
+  },
+  {
+    "palavra": "Antanáclase",
+    "correta": "Repetição da mesma palavra com sentidos diferentes."
+  },
+  {
+    "palavra": "Antanagoge",
+    "correta": "Recurso retórico que contrapõe uma qualidade a uma crítica."
+  },
+  {
+    "palavra": "Antanho",
+    "correta": "Outrora."
+  },
+  {
+    "palavra": "Antedata",
+    "correta": "Data anterior à verdadeira."
+  },
+  {
+    "palavra": "Antediluviano",
+    "correta": "Arcaico."
+  },
+  {
+    "palavra": "Antefixo",
+    "correta": "Enfeite na beirada do telhado."
+  },
+  {
+    "palavra": "Antegozo",
+    "correta": "Prazer sentido por antecipação."
+  },
+  {
+    "palavra": "Antelóquio",
+    "correta": "Prefácio."
+  },
+  {
+    "palavra": "Antemanhã",
+    "correta": "Período que precede o amanhecer."
+  },
+  {
+    "palavra": "Antemural",
+    "correta": "Muro externo de proteção."
+  },
+  {
+    "palavra": "Antese",
+    "correta": "Abertura das pétalas da flor."
+  },
+  {
+    "palavra": "Antífona",
+    "correta": "Versículo cantado antes ou depois de um salmo."
+  },
+  {
+    "palavra": "Antífrase",
+    "correta": "Uso irônico de uma expressão com sentido oposto ao habitual."
+  },
+  {
+    "palavra": "Antilogia",
+    "correta": "Contradição entre duas ideias."
+  },
+  {
+    "palavra": "Antinomia",
+    "correta": "Conflito entre duas leis válidas."
+  },
+  {
+    "palavra": "Antístite",
+    "correta": "Bispo ou chefe supremo de religião."
+  },
+  {
+    "palavra": "Antofagia",
+    "correta": "Hábito de comer flores."
+  },
+  {
+    "palavra": "Antófago",
+    "correta": "Inseto que se alimenta de flores."
+  },
+  {
+    "palavra": "Antolhos",
+    "correta": "Peças que limitam a visão lateral do cavalo."
+  },
+  {
+    "palavra": "Antonomásia",
+    "correta": "Substituição de um nome próprio por um título, epíteto ou expressão característica."
+  },
+  {
+    "palavra": "Antracose",
+    "correta": "Acúmulo de partículas de carvão nos pulmões."
+  },
+  {
+    "palavra": "Antropopatia",
+    "correta": "Atribuição de sentimentos humanos a divindades."
+  },
+  {
+    "palavra": "Aojamento",
+    "correta": "Mau-olhado."
+  },
+  {
+    "palavra": "Aojar",
+    "correta": "Lançar mau-olhado."
+  },
+  {
+    "palavra": "Apainelar",
+    "correta": "Revestir com painéis."
+  },
+  {
+    "palavra": "Apaiolado",
+    "correta": "Guardado no paiol."
+  },
+  {
+    "palavra": "Apanágio",
+    "correta": "Privilégio."
+  },
+  {
+    "palavra": "Apaniguado",
+    "correta": "Protegido de alguém poderoso."
+  },
+  {
+    "palavra": "Apatheia",
+    "correta": "No estoicismo, serenidade alcançada pelo domínio das paixões."
+  },
+  {
+    "palavra": "Apedêuta",
+    "correta": "Pessoa sem instrução."
+  },
+  {
+    "palavra": "Apeirar",
+    "correta": "Atrelar os bois ao carro ou ao arado."
+  },
+  {
+    "palavra": "Apeiro",
+    "correta": "Conjunto de arreios e peças do arado."
+  },
+  {
+    "palavra": "Apepitar",
+    "correta": "Piar baixinho."
+  },
+  {
+    "palavra": "Apercepção",
+    "correta": "Consciência clara do que se percebe."
+  },
+  {
+    "palavra": "Apertura",
+    "correta": "Aperto financeiro."
+  },
+  {
+    "palavra": "Apisoar",
+    "correta": "Prensar pano no moinho."
+  },
+  {
+    "palavra": "Apodítico",
+    "correta": "Incontestável."
+  },
+  {
+    "palavra": "Apodo",
+    "correta": "Apelido debochado."
+  },
+  {
+    "palavra": "Apódose",
+    "correta": "Parte final de uma frase condicional."
+  },
+  {
+    "palavra": "Apofântico",
+    "correta": "Que exprime uma afirmação ou negação."
+  },
+  {
+    "palavra": "Apófase",
+    "correta": "Menção a algo sob o pretexto de omiti-lo."
+  },
+  {
+    "palavra": "Apofenia",
+    "correta": "Percepção de padrões ou conexões em fatos aleatórios."
+  },
+  {
+    "palavra": "Apofonia",
+    "correta": "Alternância de vogais na raiz de uma palavra."
+  },
+  {
+    "palavra": "Apoftegma",
+    "correta": "Frase curta e sábia."
+  },
+  {
+    "palavra": "Apógrafo",
+    "correta": "Cópia fiel de texto antigo."
+  },
+  {
+    "palavra": "Apojadura",
+    "correta": "Descida do leite materno."
+  },
+  {
+    "palavra": "Apojar",
+    "correta": "Encher o peito de leite."
+  },
+  {
+    "palavra": "Apologética",
+    "correta": "Defesa de uma doutrina religiosa."
+  },
+  {
+    "palavra": "Apomixia",
+    "correta": "Formação de sementes sem fecundação."
+  },
+  {
+    "palavra": "Apontoado",
+    "correta": "Costurado de leve."
+  },
+  {
+    "palavra": "Apoquentado",
+    "correta": "Chateado e aflito."
+  },
+  {
+    "palavra": "Aporético",
+    "correta": "Cheio de dúvidas sem saída."
+  },
+  {
+    "palavra": "Aporia",
+    "correta": "Impasse no raciocínio."
+  },
+  {
+    "palavra": "Aposiopese",
+    "correta": "Interrupção deliberada de uma frase, deixando o sentido em suspenso."
+  },
+  {
+    "palavra": "Apostema",
+    "correta": "Abscesso."
+  },
+  {
+    "palavra": "Apotegma",
+    "correta": "Frase sábia."
+  },
+  {
+    "palavra": "Apotropaico",
+    "correta": "Que se destina a afastar males ou influências nocivas."
+  },
+  {
+    "palavra": "Apoucar",
+    "correta": "Diminuir o valor."
+  },
+  {
+    "palavra": "Apreçar",
+    "correta": "Perguntar o preço."
+  },
+  {
+    "palavra": "Apresamento",
+    "correta": "Captura de navio inimigo."
+  },
+  {
+    "palavra": "Apresar",
+    "correta": "Capturar navio no mar."
+  },
+  {
+    "palavra": "Aprisco",
+    "correta": "Curral de ovelhas."
+  },
+  {
+    "palavra": "Aptialismo",
+    "correta": "Ausência de salivação."
+  },
+  {
+    "palavra": "Apupar",
+    "correta": "Vaiar."
+  },
+  {
+    "palavra": "Apupo",
+    "correta": "Vaia."
+  },
+  {
+    "palavra": "Aqueloutro",
+    "correta": "Aquele outro."
+  },
+  {
+    "palavra": "Aquiescer",
+    "correta": "Consentir."
+  },
+  {
+    "palavra": "Aquilão",
+    "correta": "Vento frio que sopra do norte."
+  },
+  {
+    "palavra": "Aquilatar",
+    "correta": "Medir o valor."
+  },
+  {
+    "palavra": "Aquilonal",
+    "correta": "Que vem do lado norte."
+  },
+  {
+    "palavra": "Aracnodactilia",
+    "correta": "Alongamento anormal dos dedos, que se tornam finos e compridos."
+  },
+  {
+    "palavra": "Aranzel",
+    "correta": "Conversa longa e monótona."
+  },
+  {
+    "palavra": "Arcano",
+    "correta": "Segredo."
+  },
+  {
+    "palavra": "Arconte",
+    "correta": "Magistrado."
+  },
+  {
+    "palavra": "Areópago",
+    "correta": "Antigo tribunal supremo de Atenas."
+  },
+  {
+    "palavra": "Aretaico",
+    "correta": "Virtuoso."
+  },
+  {
+    "palavra": "Aretologia",
+    "correta": "Estudo filosófico das virtudes."
+  },
+  {
+    "palavra": "Argel",
+    "correta": "Diz-se do cavalo com marca branca em apenas um dos pés."
+  },
+  {
+    "palavra": "Argentário",
+    "correta": "Banqueiro ou negociante de dinheiro."
+  },
+  {
+    "palavra": "Argirismo",
+    "correta": "Pele acinzentada por sais de prata."
+  },
+  {
+    "palavra": "Argirocracia",
+    "correta": "Domínio político dos muito ricos."
+  },
+  {
+    "palavra": "Argúcia",
+    "correta": "Astúcia."
+  },
+  {
+    "palavra": "Aríolo",
+    "correta": "Adivinho."
+  },
+  {
+    "palavra": "Aristologia",
+    "correta": "Arte de preparar e servir banquetes."
+  },
+  {
+    "palavra": "Armaria",
+    "correta": "Arte dos brasões ou depósito de armas."
+  },
+  {
+    "palavra": "Armorial",
+    "correta": "Livro de brasões da nobreza."
+  },
+  {
+    "palavra": "Arneiro",
+    "correta": "Areal."
+  },
+  {
+    "palavra": "Arnês",
+    "correta": "Armadura completa de cavaleiro."
+  },
+  {
+    "palavra": "Arpar",
+    "correta": "Ferir ou fisgar com arpão."
+  },
+  {
+    "palavra": "Arpéu",
+    "correta": "Gancho de ferro para abordar navios."
+  },
+  {
+    "palavra": "Arquitrave",
+    "correta": "Viga principal apoiada sobre colunas."
+  },
+  {
+    "palavra": "Arquivolta",
+    "correta": "Moldura curva sobre arco de porta."
+  },
+  {
+    "palavra": "Arraia-miúda",
+    "correta": "O povo simples."
+  },
+  {
+    "palavra": "Arrais",
+    "correta": "Mestre de barco pequeno."
+  },
+  {
+    "palavra": "Arras",
+    "correta": "Sinal dado para garantir um acordo."
+  },
+  {
+    "palavra": "Arrebicar",
+    "correta": "Enfeitar ou maquiar em excesso."
+  },
+  {
+    "palavra": "Arrebol",
+    "correta": "Cor avermelhada do céu no pôr do sol."
+  },
+  {
+    "palavra": "Arribação",
+    "correta": "Voo de aves que migram."
+  },
+  {
+    "palavra": "Arribar",
+    "correta": "Recuperar forças ou chegar ao porto."
+  },
+  {
+    "palavra": "Arrogar",
+    "correta": "Tomar como seu."
+  },
+  {
+    "palavra": "Asbesto",
+    "correta": "Amianto."
+  },
+  {
+    "palavra": "Ascese",
+    "correta": "Prática de disciplina espiritual e renúncia."
+  },
+  {
+    "palavra": "Ascídio",
+    "correta": "Estrutura vegetal em forma de jarro que pode capturar insetos."
+  },
+  {
+    "palavra": "Asfigmia",
+    "correta": "Falta temporária de pulso."
+  },
+  {
+    "palavra": "Asinhaga",
+    "correta": "Vereda estreita entre muros."
+  },
+  {
+    "palavra": "Asna",
+    "correta": "Viga em forma de V no telhado."
+  },
+  {
+    "palavra": "Asperges",
+    "correta": "Momento de borrifar água benta na missa."
+  },
+  {
+    "palavra": "Assacar",
+    "correta": "Imputar."
+  },
+  {
+    "palavra": "Assaz",
+    "correta": "Bastante."
+  },
+  {
+    "palavra": "Assestar",
+    "correta": "Apontar uma arma para o alvo."
+  },
+  {
+    "palavra": "Asseverar",
+    "correta": "Afirmar."
+  },
+  {
+    "palavra": "Assomo",
+    "correta": "Impulso repentino de raiva."
+  },
+  {
+    "palavra": "Assuadas",
+    "correta": "Motim barulhento com gritos e vaias."
+  },
+  {
+    "palavra": "Astacicultura",
+    "correta": "Criação de lagostins."
+  },
+  {
+    "palavra": "Astenia",
+    "correta": "Debilidade."
+  },
+  {
+    "palavra": "Astenopia",
+    "correta": "Vista cansada."
+  },
+  {
+    "palavra": "Asterognosia",
+    "correta": "Incapacidade de reconhecer objetos pelo tato."
+  },
+  {
+    "palavra": "Astragalomancia",
+    "correta": "Adivinhação pelo lançamento de dados ou pequenos ossos."
+  },
+  {
+    "palavra": "Astromancia",
+    "correta": "Adivinhação do destino pelas estrelas."
+  },
+  {
+    "palavra": "Atabalhoar",
+    "correta": "Fazer algo às pressas e sem cuidado."
+  },
+  {
+    "palavra": "Atafona",
+    "correta": "Moinho de grãos tocado por roda."
+  },
+  {
+    "palavra": "Atamancar",
+    "correta": "Fazer de modo apressado e mal-acabado."
+  },
+  {
+    "palavra": "Atanado",
+    "correta": "Couro curtido com casca de árvore."
+  },
+  {
+    "palavra": "Ataraxia",
+    "correta": "Sossego completo da alma."
+  },
+  {
+    "palavra": "Ataráxico",
+    "correta": "Imperturbável."
+  },
+  {
+    "palavra": "Atávico",
+    "correta": "Herdado de antepassados distantes."
+  },
+  {
+    "palavra": "Atavio",
+    "correta": "Adorno."
+  },
+  {
+    "palavra": "Ataxia",
+    "correta": "Falta de coordenação dos movimentos."
+  },
+  {
+    "palavra": "Atelofobia",
+    "correta": "Medo intenso de imperfeição ou de cometer erros."
+  },
+  {
+    "palavra": "Atetose",
+    "correta": "Movimentos involuntários, lentos e sinuosos, sobretudo das extremidades."
+  },
+  {
+    "palavra": "Atimia",
+    "correta": "Desânimo profundo ou perda de honra."
+  },
+  {
+    "palavra": "Atrabiliário",
+    "correta": "Colérico."
+  },
+  {
+    "palavra": "Atrabilis",
+    "correta": "Melancolia amarga."
+  },
+  {
+    "palavra": "Atresia",
+    "correta": "Canal do corpo fechado de nascença."
+  },
+  {
+    "palavra": "Atriquia",
+    "correta": "Ausência total de pelos no corpo."
+  },
+  {
+    "palavra": "Atro",
+    "correta": "Tenebroso."
+  },
+  {
+    "palavra": "Atroada",
+    "correta": "Barulho forte e prolongado."
+  },
+  {
+    "palavra": "Áugure",
+    "correta": "Sacerdote romano que lia o voo das aves."
+  },
+  {
+    "palavra": "Áulico",
+    "correta": "Cortesão."
+  },
+  {
+    "palavra": "Aulido",
+    "correta": "Uivo triste de cão ou lobo."
+  },
+  {
+    "palavra": "Auriga",
+    "correta": "Condutor de um carro puxado por cavalos."
+  },
+  {
+    "palavra": "Aurirrosado",
+    "correta": "Dourado com tons de rosa."
+  },
+  {
+    "palavra": "Aurispício",
+    "correta": "Adivinhação pelo exame das vísceras de animais."
+  },
+  {
+    "palavra": "Autóctone",
+    "correta": "Nativo."
+  },
+  {
+    "palavra": "Autotelia",
+    "correta": "Condição do que tem finalidade em si mesmo."
+  },
+  {
+    "palavra": "Autótone",
+    "correta": "Originário do próprio lugar."
+  },
+  {
+    "palavra": "Auxologia",
+    "correta": "Estudo biológico do crescimento físico."
+  },
+  {
+    "palavra": "Avantesma",
+    "correta": "Fantasma enorme."
+  },
+  {
+    "palavra": "Avejar",
+    "correta": "Avistar."
+  },
+  {
+    "palavra": "Avença",
+    "correta": "Acordo amigável entre partes."
+  },
+  {
+    "palavra": "Averno",
+    "correta": "O inferno na mitologia romana."
+  },
+  {
+    "palavra": "Avocar",
+    "correta": "Chamar processo para seu próprio julgamento."
+  },
+  {
+    "palavra": "Avoenga",
+    "correta": "Herança antiga dos avós."
+  },
+  {
+    "palavra": "Avoengo",
+    "correta": "Ancestral."
+  },
+  {
+    "palavra": "Axiologia",
+    "correta": "Estudo filosófico dos valores."
+  },
+  {
+    "palavra": "Axiológico",
+    "correta": "Relativo aos valores."
+  },
+  {
+    "palavra": "Azáfama",
+    "correta": "Pressa acompanhada de agitação."
+  },
+  {
+    "palavra": "Azagaia",
+    "correta": "Lança curta de arremesso."
+  },
+  {
+    "palavra": "Azambujeiro",
+    "correta": "Oliveira silvestre."
+  },
+  {
+    "palavra": "Azarola",
+    "correta": "Frutinha vermelha e azeda."
+  },
+  {
+    "palavra": "Azevichado",
+    "correta": "Negríssimo."
+  },
+  {
+    "palavra": "Azeviche",
+    "correta": "Carvão fóssil negro e muito lustroso."
+  },
+  {
+    "palavra": "Ázimo",
+    "correta": "Pão feito sem fermento."
+  },
+  {
+    "palavra": "Azinhaga",
+    "correta": "Caminho estreito e fundo no campo."
+  },
+  {
+    "palavra": "Azinhavre",
+    "correta": "Camada esverdeada que se forma sobre o cobre e suas ligas."
+  },
+  {
+    "palavra": "Azoratado",
+    "correta": "Atordoado."
+  },
+  {
+    "palavra": "Azorrague",
+    "correta": "Chicote de tiras de couro."
+  },
+  {
+    "palavra": "Azougado",
+    "correta": "Inquieto."
+  },
+  {
+    "palavra": "Azougue",
+    "correta": "Mercúrio."
+  },
+  {
+    "palavra": "Azumbrado",
+    "correta": "Curvado."
+  },
+  {
+    "palavra": "Babiça",
+    "correta": "Espuma."
+  },
+  {
+    "palavra": "Babugem",
+    "correta": "Espuma marinha."
+  },
+  {
+    "palavra": "Bacamarte",
+    "correta": "Arma antiga de cano curto e largo."
+  },
+  {
+    "palavra": "Bácoro",
+    "correta": "Leitão."
+  },
+  {
+    "palavra": "Badameco",
+    "correta": "Pasta de estudante ou sujeito sem valor."
+  },
+  {
+    "palavra": "Badana",
+    "correta": "Ovelha velha e magra."
+  },
+  {
+    "palavra": "Baeta",
+    "correta": "Lã felpuda."
+  },
+  {
+    "palavra": "Bafagem",
+    "correta": "Vento morno suave."
+  },
+  {
+    "palavra": "Bafio",
+    "correta": "Cheiro abafado."
+  },
+  {
+    "palavra": "Bagana",
+    "correta": "Resto de cigarro apagado."
+  },
+  {
+    "palavra": "Baila",
+    "correta": "Assunto lembrado."
+  },
+  {
+    "palavra": "Bailéu",
+    "correta": "Andaime suspenso."
+  },
+  {
+    "palavra": "Bajoujo",
+    "correta": "Palerma."
+  },
+  {
+    "palavra": "Balandrão",
+    "correta": "Capote largo."
+  },
+  {
+    "palavra": "Baláustio",
+    "correta": "Flor seca da romãzeira."
+  },
+  {
+    "palavra": "Balda",
+    "correta": "Hábito ou defeito persistente."
   },
   {
     "palavra": "Baldaquino",
-    "correta": "Armação em forma de dossel sustentada por colunas ou pendente do teto, sob a qual se coloca um trono, altar ou leito.",
-    "falsas": [
-      "Antigo saltimbanco italiano que realizava acrobacias sobre pernas de pau nas feiras.",
-      "Vaso bojudo de cerâmica esmaltada utilizado para conservar azeite e azeitonas.",
-      "balaustrada de pedra lavrada que circunda o pátio interno de mosteiros."
-    ]
+    "correta": "Dossel nobre."
+  },
+  {
+    "palavra": "Baldo",
+    "correta": "Desprovido."
+  },
+  {
+    "palavra": "Baldroca",
+    "correta": "Trapaça."
+  },
+  {
+    "palavra": "Balseiro",
+    "correta": "Mato fechado de cipós."
+  },
+  {
+    "palavra": "Bálteo",
+    "correta": "Cinturão militar."
+  },
+  {
+    "palavra": "Bambinelas",
+    "correta": "Cortinas estreitas."
+  },
+  {
+    "palavra": "Bambochata",
+    "correta": "Pintura burlesca."
+  },
+  {
+    "palavra": "Bambúrrio",
+    "correta": "Golpe de sorte."
+  },
+  {
+    "palavra": "Bandarra",
+    "correta": "Vadio."
+  },
+  {
+    "palavra": "Bandear",
+    "correta": "Mudar de lado ou de partido."
+  },
+  {
+    "palavra": "Bandoleira",
+    "correta": "Correia tiracolo."
+  },
+  {
+    "palavra": "Banguê",
+    "correta": "Engenho antigo."
+  },
+  {
+    "palavra": "Baptistério",
+    "correta": "Capela onde fica a pia de batismo."
+  },
+  {
+    "palavra": "Barafustar",
+    "correta": "Protestar com veemência."
+  },
+  {
+    "palavra": "Barbacã",
+    "correta": "Muro externo."
+  },
+  {
+    "palavra": "Barbaças",
+    "correta": "Barbudo."
+  },
+  {
+    "palavra": "Barbicacho",
+    "correta": "Cordão de chapéu."
+  },
+  {
+    "palavra": "Barbilhão",
+    "correta": "Pele vermelha sob o bico do galo."
+  },
+  {
+    "palavra": "Barbote",
+    "correta": "Peça da armadura que protegia o queixo."
+  },
+  {
+    "palavra": "Barcarola",
+    "correta": "Canção veneziana."
+  },
+  {
+    "palavra": "Barigélico",
+    "correta": "Antigo chefe policial."
+  },
+  {
+    "palavra": "Barlavento",
+    "correta": "Lado de onde sopra o vento."
+  },
+  {
+    "palavra": "Barregã",
+    "correta": "Concubina."
+  },
+  {
+    "palavra": "Barrela",
+    "correta": "Solução de cinzas usada para lavar roupa."
+  },
+  {
+    "palavra": "Barrete",
+    "correta": "Gorro macio sem abas."
+  },
+  {
+    "palavra": "Bartolismo",
+    "correta": "Formalismo jurídico."
+  },
+  {
+    "palavra": "Basculho",
+    "correta": "Vassoura comprida."
+  },
+  {
+    "palavra": "Basilisco",
+    "correta": "Lagarto mítico que matava com o olhar."
+  },
+  {
+    "palavra": "Basófia",
+    "correta": "Ostentação ou fanfarronice."
+  },
+  {
+    "palavra": "Bastardia",
+    "correta": "Filiação ilegítima."
+  },
+  {
+    "palavra": "Batega",
+    "correta": "Chuva torrencial."
+  },
+  {
+    "palavra": "Batel",
+    "correta": "Barquinho a remo."
+  },
+  {
+    "palavra": "Batelão",
+    "correta": "Embarcação de fundo chato."
+  },
+  {
+    "palavra": "Batologia",
+    "correta": "Repetição de palavras."
+  },
+  {
+    "palavra": "Batoque",
+    "correta": "Rolha de barril."
+  },
+  {
+    "palavra": "Batráquio",
+    "correta": "Sapo, rã ou perereca."
+  },
+  {
+    "palavra": "Bazaruco",
+    "correta": "Moeda antiga de cobre de pouco valor."
+  },
+  {
+    "palavra": "Beatério",
+    "correta": "Recolhimento religioso."
+  },
+  {
+    "palavra": "Bebeorrotear",
+    "correta": "Bebericar."
+  },
+  {
+    "palavra": "Bedel",
+    "correta": "Funcionário encarregado da ordem e da disciplina em uma escola."
+  },
+  {
+    "palavra": "Beguina",
+    "correta": "Mulher de comunidade religiosa leiga, sem votos perpétuos."
+  },
+  {
+    "palavra": "Beladona",
+    "correta": "Planta venenosa de cujas folhas se extrai atropina."
+  },
+  {
+    "palavra": "Belida",
+    "correta": "Mancha esbranquiçada na córnea."
+  },
+  {
+    "palavra": "Belígero",
+    "correta": "Guerreiro."
+  },
+  {
+    "palavra": "Beluíno",
+    "correta": "Próprio de fera."
+  },
+  {
+    "palavra": "Beneplácito",
+    "correta": "Permissão."
+  },
+  {
+    "palavra": "Benzedura",
+    "correta": "Reza curativa."
+  },
+  {
+    "palavra": "Beócio",
+    "correta": "Ignorante."
+  },
+  {
+    "palavra": "Beque",
+    "correta": "Proa curva."
+  },
+  {
+    "palavra": "Berbiqui",
+    "correta": "Ferramenta manual usada para perfurar madeira."
+  },
+  {
+    "palavra": "Bergantim",
+    "correta": "Veleiro antigo."
+  },
+  {
+    "palavra": "Berlenguche",
+    "correta": "Estrangeiro nórdico."
+  },
+  {
+    "palavra": "Besante",
+    "correta": "Moeda bizantina."
+  },
+  {
+    "palavra": "Besteiro",
+    "correta": "Soldado armado de besta."
+  },
+  {
+    "palavra": "Bestiário",
+    "correta": "Livro medieval que descreve animais reais e fantásticos."
+  },
+  {
+    "palavra": "Betesga",
+    "correta": "Beco escuro."
+  },
+  {
+    "palavra": "Betumar",
+    "correta": "Tapar fendas com betume."
+  },
+  {
+    "palavra": "Bexiguento",
+    "correta": "Marcado por cicatrizes de varíola."
+  },
+  {
+    "palavra": "Bezoar",
+    "correta": "Massa compacta de material não digerido no estômago."
+  },
+  {
+    "palavra": "Bibe",
+    "correta": "Avental escolar de criança."
+  },
+  {
+    "palavra": "Bicéfalo",
+    "correta": "Que possui duas cabeças."
+  },
+  {
+    "palavra": "Bicheiro",
+    "correta": "Vara ganchuda."
+  },
+  {
+    "palavra": "Bicorne",
+    "correta": "Chapéu de duas pontas."
+  },
+  {
+    "palavra": "Bifronte",
+    "correta": "De duas caras."
+  },
+  {
+    "palavra": "Bilhó",
+    "correta": "Castanha assada sem casca."
+  },
+  {
+    "palavra": "Bilioso",
+    "correta": "Irascível."
+  },
+  {
+    "palavra": "Bilro",
+    "correta": "Peça em que se enrola o fio para fazer renda."
+  },
+  {
+    "palavra": "Biltre",
+    "correta": "Canalha."
+  },
+  {
+    "palavra": "Bimbalhar",
+    "correta": "Repicar."
+  },
+  {
+    "palavra": "Birreme",
+    "correta": "Navio antigo com duas fileiras de remos."
+  },
+  {
+    "palavra": "Bisagra",
+    "correta": "Dobradiça antiga de porta."
+  },
+  {
+    "palavra": "Bisbórria",
+    "correta": "Sujeito desprezível."
+  },
+  {
+    "palavra": "Biscato",
+    "correta": "Comida bicada."
+  },
+  {
+    "palavra": "Bisel",
+    "correta": "Borda chanfrada."
+  },
+  {
+    "palavra": "Bisnau",
+    "correta": "Velhaco esperto e manhoso."
+  },
+  {
+    "palavra": "Bisonhice",
+    "correta": "Inexperiência."
   },
   {
     "palavra": "Bisonho",
-    "correta": "Recruta recém-incorporado ao exército; por extensão, pessoa inexperiente, canhestra ou ingênua numa atividade.",
-    "falsas": [
-      "Animal bovino selvagem de pelagem escura que habitava as planícies ibéricas.",
-      "Vento frio e úmido que sopra do litoral ao entardecer durante o inverno.",
-      " Rascunho preliminar feito a carvão pelos pintores renascentistas antes do afresco."
-    ]
+    "correta": "Inexperiente."
+  },
+  {
+    "palavra": "Bispote",
+    "correta": "Urinol ou penico."
+  },
+  {
+    "palavra": "Bitácula",
+    "correta": "Caixa que abriga a bússola do navio."
+  },
+  {
+    "palavra": "Blandícia",
+    "correta": "Meiguice."
+  },
+  {
+    "palavra": "Blenofobia",
+    "correta": "Aversão doentia a gosma ou muco."
+  },
+  {
+    "palavra": "Bletérico",
+    "correta": "Nocivo ou venenoso."
+  },
+  {
+    "palavra": "Boião",
+    "correta": "Pote bojudo."
+  },
+  {
+    "palavra": "Bólide",
+    "correta": "Meteoro muito brilhante que cruza o céu."
+  },
+  {
+    "palavra": "Bombarda",
+    "correta": "Antiga peça de artilharia que lançava projéteis de pedra."
+  },
+  {
+    "palavra": "Bonifrate",
+    "correta": "Boneco manipulado por fios."
+  },
+  {
+    "palavra": "Bonomia",
+    "correta": "Bondade simples e sincera."
+  },
+  {
+    "palavra": "Boquirroto",
+    "correta": "Linguarudo."
+  },
+  {
+    "palavra": "Bordada",
+    "correta": "Rumo do navio que navega no vento."
+  },
+  {
+    "palavra": "Bordalo",
+    "correta": "Peixe pequeno de rio."
+  },
+  {
+    "palavra": "Borjaca",
+    "correta": "Bolsa de couro."
+  },
+  {
+    "palavra": "Bornear",
+    "correta": "Mirar canhão."
+  },
+  {
+    "palavra": "Borrascoso",
+    "correta": "Tempestuoso."
+  },
+  {
+    "palavra": "Borrega",
+    "correta": "Ovelha jovem de menos de um ano."
+  },
+  {
+    "palavra": "Borzeguim",
+    "correta": "Bota antiga que se amarrava à perna."
+  },
+  {
+    "palavra": "Bostela",
+    "correta": "Crosta de ferida."
+  },
+  {
+    "palavra": "Bota-fogo",
+    "correta": "Pavio artilheiro."
+  },
+  {
+    "palavra": "Botim",
+    "correta": "Bota curta sem salto."
+  },
+  {
+    "palavra": "Botocudo",
+    "correta": "Grosseiro."
+  },
+  {
+    "palavra": "Bouça",
+    "correta": "Terreno matagoso."
+  },
+  {
+    "palavra": "Brafonete",
+    "correta": "Peça de armadura que protegia o braço."
+  },
+  {
+    "palavra": "Bragal",
+    "correta": "Roupa grosseira."
+  },
+  {
+    "palavra": "Braquióptero",
+    "correta": "Que tem asas curtas."
+  },
+  {
+    "palavra": "Brasmático",
+    "correta": "Que ferve muito."
+  },
+  {
+    "palavra": "Breal",
+    "correta": "Matagal escuro."
+  },
+  {
+    "palavra": "Brelho",
+    "correta": "Pedrinha miúda de rio."
+  },
+  {
+    "palavra": "Breviloquência",
+    "correta": "Fala curta e direta."
+  },
+  {
+    "palavra": "Brigue",
+    "correta": "Navio à vela de dois mastros."
+  },
+  {
+    "palavra": "Bródio",
+    "correta": "Banquete ruidoso."
+  },
+  {
+    "palavra": "Broma",
+    "correta": "Verme marinho."
+  },
+  {
+    "palavra": "Brontologia",
+    "correta": "Estudo antigo dos trovões."
+  },
+  {
+    "palavra": "Broquel",
+    "correta": "Escudo redondo."
+  },
+  {
+    "palavra": "Brunidor",
+    "correta": "Instrumento usado para polir superfícies."
+  },
+  {
+    "palavra": "Bucentauro",
+    "correta": "Centauro taurino."
+  },
+  {
+    "palavra": "Budião",
+    "correta": "Peixe recifal."
+  },
+  {
+    "palavra": "Bufarinha",
+    "correta": "Bugiganga barata de feira."
+  },
+  {
+    "palavra": "Bufonaria",
+    "correta": "Gracejo grosseiro."
+  },
+  {
+    "palavra": "Bugiar",
+    "correta": "Macaquear."
+  },
+  {
+    "palavra": "Bujarrona",
+    "correta": "Vela triangular."
+  },
+  {
+    "palavra": "Bulício",
+    "correta": "Agitação."
+  },
+  {
+    "palavra": "Burel",
+    "correta": "Lã grosseira."
+  },
+  {
+    "palavra": "Burgomestre",
+    "correta": "Chefe da administração municipal em vários países europeus."
+  },
+  {
+    "palavra": "Busílis",
+    "correta": "Ponto mais difícil de uma questão."
+  },
+  {
+    "palavra": "Bútio",
+    "correta": "Gavião pequeno caçador."
+  },
+  {
+    "palavra": "Cabaia",
+    "correta": "Túnica oriental de seda."
+  },
+  {
+    "palavra": "Cabila",
+    "correta": "Tribo de montanheses do norte da África."
+  },
+  {
+    "palavra": "Cabograma",
+    "correta": "Telegrama submarino."
+  },
+  {
+    "palavra": "Cabotino",
+    "correta": "Ator vaidoso."
+  },
+  {
+    "palavra": "Cabriolé",
+    "correta": "Charrete leve."
+  },
+  {
+    "palavra": "Cabrucar",
+    "correta": "Cultivar cacau sob a sombra de árvores nativas."
+  },
+  {
+    "palavra": "Caçanje",
+    "correta": "Geringonça."
+  },
+  {
+    "palavra": "Caçapo",
+    "correta": "Coelho novo e atarracado."
+  },
+  {
+    "palavra": "Cachamorra",
+    "correta": "Porrete de cabeça redonda."
+  },
+  {
+    "palavra": "Cachimanha",
+    "correta": "Artimanha."
+  },
+  {
+    "palavra": "Cachimônia",
+    "correta": "Cabeça ou juízo."
+  },
+  {
+    "palavra": "Cachopo",
+    "correta": "Rochedo marítimo."
+  },
+  {
+    "palavra": "Cacifo",
+    "correta": "Armário estreito com cadeado."
+  },
+  {
+    "palavra": "Cacografia",
+    "correta": "Escrita incorreta."
+  },
+  {
+    "palavra": "Caçoila",
+    "correta": "Panela baixa de barro."
+  },
+  {
+    "palavra": "Caçoleta",
+    "correta": "Peça onde se punha a pólvora na espingarda."
+  },
+  {
+    "palavra": "Cacóstomo",
+    "correta": "Que tem mau hálito."
+  },
+  {
+    "palavra": "Cacotopia",
+    "correta": "Sociedade opressiva."
+  },
+  {
+    "palavra": "Caçoula",
+    "correta": "Vasilha para queimar substâncias aromáticas."
+  },
+  {
+    "palavra": "Cacumbu",
+    "correta": "Enxada gasta."
+  },
+  {
+    "palavra": "Cadaste",
+    "correta": "Peça da popa que segura o leme."
+  },
+  {
+    "palavra": "Cadoz",
+    "correta": "Poço fundo num rio, onde os peixes se abrigam."
+  },
+  {
+    "palavra": "Caetanear",
+    "correta": "Fazer manhas."
+  },
+  {
+    "palavra": "Cafarnaum",
+    "correta": "Lugar de grande bagunça."
+  },
+  {
+    "palavra": "Cáfila",
+    "correta": "Caravana de camelos ou, em sentido figurado, bando de pessoas desprezíveis."
+  },
+  {
+    "palavra": "Cafua",
+    "correta": "Esconderijo escuro."
+  },
+  {
+    "palavra": "Cainheza",
+    "correta": "Sovinice."
+  },
+  {
+    "palavra": "Cainho",
+    "correta": "Mão-de-vaca."
+  },
+  {
+    "palavra": "Cairel",
+    "correta": "Debrum ou fita na borda do chapéu."
+  },
+  {
+    "palavra": "Calaceiro",
+    "correta": "Vadio e preguiçoso."
+  },
+  {
+    "palavra": "Calafetar",
+    "correta": "Vedar frestas."
+  },
+  {
+    "palavra": "Calatrava",
+    "correta": "Ordem militar."
+  },
+  {
+    "palavra": "Calcetaria",
+    "correta": "Pavimentação com pedras."
+  },
+  {
+    "palavra": "Calendas",
+    "correta": "Primeiro dia do mês entre os romanos."
+  },
+  {
+    "palavra": "Calheta",
+    "correta": "Enseada estreita."
+  },
+  {
+    "palavra": "Caligem",
+    "correta": "Névoa escura e densa."
+  },
+  {
+    "palavra": "Caliginoso",
+    "correta": "Tenebroso."
+  },
+  {
+    "palavra": "Calipígio",
+    "correta": "Que tem nádegas formosas."
+  },
+  {
+    "palavra": "Caliptra",
+    "correta": "Estrutura protetora que recobre a ponta da raiz ou outras partes vegetais."
+  },
+  {
+    "palavra": "Camaldulense",
+    "correta": "Monge eremita."
+  },
+  {
+    "palavra": "Camalha",
+    "correta": "Malha de ferro que protegia o pescoço."
+  },
+  {
+    "palavra": "Camândula",
+    "correta": "Astúcia ou hipocrisia."
+  },
+  {
+    "palavra": "Camândulas",
+    "correta": "Contas bentas."
+  },
+  {
+    "palavra": "Camanduleiro",
+    "correta": "Manhoso."
+  },
+  {
+    "palavra": "Camarinha",
+    "correta": "Quarto reservado."
+  },
+  {
+    "palavra": "Camartelo",
+    "correta": "Martelo pesado."
+  },
+  {
+    "palavra": "Cambaxirra",
+    "correta": "Corruíra, pequena ave de canto vigoroso."
+  },
+  {
+    "palavra": "Cambitar",
+    "correta": "Levar cana ou lenha no lombo do burro."
+  },
+  {
+    "palavra": "Cambota",
+    "correta": "Molde arqueado."
+  },
+  {
+    "palavra": "Camerlengo",
+    "correta": "Cardeal que administra os bens da Santa Sé durante a vacância papal."
+  },
+  {
+    "palavra": "Camilha",
+    "correta": "Sofá pequeno de descanso."
+  },
+  {
+    "palavra": "Camiliano",
+    "correta": "Relativo à vida ou à obra de Camilo Castelo Branco."
+  },
+  {
+    "palavra": "Candonga",
+    "correta": "Fofoca ou intriga fingida."
+  },
+  {
+    "palavra": "Candongueiro",
+    "correta": "Mexeriqueiro e bajulador."
+  },
+  {
+    "palavra": "Canhada",
+    "correta": "Vale fundo entre morros."
+  },
+  {
+    "palavra": "Canhenho",
+    "correta": "Caderno pessoal."
+  },
+  {
+    "palavra": "Canícula",
+    "correta": "Época de calor mais forte do ano."
+  },
+  {
+    "palavra": "Canicular",
+    "correta": "Relativo à época de calor mais intenso."
+  },
+  {
+    "palavra": "Canitar",
+    "correta": "Cocar indígena."
+  },
+  {
+    "palavra": "Canjerê",
+    "correta": "Reunião de feitiçaria."
+  },
+  {
+    "palavra": "Canoro",
+    "correta": "Melodioso."
+  },
+  {
+    "palavra": "Cantimplora",
+    "correta": "Cantil resfriador."
+  },
+  {
+    "palavra": "Canzarrão",
+    "correta": "Cachorro enorme de guarda."
+  },
+  {
+    "palavra": "Capadócio",
+    "correta": "Malandro fanfarrão e conversador."
+  },
+  {
+    "palavra": "Caparrosa",
+    "correta": "Sal tintureiro."
+  },
+  {
+    "palavra": "Capilé",
+    "correta": "Xarope doce."
+  },
+  {
+    "palavra": "Capitoso",
+    "correta": "Que embriaga facilmente, como certos vinhos."
+  },
+  {
+    "palavra": "Cápua",
+    "correta": "Luxo amolecedor."
+  },
+  {
+    "palavra": "Caracolar",
+    "correta": "Fazer o cavalo girar em voltas."
+  },
+  {
+    "palavra": "Caraminguás",
+    "correta": "Dinheiro miúdo ou objetos de pouco valor."
+  },
+  {
+    "palavra": "Carapetão",
+    "correta": "Mentira deslavada."
+  },
+  {
+    "palavra": "Carbonário",
+    "correta": "Conspirador antigo."
+  },
+  {
+    "palavra": "Carbúnculo",
+    "correta": "Rubi escuro."
+  },
+  {
+    "palavra": "Carcás",
+    "correta": "Aljava."
+  },
+  {
+    "palavra": "Carcoma",
+    "correta": "Broca madeireira."
+  },
+  {
+    "palavra": "Carda",
+    "correta": "Instrumento de dentes metálicos usado para desembaraçar fibras."
+  },
+  {
+    "palavra": "Cardina",
+    "correta": "Sujeira encardida ou bebedeira."
+  },
+  {
+    "palavra": "Cariátide",
+    "correta": "Estátua feminina que serve de coluna."
+  },
+  {
+    "palavra": "Caribdis",
+    "correta": "Redemoinho perigoso do mar."
+  },
+  {
+    "palavra": "Carlinga",
+    "correta": "Cabine do piloto ou encaixe do pé do mastro."
+  },
+  {
+    "palavra": "Carme",
+    "correta": "Poema ou canto lírico."
+  },
+  {
+    "palavra": "Carminativo",
+    "correta": "Contra gases."
+  },
+  {
+    "palavra": "Carnaçal",
+    "correta": "Lugar de grande matança."
+  },
+  {
+    "palavra": "Carnadura",
+    "correta": "Textura muscular."
+  },
+  {
+    "palavra": "Carneira",
+    "correta": "Couro macio."
+  },
+  {
+    "palavra": "Carolice",
+    "correta": "Beateria exagerada."
+  },
+  {
+    "palavra": "Carpe",
+    "correta": "Árvore dura."
+  },
+  {
+    "palavra": "Carraspana",
+    "correta": "Bebedeira."
+  },
+  {
+    "palavra": "Carregação",
+    "correta": "Mercadoria barata."
+  },
+  {
+    "palavra": "Carriça",
+    "correta": "Passarinho cantador."
+  },
+  {
+    "palavra": "Carril",
+    "correta": "Trilho de ferro ou sulco de roda."
+  },
+  {
+    "palavra": "Cartapácio",
+    "correta": "Livro pesado."
+  },
+  {
+    "palavra": "Cartuxa",
+    "correta": "Mosteiro da ordem dos cartuxos."
   },
   {
     "palavra": "Casquilho",
-    "correta": "Homem muito preocupado com a elegância do vestuário, que se veste com requinte afetado e presunçoso; janota, dândi.",
-    "falsas": [
-      "Camada fina de gelo quebradiço que se forma sobre poças de água no inverno.",
-      "Fragmento de concha marinha triturada usado na pavimentação de jardins.",
-      "Pequeno odre de couro curtido utilizado por pastores para transportar vinho."
-    ]
+    "correta": "Janota."
   },
   {
-    "palavra": "Chafarica",
-    "correta": "Tasca ou taberna reles e modesta, de baixa categoria; botequim humilde onde se serve vinho e petiscos baratos.",
-    "falsas": [
-      "Fonte pública rudimentar com bica de ferro instalada em praças coloniais.",
-      "Dança popular de roda acompanhada por pandeiros e violas de arame.",
-      "Faca curta de lâmina recurvada usada para descascar árvores frutíferas."
-    ]
+    "palavra": "Casquinar",
+    "correta": "Dar risadinha debochada."
   },
   {
-    "palavra": "Chavascal",
-    "correta": "Terreno alagadiço, brejoso e intrincado, cheio de sarças e espinheiros; situação extremamente confusa e embaraçada.",
-    "falsas": [
-      "Chuva torrencial de curta duração acompanhada de fortes rajadas de vento.",
-      "Curral de pedras soltas construído no alto da serra para abrigar cabras.",
-      "Tipo de embarcação chata usada para atravessar gado em rios caudalosos."
-    ]
+    "palavra": "Cassaco",
+    "correta": "Trabalhador braçal."
   },
   {
-    "palavra": "Cochichola",
-    "correta": "Habitação muito acanhada, tosca, escura e de proporções minúsculas; casebre desconfortável.",
-    "falsas": [
-      "Gaiola de vime trançado usada para transportar aves canoras em viagens.",
-      "Conversa sussurrada entre comadres nos bancos laterais das igrejas.",
-      "Espécie de caracol terrestre que se esconde sob pedras úmidas."
-    ]
+    "palavra": "Castão",
+    "correta": "Remate de metal no topo da bengala."
   },
   {
-    "palavra": "Desasnado",
-    "correta": "Aquele que foi desprovido de rusticidade ou ignorância; indivíduo que foi instruído, educado ou desemburrado.",
-    "falsas": [
-      "Jumento de carga que perdeu a ferradura durante uma longa jornada serrana.",
-      "Terreno agrícola que foi limpo de ervas daninhas e pedras antes do plantio.",
-      "Soldado dispensado temporariamente do serviço de guarda por exaustão."
-    ]
+    "palavra": "Casticismo",
+    "correta": "Pureza vernácula."
   },
   {
-    "palavra": "Facheiro",
-    "correta": "Cacto espinhoso típico da caatinga brasileira de grande porte; antigamente, o criado encarregado de conduzir archotes.",
-    "falsas": [
-      "Artesão especializado em entalhar cabos de madeira para ferramentas agrícolas.",
-      "Feixe de lenha seca amarrado com cipó para alimentar fornos de padaria.",
-      "Farol costeiro de pequeno porte operado manualmente com óleo de baleia."
-    ]
+    "palavra": "Castiço",
+    "correta": "Genuíno ou vernáculo."
   },
   {
-    "palavra": "Galandim",
-    "correta": "Pessoa que se esforça para aparentar nobreza, riqueza ou elegância que na realidade não possui; peralvilho empobrecido.",
-    "falsas": [
-      "Tecido fino de seda listrada importado do Oriente no século XVI.",
-      "Pequeno pássaro canoro de plumagem azulada comum nos pomares do sul.",
-      "Espada curta de guarda ornamentada usada por oficiais da marinha antiga."
-    ]
+    "palavra": "Casuística",
+    "correta": "Estudo ou resolução de casos particulares à luz de princípios gerais."
   },
   {
-    "palavra": "Geringonça",
-    "correta": "Aparelho ou mecanismo de construção tosca, complicado e que funciona de maneira precária ou imprevisível; engenhoca.",
-    "falsas": [
-      "Antiga gíria falada por mercadores ambulantes para ocultar o preço das mercadorias.",
-      "Caldo ralo de legumes e farinha servido aos marinheiros em longas travessias.",
-      "Ponte pênsil improvisada com cordas de cânhamo e tábuas de pinho."
-    ]
+    "palavra": "Casula",
+    "correta": "Veste sem mangas que o padre usa na missa."
+  },
+  {
+    "palavra": "Catábase",
+    "correta": "Descida, especialmente ao mundo dos mortos."
+  },
+  {
+    "palavra": "Catadupa",
+    "correta": "Cachoeira ruidosa ou enxurrada."
+  },
+  {
+    "palavra": "Catafalco",
+    "correta": "Estrado alto onde fica o caixão no velório."
+  },
+  {
+    "palavra": "Catafático",
+    "correta": "Que descreve o divino por meio de afirmações."
+  },
+  {
+    "palavra": "Catalejo",
+    "correta": "Luneta de observação."
+  },
+  {
+    "palavra": "Catau",
+    "correta": "Pequeno remendo."
+  },
+  {
+    "palavra": "Catecúmeno",
+    "correta": "Pessoa que recebe instrução religiosa para o batismo."
+  },
+  {
+    "palavra": "Caterva",
+    "correta": "Ralé desordeira."
+  },
+  {
+    "palavra": "Catilinária",
+    "correta": "Discurso acusatório."
+  },
+  {
+    "palavra": "Catingueiro",
+    "correta": "Veado pequeno do sertão."
+  },
+  {
+    "palavra": "Catoptromancia",
+    "correta": "Adivinhação por meio de espelhos."
+  },
+  {
+    "palavra": "Catrefa",
+    "correta": "Bando barulhento."
+  },
+  {
+    "palavra": "Caudatário",
+    "correta": "Quem segura a cauda da veste do bispo."
+  },
+  {
+    "palavra": "Caurim",
+    "correta": "Pequena concha usada como moeda."
+  },
+  {
+    "palavra": "Cautério",
+    "correta": "Ferro ardente."
+  },
+  {
+    "palavra": "Cavilação",
+    "correta": "Ardil mentiroso."
+  },
+  {
+    "palavra": "Caviloso",
+    "correta": "Ardiloso."
+  },
+  {
+    "palavra": "Cazumbá",
+    "correta": "Figura mascarada do bumba-meu-boi."
+  },
+  {
+    "palavra": "Cebolório",
+    "correta": "Relógio grande de bolso."
+  },
+  {
+    "palavra": "Ceceio",
+    "correta": "Pronúncia sibilante com a língua entre os dentes."
+  },
+  {
+    "palavra": "Cediço",
+    "correta": "Notório."
+  },
+  {
+    "palavra": "Cegarrega",
+    "correta": "Cigarra ou pessoa que fala sem parar."
+  },
+  {
+    "palavra": "Ceitil",
+    "correta": "Antiga moeda portuguesa de pequeno valor."
+  },
+  {
+    "palavra": "Celada",
+    "correta": "Elmo fechado."
+  },
+  {
+    "palavra": "Celha",
+    "correta": "Tina de madeira ou cílio da pálpebra."
+  },
+  {
+    "palavra": "Celtibero",
+    "correta": "Antigo ibérico."
+  },
+  {
+    "palavra": "Cendal",
+    "correta": "Véu transparente."
+  },
+  {
+    "palavra": "Cendrado",
+    "correta": "Acinzentado."
+  },
+  {
+    "palavra": "Cenestesia",
+    "correta": "Sensação geral do estado interno do próprio corpo."
+  },
+  {
+    "palavra": "Cenóbio",
+    "correta": "Mosteiro comunitário."
+  },
+  {
+    "palavra": "Cenobítico",
+    "correta": "Relativo à vida monástica em comunidade."
+  },
+  {
+    "palavra": "Cenotáfio",
+    "correta": "Monumento funerário erguido onde o morto não está sepultado."
+  },
+  {
+    "palavra": "Cepilho",
+    "correta": "Plaina pequena de marceneiro."
+  },
+  {
+    "palavra": "Cerdoso",
+    "correta": "Cheio de cerdas duras."
+  },
+  {
+    "palavra": "Cerúleo",
+    "correta": "Azul-claro como o céu."
+  },
+  {
+    "palavra": "Cesura",
+    "correta": "Pausa no meio de um verso poético."
+  },
+  {
+    "palavra": "Cevadeira",
+    "correta": "Saco forrageiro."
+  },
+  {
+    "palavra": "Chabuco",
+    "correta": "Chicote pesado de couro."
+  },
+  {
+    "palavra": "Chagrin",
+    "correta": "Couro granulado ou desgosto."
+  },
+  {
+    "palavra": "Chalaça",
+    "correta": "Piada curta e debochada."
+  },
+  {
+    "palavra": "Chalrar",
+    "correta": "Tagarelar alto."
+  },
+  {
+    "palavra": "Chambão",
+    "correta": "Sujeito desajeitado."
+  },
+  {
+    "palavra": "Chanca",
+    "correta": "Sapato grande."
+  },
+  {
+    "palavra": "Chantre",
+    "correta": "Mestre coral."
+  },
+  {
+    "palavra": "Chapuz",
+    "correta": "Tampão rústico."
+  },
+  {
+    "palavra": "Charneira",
+    "correta": "Dobradiça metálica."
+  },
+  {
+    "palavra": "Charpa",
+    "correta": "Faixa larga."
+  },
+  {
+    "palavra": "Chasquear",
+    "correta": "Fazer troça."
+  },
+  {
+    "palavra": "Chavelho",
+    "correta": "Chifre curto."
+  },
+  {
+    "palavra": "Chelim",
+    "correta": "Moeda inglesa."
+  },
+  {
+    "palavra": "Cherivia",
+    "correta": "Raiz branca."
+  },
+  {
+    "palavra": "Chibante",
+    "correta": "Valentão exibido."
+  },
+  {
+    "palavra": "Chibarro",
+    "correta": "Bode castrado."
+  },
+  {
+    "palavra": "Chicana",
+    "correta": "Manobra para atrasar ou tumultuar um processo."
+  },
+  {
+    "palavra": "Chilro",
+    "correta": "Insípido ou aguado."
+  },
+  {
+    "palavra": "Chincha",
+    "correta": "Rede pesqueira."
+  },
+  {
+    "palavra": "Chinche",
+    "correta": "Percevejo caseiro."
+  },
+  {
+    "palavra": "Chinguiço",
+    "correta": "Pedaço miúdo."
+  },
+  {
+    "palavra": "Chinquilho",
+    "correta": "Antigo jogo popular da malha."
+  },
+  {
+    "palavra": "Chiste",
+    "correta": "Tirada engraçada e espirituosa."
+  },
+  {
+    "palavra": "Chocarrice",
+    "correta": "Piada grossa."
+  },
+  {
+    "palavra": "Choldra",
+    "correta": "Ralé barulhenta."
+  },
+  {
+    "palavra": "Choldraboldra",
+    "correta": "Grande confusão."
+  },
+  {
+    "palavra": "Choutar",
+    "correta": "Trotar duro."
+  },
+  {
+    "palavra": "Chouto",
+    "correta": "Trote sacolejante."
+  },
+  {
+    "palavra": "Chufa",
+    "correta": "Zombaria maldosa."
+  },
+  {
+    "palavra": "Chufar",
+    "correta": "Fazer escárnio."
+  },
+  {
+    "palavra": "Ciar",
+    "correta": "Remar em sentido contrário para recuar ou frear o barco."
+  },
+  {
+    "palavra": "Cibalho",
+    "correta": "Alimento que a ave leva no bico aos filhotes."
+  },
+  {
+    "palavra": "Cicioso",
+    "correta": "Sussurrante."
+  },
+  {
+    "palavra": "Cieiro",
+    "correta": "Rachadura na pele, especialmente nos lábios."
+  },
+  {
+    "palavra": "Cifa",
+    "correta": "Graxa de peixe para casco de navio."
+  },
+  {
+    "palavra": "Ciganagem",
+    "correta": "Vida errante ou trapaça em negócios."
+  },
+  {
+    "palavra": "Cimalha",
+    "correta": "Moldura alta."
+  },
+  {
+    "palavra": "Cimério",
+    "correta": "Mergulhado em escuridão profunda."
+  },
+  {
+    "palavra": "Cinca",
+    "correta": "Erro ou distração durante o jogo."
+  },
+  {
+    "palavra": "Cincada",
+    "correta": "Erro grosseiro ao falar."
+  },
+  {
+    "palavra": "Cincar",
+    "correta": "Cometer furo."
+  },
+  {
+    "palavra": "Cincha",
+    "correta": "Correia que prende a sela ao animal."
+  },
+  {
+    "palavra": "Cinchar",
+    "correta": "Prensar queijo na forma."
+  },
+  {
+    "palavra": "Cinesia",
+    "correta": "Capacidade de se movimentar."
+  },
+  {
+    "palavra": "Cingel",
+    "correta": "Junta de bois atrelados ao arado."
+  },
+  {
+    "palavra": "Cíngulo",
+    "correta": "Cordão sacerdotal."
+  },
+  {
+    "palavra": "Cinocéfalo",
+    "correta": "Macaco africano com focinho de cão."
+  },
+  {
+    "palavra": "Circunlóquio",
+    "correta": "Rodeio verbal."
+  },
+  {
+    "palavra": "Cizânia",
+    "correta": "Discórdia."
+  },
+  {
+    "palavra": "Cizirão",
+    "correta": "Planta parecida com a ervilha."
+  },
+  {
+    "palavra": "Clâmide",
+    "correta": "Manto curto grego."
+  },
+  {
+    "palavra": "Claudicante",
+    "correta": "Manco ou vacilante."
+  },
+  {
+    "palavra": "Clavicórdio",
+    "correta": "Instrumento de teclado e cordas percutidas por pequenas lâminas metálicas."
+  },
+  {
+    "palavra": "Claviculário",
+    "correta": "Guardião de chaves."
+  },
+  {
+    "palavra": "Clébano",
+    "correta": "Forno de barro rústico."
+  },
+  {
+    "palavra": "Cleptocracia",
+    "correta": "Governo em que os governantes se apropriam dos bens públicos."
+  },
+  {
+    "palavra": "Clerezia",
+    "correta": "Classe clerical."
+  },
+  {
+    "palavra": "Clinâmen",
+    "correta": "Desvio espontâneo dos átomos na filosofia epicurista."
+  },
+  {
+    "palavra": "Clinofilia",
+    "correta": "Vontade de ficar deitado o dia todo."
+  },
+  {
+    "palavra": "Clipeu",
+    "correta": "Escudo redondo grande dos antigos romanos."
+  },
+  {
+    "palavra": "Clisímetro",
+    "correta": "Instrumento para medir inclinações."
+  },
+  {
+    "palavra": "Clivagem",
+    "correta": "Fenda natural."
+  },
+  {
+    "palavra": "Coactiva",
+    "correta": "Que impõe pela força ou por ameaça."
+  },
+  {
+    "palavra": "Coalescência",
+    "correta": "União de partes que se fundem."
+  },
+  {
+    "palavra": "Coartar",
+    "correta": "Restringir."
+  },
+  {
+    "palavra": "Codicilo",
+    "correta": "Disposição escrita de última vontade sobre assuntos limitados."
+  },
+  {
+    "palavra": "Codilhar",
+    "correta": "Lograr parceiro."
+  },
+  {
+    "palavra": "Codilho",
+    "correta": "Derrota ou logro num jogo de cartas."
+  },
+  {
+    "palavra": "Coenócito",
+    "correta": "Estrutura com vários núcleos em um citoplasma comum."
+  },
+  {
+    "palavra": "Coetâneo",
+    "correta": "Da mesma época."
+  },
+  {
+    "palavra": "Coevo",
+    "correta": "Da mesma idade ou época."
+  },
+  {
+    "palavra": "Cognome",
+    "correta": "Apelido histórico de uma pessoa."
+  },
+  {
+    "palavra": "Cognoscível",
+    "correta": "Compreensível."
+  },
+  {
+    "palavra": "Cogula",
+    "correta": "Túnica monástica."
+  },
+  {
+    "palavra": "Coirmão",
+    "correta": "Irmão em uma confraria ou entidade de natureza semelhante."
+  },
+  {
+    "palavra": "Colafizar",
+    "correta": "Esbofetear."
+  },
+  {
+    "palavra": "Coleóptero",
+    "correta": "Inseto, como o besouro, com asas anteriores endurecidas."
+  },
+  {
+    "palavra": "Colgaduras",
+    "correta": "Tecidos ornamentais pendurados em paredes ou janelas."
+  },
+  {
+    "palavra": "Coligir",
+    "correta": "Reunir ou compilar."
+  },
+  {
+    "palavra": "Colimador",
+    "correta": "Lente de alinhar a mira."
+  },
+  {
+    "palavra": "Colimar",
+    "correta": "Alinhar a mira ou dirigir-se a um objetivo."
+  },
+  {
+    "palavra": "Coliquativo",
+    "correta": "Que derrete ou faz suar demais."
+  },
+  {
+    "palavra": "Colódio",
+    "correta": "Líquido viscoso que forma uma película ao secar."
+  },
+  {
+    "palavra": "Colofão",
+    "correta": "Nota final do livro com dados da impressão."
+  },
+  {
+    "palavra": "Colubrina",
+    "correta": "Canhão longo."
+  },
+  {
+    "palavra": "Columbário",
+    "correta": "Pombal ou parede com nichos de urnas."
+  },
+  {
+    "palavra": "Columela",
+    "correta": "Eixo central da concha de caracol."
+  },
+  {
+    "palavra": "Combalido",
+    "correta": "Fraco de doença ou cansaço."
+  },
+  {
+    "palavra": "Comburência",
+    "correta": "Capacidade de fazer pegar fogo."
+  },
+  {
+    "palavra": "Comedoria",
+    "correta": "Pensão antiga."
+  },
+  {
+    "palavra": "Comensal",
+    "correta": "Pessoa que compartilha a mesa com outras."
+  },
+  {
+    "palavra": "Comensurável",
+    "correta": "Que pode ser medido pela mesma escala."
+  },
+  {
+    "palavra": "Cominação",
+    "correta": "Ameaça de castigo prevista na lei."
+  },
+  {
+    "palavra": "Comissura",
+    "correta": "Ponto de união entre duas partes, como os cantos dos lábios."
+  },
+  {
+    "palavra": "Comorba",
+    "correta": "Monte de terra na borda da roça."
+  },
+  {
+    "palavra": "Compaginar",
+    "correta": "Unir."
+  },
+  {
+    "palavra": "Complanar",
+    "correta": "Nivelar."
+  },
+  {
+    "palavra": "Comprazimento",
+    "correta": "Satisfação ou deleite."
+  },
+  {
+    "palavra": "Compungido",
+    "correta": "Triste e arrependido."
+  },
+  {
+    "palavra": "Conca",
+    "correta": "Jogo antigo de atirar discos de ferro."
+  },
+  {
+    "palavra": "Conculcar",
+    "correta": "Calcar aos pés ou violar um direito."
+  },
+  {
+    "palavra": "Condão",
+    "correta": "Dom ou poder especial."
+  },
+  {
+    "palavra": "Condestável",
+    "correta": "Antigo comandante supremo do exército real."
+  },
+  {
+    "palavra": "Condottiere",
+    "correta": "Chefe mercenário."
+  },
+  {
+    "palavra": "Confutar",
+    "correta": "Refutar."
+  },
+  {
+    "palavra": "Congeminado",
+    "correta": "Duplicado."
+  },
+  {
+    "palavra": "Congérie",
+    "correta": "Amontoado confuso."
+  },
+  {
+    "palavra": "Cóngrua",
+    "correta": "Pensão antiga paga pelo Estado aos padres."
+  },
+  {
+    "palavra": "Conimbricense",
+    "correta": "Natural da cidade de Coimbra."
+  },
+  {
+    "palavra": "Conluiado",
+    "correta": "Mancomunado."
+  },
+  {
+    "palavra": "Conopial",
+    "correta": "Em forma de arco com curvas opostas que se encontram em ponta."
+  },
+  {
+    "palavra": "Conquiliologia",
+    "correta": "Estudo das conchas dos moluscos."
+  },
+  {
+    "palavra": "Consentâneo",
+    "correta": "Adequado."
+  },
+  {
+    "palavra": "Consoada",
+    "correta": "Ceia da noite de Natal."
+  },
+  {
+    "palavra": "Conspícuo",
+    "correta": "Notável e muito respeitado."
+  },
+  {
+    "palavra": "Consubstanciar",
+    "correta": "Unir numa mesma substância ou ideia."
+  },
+  {
+    "palavra": "Consuetudinário",
+    "correta": "Fundamentado no costume."
+  },
+  {
+    "palavra": "Consumpção",
+    "correta": "Emagrecimento por doença."
+  },
+  {
+    "palavra": "Consuntivo",
+    "correta": "Febre que faz definhar aos poucos."
+  },
+  {
+    "palavra": "Conticínio",
+    "correta": "Silêncio profundo da noite."
+  },
+  {
+    "palavra": "Contiguidade",
+    "correta": "Vizinhança imediata."
+  },
+  {
+    "palavra": "Contradita",
+    "correta": "Contestação de testemunha no tribunal."
+  },
+  {
+    "palavra": "Contubernal",
+    "correta": "Pessoa que compartilha a mesma habitação."
+  },
+  {
+    "palavra": "Contubérnio",
+    "correta": "Moradia conjunta."
+  },
+  {
+    "palavra": "Contumaz",
+    "correta": "Reincidente."
+  },
+  {
+    "palavra": "Contumélia",
+    "correta": "Insulto grave dito na cara."
+  },
+  {
+    "palavra": "Conventículo",
+    "correta": "Reunião reservada ou clandestina de poucas pessoas."
+  },
+  {
+    "palavra": "Convizinho",
+    "correta": "Próximo."
+  },
+  {
+    "palavra": "Copázio",
+    "correta": "Copo grande."
+  },
+  {
+    "palavra": "Copiador",
+    "correta": "Antigo livro de registrar cartas."
+  },
+  {
+    "palavra": "Coprófago",
+    "correta": "Que se alimenta de fezes."
+  },
+  {
+    "palavra": "Coprolito",
+    "correta": "Excremento fossilizado."
+  },
+  {
+    "palavra": "Corbelha",
+    "correta": "Cesta pequena para flores ou frutas."
+  },
+  {
+    "palavra": "Cordovão",
+    "correta": "Couro macio de cabra para calçados."
+  },
+  {
+    "palavra": "Corgo",
+    "correta": "Córrego estreito."
+  },
+  {
+    "palavra": "Coribante",
+    "correta": "Dançarino antigo."
+  },
+  {
+    "palavra": "Corimbo",
+    "correta": "Cacho floral."
+  },
+  {
+    "palavra": "Cornaca",
+    "correta": "Domador e guia de elefantes."
+  },
+  {
+    "palavra": "Cornamusas",
+    "correta": "Instrumentos de sopro semelhantes à gaita de foles."
+  },
+  {
+    "palavra": "Corniso",
+    "correta": "Arbusto duro."
+  },
+  {
+    "palavra": "Corolário",
+    "correta": "Consequência que decorre de uma proposição."
+  },
+  {
+    "palavra": "Corpanzil",
+    "correta": "Corpo grande e pesado."
+  },
+  {
+    "palavra": "Correaria",
+    "correta": "Oficina onde se fazem selas e arreios."
+  },
+  {
+    "palavra": "Corredio",
+    "correta": "Que desliza, como um nó ajustável."
+  },
+  {
+    "palavra": "Corricão",
+    "correta": "Caçada de perdizes feita com cães."
+  },
+  {
+    "palavra": "Corselete",
+    "correta": "Couraça leve."
+  },
+  {
+    "palavra": "Cosmorama",
+    "correta": "Pintura panorâmica."
+  },
+  {
+    "palavra": "Costaneira",
+    "correta": "Tábua externa."
+  },
+  {
+    "palavra": "Cotilhão",
+    "correta": "Antiga dança animada de salão."
+  },
+  {
+    "palavra": "Cotio",
+    "correta": "Uso diário."
+  },
+  {
+    "palavra": "Courela",
+    "correta": "Terreno comprido."
+  },
+  {
+    "palavra": "Coutada",
+    "correta": "Terreno reservado à caça."
+  },
+  {
+    "palavra": "Crapuloso",
+    "correta": "Entregue a vícios e excessos."
+  },
+  {
+    "palavra": "Cravagem",
+    "correta": "Fungo parasita que ataca o centeio."
+  },
+  {
+    "palavra": "Crematística",
+    "correta": "Arte de adquirir e acumular riquezas."
+  },
+  {
+    "palavra": "Crencha",
+    "correta": "Risca do cabelo repartido."
+  },
+  {
+    "palavra": "Crepusculário",
+    "correta": "Ativo durante o crepúsculo."
+  },
+  {
+    "palavra": "Crestar",
+    "correta": "Queimar."
+  },
+  {
+    "palavra": "Criptofasia",
+    "correta": "Linguagem particular compartilhada por irmãos gêmeos."
+  },
+  {
+    "palavra": "Criptomnésia",
+    "correta": "Lembrança que é tomada por uma ideia original."
+  },
+  {
+    "palavra": "Criptônimo",
+    "correta": "Nome usado para ocultar a identidade."
+  },
+  {
+    "palavra": "Crisíaco",
+    "correta": "Dourado."
+  },
+  {
+    "palavra": "Crisoberilo",
+    "correta": "Pedra verde-amarela."
+  },
+  {
+    "palavra": "Crisol",
+    "correta": "Recipiente resistente ao calor usado para fundir materiais."
+  },
+  {
+    "palavra": "Crisoprásio",
+    "correta": "Pedra preciosa verde-maçã."
+  },
+  {
+    "palavra": "Crisóstomo",
+    "correta": "Orador brilhante."
+  },
+  {
+    "palavra": "Cromestesia",
+    "correta": "Associação involuntária de sons a cores."
+  },
+  {
+    "palavra": "Cruento",
+    "correta": "Sangrento."
+  },
+  {
+    "palavra": "Crupe",
+    "correta": "Asfixia infantil."
+  },
+  {
+    "palavra": "Cubata",
+    "correta": "Cabana africana."
+  },
+  {
+    "palavra": "Cúbito",
+    "correta": "Osso do antebraço."
+  },
+  {
+    "palavra": "Cucuritar",
+    "correta": "Cantar ou gritar como um galo."
+  },
+  {
+    "palavra": "Curriola",
+    "correta": "Panelinha ou bando de trapaceiros."
+  },
+  {
+    "palavra": "Curul",
+    "correta": "Diz-se da cadeira usada por certos magistrados da Roma antiga."
+  },
+  {
+    "palavra": "Curvete",
+    "correta": "Salto equino."
+  },
+  {
+    "palavra": "Dactílico",
+    "correta": "Relativo ao dátilo, pé métrico de três sílabas."
+  },
+  {
+    "palavra": "Dadá",
+    "correta": "Vanguarda artística irreverente."
+  },
+  {
+    "palavra": "Damasquinar",
+    "correta": "Incrustar fios de ouro no aço."
+  },
+  {
+    "palavra": "Dardejante",
+    "correta": "Chispante."
+  },
+  {
+    "palavra": "Dativo",
+    "correta": "Caso gramatical que costuma indicar o destinatário."
+  },
+  {
+    "palavra": "Deambular",
+    "correta": "Passear sem destino certo."
+  },
+  {
+    "palavra": "Deão",
+    "correta": "Padre chefe de catedral."
+  },
+  {
+    "palavra": "Debalde",
+    "correta": "Inutilmente."
+  },
+  {
+    "palavra": "Debelar",
+    "correta": "Dominar revolta ou curar doença."
+  },
+  {
+    "palavra": "Debuxo",
+    "correta": "Rascunho inicial de desenho."
+  },
+  {
+    "palavra": "Deçalho",
+    "correta": "Peça posta no focinho do bezerro para impedir que mame."
+  },
+  {
+    "palavra": "Decampado",
+    "correta": "Que fugiu levantando acampamento."
+  },
+  {
+    "palavra": "Decano",
+    "correta": "Membro mais antigo de um grupo ou instituição."
+  },
+  {
+    "palavra": "Decantar",
+    "correta": "Separar um líquido do sedimento ou de outro líquido de densidade diferente."
+  },
+  {
+    "palavra": "Decassílabo",
+    "correta": "Verso de dez sílabas métricas."
+  },
+  {
+    "palavra": "Decenvirato",
+    "correta": "Conselho romano de dez magistrados."
+  },
+  {
+    "palavra": "Decênviro",
+    "correta": "Magistrado romano de grupo de dez."
+  },
+  {
+    "palavra": "Deceptivo",
+    "correta": "Ilusório."
+  },
+  {
+    "palavra": "Deciduidade",
+    "correta": "Queda periódica das folhas."
+  },
+  {
+    "palavra": "Decíduo",
+    "correta": "Caduco."
+  },
+  {
+    "palavra": "Declinatório",
+    "correta": "Que recusa jurisdição."
+  },
+  {
+    "palavra": "Decoada",
+    "correta": "Solução obtida pela passagem de água através de cinzas."
+  },
+  {
+    "palavra": "Decocção",
+    "correta": "Cozimento de ervas medicinais."
+  },
+  {
+    "palavra": "Decocto",
+    "correta": "Líquido obtido pela fervura de uma substância."
+  },
+  {
+    "palavra": "Decoroso",
+    "correta": "Decente e respeitoso."
+  },
+  {
+    "palavra": "Decretal",
+    "correta": "Carta antiga do papa com valor de lei."
+  },
+  {
+    "palavra": "Decúbito",
+    "correta": "Posição do corpo deitado."
+  },
+  {
+    "palavra": "Decumano",
+    "correta": "Onda gigantesca ou rua romana."
+  },
+  {
+    "palavra": "Decúria",
+    "correta": "Tropa romana de dez soldados."
+  },
+  {
+    "palavra": "Decurião",
+    "correta": "Comandante de dez cavaleiros."
+  },
+  {
+    "palavra": "Dedaleira",
+    "correta": "Planta medicinal."
+  },
+  {
+    "palavra": "Dedáleo",
+    "correta": "Labiríntico."
+  },
+  {
+    "palavra": "Defecção",
+    "correta": "Deserção."
+  },
+  {
+    "palavra": "Defenestração",
+    "correta": "Ato de lançar alguém ou algo pela janela."
+  },
+  {
+    "palavra": "Deferente",
+    "correta": "Respeitoso."
+  },
+  {
+    "palavra": "Defeso",
+    "correta": "Período em que é proibido caçar ou pescar determinadas espécies."
+  },
+  {
+    "palavra": "Deflúvio",
+    "correta": "Queda dos cabelos ou corrente de água."
+  },
+  {
+    "palavra": "Defumadouro",
+    "correta": "Lugar de defumar carnes."
+  },
+  {
+    "palavra": "Degredo",
+    "correta": "Pena de desterro."
+  },
+  {
+    "palavra": "Deicida",
+    "correta": "Assassino de um deus."
+  },
+  {
+    "palavra": "Deicídio",
+    "correta": "Morte de uma divindade."
+  },
+  {
+    "palavra": "Deidade",
+    "correta": "Divindade."
+  },
+  {
+    "palavra": "Deificar",
+    "correta": "Transformar em deus."
+  },
+  {
+    "palavra": "Deísmo",
+    "correta": "Crença em uma divindade com base na razão, sem recorrer à revelação."
+  },
+  {
+    "palavra": "Delator",
+    "correta": "Dedo-duro."
+  },
+  {
+    "palavra": "Deleitével",
+    "correta": "Agradável aos sentidos."
+  },
+  {
+    "palavra": "Deletério",
+    "correta": "Nocivo."
+  },
+  {
+    "palavra": "Deletrear",
+    "correta": "Soletrar letra por letra."
+  },
+  {
+    "palavra": "Deliquescente",
+    "correta": "Que absorve umidade do ar até se dissolver."
+  },
+  {
+    "palavra": "Delíquio",
+    "correta": "Desmaio."
+  },
+  {
+    "palavra": "Delir",
+    "correta": "Apagar ou fazer desaparecer."
+  },
+  {
+    "palavra": "Delonga",
+    "correta": "Atraso proposital e demora."
+  },
+  {
+    "palavra": "Deltoide",
+    "correta": "Músculo arredondado do ombro."
+  },
+  {
+    "palavra": "Delubro",
+    "correta": "Antigo templo pagão."
+  },
+  {
+    "palavra": "Demerara",
+    "correta": "Açúcar pouco refinado, de cristais dourados."
+  },
+  {
+    "palavra": "Demiúrgico",
+    "correta": "Criador."
+  },
+  {
+    "palavra": "Demonismo",
+    "correta": "Crença ou culto aos demônios."
+  },
+  {
+    "palavra": "Demonolatria",
+    "correta": "Culto aos demônios."
+  },
+  {
+    "palavra": "Demonologia",
+    "correta": "Estudo sobre os demônios."
+  },
+  {
+    "palavra": "Demótico",
+    "correta": "Popular."
+  },
+  {
+    "palavra": "Demudar",
+    "correta": "Empalidecer."
+  },
+  {
+    "palavra": "Dendroclastia",
+    "correta": "Derrubada de árvores pelo vento."
+  },
+  {
+    "palavra": "Dendrocronologia",
+    "correta": "Datação por meio dos anéis de crescimento das árvores."
+  },
+  {
+    "palavra": "Dendrófilo",
+    "correta": "Que vive nas árvores."
+  },
+  {
+    "palavra": "Dendrolatria",
+    "correta": "Culto religioso às árvores."
+  },
+  {
+    "palavra": "Dendrologia",
+    "correta": "Estudo botânico das árvores."
+  },
+  {
+    "palavra": "Denegação",
+    "correta": "Recusa de um pedido."
+  },
+  {
+    "palavra": "Dentilhão",
+    "correta": "Ornamento em forma de dente na parede."
+  },
+  {
+    "palavra": "Denudar",
+    "correta": "Despir."
+  },
+  {
+    "palavra": "Deontologia",
+    "correta": "Estudo dos deveres, sobretudo os de uma profissão."
+  },
+  {
+    "palavra": "Depauperado",
+    "correta": "Exaurido."
+  },
+  {
+    "palavra": "Depauperar",
+    "correta": "Enfraquecer."
+  },
+  {
+    "palavra": "Deperecer",
+    "correta": "Definhar."
+  },
+  {
+    "palavra": "Depleção",
+    "correta": "Redução da quantidade ou das reservas de uma substância no organismo."
+  },
+  {
+    "palavra": "Deprecar",
+    "correta": "Suplicar."
+  },
+  {
+    "palavra": "Deprecativo",
+    "correta": "Suplicante."
+  },
+  {
+    "palavra": "Derrancar",
+    "correta": "Estragar ou apodrecer."
+  },
+  {
+    "palavra": "Derrelição",
+    "correta": "Abandono total."
+  },
+  {
+    "palavra": "Derrelito",
+    "correta": "Embarcação abandonada à deriva."
+  },
+  {
+    "palavra": "Derribar",
+    "correta": "Derrubar."
+  },
+  {
+    "palavra": "Derriçar",
+    "correta": "Desfiar com os dentes ou namoricar."
+  },
+  {
+    "palavra": "Derriço",
+    "correta": "Namoro leve ou alvo de zombaria."
+  },
+  {
+    "palavra": "Derrocar",
+    "correta": "Demolir muralha ou edifício."
+  },
+  {
+    "palavra": "Derrogação",
+    "correta": "Revogação parcial de uma norma."
+  },
+  {
+    "palavra": "Desabono",
+    "correta": "Prejuízo ao bom nome."
+  },
+  {
+    "palavra": "Desabrido",
+    "correta": "Ríspido."
+  },
+  {
+    "palavra": "Desabusado",
+    "correta": "Atrevido e sem medo."
+  },
+  {
+    "palavra": "Desachegar",
+    "correta": "Separar."
+  },
+  {
+    "palavra": "Desacoroçoar",
+    "correta": "Tirar o ânimo."
+  },
+  {
+    "palavra": "Desafogo",
+    "correta": "Alívio financeiro ou emocional."
+  },
+  {
+    "palavra": "Desagravar",
+    "correta": "Reparar um agravo."
+  },
+  {
+    "palavra": "Desaguisado",
+    "correta": "Briga ou desentendimento."
+  },
+  {
+    "palavra": "Desapercebido",
+    "correta": "Desprevenido ou despreparado."
+  },
+  {
+    "palavra": "Desaprumo",
+    "correta": "Inclinação torta."
+  },
+  {
+    "palavra": "Desarraigar",
+    "correta": "Arrancar pela raiz."
+  },
+  {
+    "palavra": "Desasnador",
+    "correta": "Que tira alguém da ignorância."
+  },
+  {
+    "palavra": "Desassossego",
+    "correta": "Inquietação."
+  },
+  {
+    "palavra": "Desaviar",
+    "correta": "Tirar do bom caminho."
+  },
+  {
+    "palavra": "Desbaratar",
+    "correta": "Destroçar."
+  },
+  {
+    "palavra": "Desbastar",
+    "correta": "Retirar excessos ou irregularidades de um material."
+  },
+  {
+    "palavra": "Desbordar",
+    "correta": "Transbordar das margens."
+  },
+  {
+    "palavra": "Desbragado",
+    "correta": "Dissoluto."
+  },
+  {
+    "palavra": "Desbravar",
+    "correta": "Abrir caminho em terreno inculto ou pouco explorado."
+  },
+  {
+    "palavra": "Descaída",
+    "correta": "Pequeno deslize ou piada maldosa."
+  },
+  {
+    "palavra": "Descalabro",
+    "correta": "Ruína."
+  },
+  {
+    "palavra": "Descambar",
+    "correta": "Resvalar ou virar bagunça."
+  },
+  {
+    "palavra": "Descaminho",
+    "correta": "Desvio do caminho ou evasão de tributos aduaneiros."
+  },
+  {
+    "palavra": "Descampado",
+    "correta": "Campo aberto."
+  },
+  {
+    "palavra": "Descargo",
+    "correta": "Alívio de obrigação na consciência."
+  },
+  {
+    "palavra": "Desconchavo",
+    "correta": "Falta de nexo ou disparate."
+  },
+  {
+    "palavra": "Desconjuntar",
+    "correta": "Separar os ossos das juntas."
+  },
+  {
+    "palavra": "Desempoado",
+    "correta": "Espírito franco."
+  },
+  {
+    "palavra": "Desenfastiar",
+    "correta": "Distrair."
+  },
+  {
+    "palavra": "Desguaritar",
+    "correta": "Fugir do bando perdendo-se."
+  },
+  {
+    "palavra": "Desiderato",
+    "correta": "Aspiração ou objetivo."
+  },
+  {
+    "palavra": "Desídia",
+    "correta": "Preguiça."
+  },
+  {
+    "palavra": "Deslinde",
+    "correta": "Esclarecimento de uma questão confusa."
+  },
+  {
+    "palavra": "Desmalhar",
+    "correta": "Rasgar malha."
+  },
+  {
+    "palavra": "Despautério",
+    "correta": "Disparate."
+  },
+  {
+    "palavra": "Despiciendo",
+    "correta": "De pouca importância."
+  },
+  {
+    "palavra": "Despique",
+    "correta": "Desforra."
+  },
+  {
+    "palavra": "Despraguejar",
+    "correta": "Rogar pragas."
+  },
+  {
+    "palavra": "Dessorar",
+    "correta": "Perder forças."
+  },
+  {
+    "palavra": "Destarte",
+    "correta": "Assim."
+  },
+  {
+    "palavra": "Desuetude",
+    "correta": "Desuso de uma prática ou norma."
+  },
+  {
+    "palavra": "Desvair",
+    "correta": "Perder o juízo."
+  },
+  {
+    "palavra": "Desvaire",
+    "correta": "Alucinação ou loucura passageira."
+  },
+  {
+    "palavra": "Desvão",
+    "correta": "Canto escondido debaixo do telhado."
+  },
+  {
+    "palavra": "Diácrise",
+    "correta": "Distinção entre elementos semelhantes."
+  },
+  {
+    "palavra": "Diacronia",
+    "correta": "Evolução de um fenômeno ao longo do tempo."
+  },
+  {
+    "palavra": "Diáfano",
+    "correta": "Transparente."
+  },
+  {
+    "palavra": "Diatribe",
+    "correta": "Crítica acerba."
+  },
+  {
+    "palavra": "Didascália",
+    "correta": "Indicação cênica escrita em uma peça."
+  },
+  {
+    "palavra": "Diglossia",
+    "correta": "Uso de duas línguas ou variedades linguísticas com funções sociais distintas."
+  },
+  {
+    "palavra": "Dilúculo",
+    "correta": "Aurora."
+  },
+  {
+    "palavra": "Dipsomania",
+    "correta": "Impulso incontrolável de beber álcool."
+  },
+  {
+    "palavra": "Díscolo",
+    "correta": "Indisciplinado."
+  },
+  {
+    "palavra": "Disfemismo",
+    "correta": "Expressão verbal rude."
+  },
+  {
+    "palavra": "Disforia",
+    "correta": "Mal-estar e tristeza inquieta."
+  },
+  {
+    "palavra": "Dissensão",
+    "correta": "Falta de acordo entre pessoas."
+  },
+  {
+    "palavra": "Dissipação",
+    "correta": "Vida de esbanjamento e farra."
+  },
+  {
+    "palavra": "Dístico",
+    "correta": "Conjunto de dois versos."
+  },
+  {
+    "palavra": "Diuturno",
+    "correta": "Duradouro."
+  },
+  {
+    "palavra": "Doxografia",
+    "correta": "Coletânea de opiniões de filósofos antigos."
+  },
+  {
+    "palavra": "Dromólatra",
+    "correta": "Viciado em viajar."
+  },
+  {
+    "palavra": "Dromomania",
+    "correta": "Impulso incontrolável de andar ou viajar."
+  },
+  {
+    "palavra": "Ebanista",
+    "correta": "Marceneiro especializado em móveis finos."
+  },
+  {
+    "palavra": "Ebriedade",
+    "correta": "Embriaguez."
+  },
+  {
+    "palavra": "Ebuliometria",
+    "correta": "Medição do ponto de ebulição."
+  },
+  {
+    "palavra": "Ebúrneo",
+    "correta": "Como marfim."
+  },
+  {
+    "palavra": "Eça",
+    "correta": "Catafalco vazio erguido na igreja."
+  },
+  {
+    "palavra": "Ecdêmico",
+    "correta": "Doença vinda de fora da região."
+  },
+  {
+    "palavra": "Ecdise",
+    "correta": "Muda do revestimento externo em animais como serpentes e insetos."
+  },
+  {
+    "palavra": "Eclésia",
+    "correta": "Assembleia popular da antiga Atenas."
+  },
+  {
+    "palavra": "Eclesiastes",
+    "correta": "Pregador bíblico."
+  },
+  {
+    "palavra": "Eclesiástico",
+    "correta": "Sacerdote."
+  },
+  {
+    "palavra": "Ecmnésia",
+    "correta": "Revivência de lembranças como se estivessem ocorrendo no presente."
+  },
+  {
+    "palavra": "Ecolalia",
+    "correta": "Repetição involuntária de palavras ouvidas."
+  },
+  {
+    "palavra": "Economato",
+    "correta": "Administração das finanças de convento."
+  },
+  {
+    "palavra": "Ecônomo",
+    "correta": "Administrador dos bens de uma instituição."
+  },
+  {
+    "palavra": "Ecopraxia",
+    "correta": "Imitação involuntária dos movimentos de outra pessoa."
+  },
+  {
+    "palavra": "Ectopia",
+    "correta": "Presença de um órgão ou tecido fora de sua posição habitual."
+  },
+  {
+    "palavra": "Ecumênico",
+    "correta": "Que une diferentes igrejas."
+  },
+  {
+    "palavra": "Ecúmeno",
+    "correta": "Parte habitada da Terra."
+  },
+  {
+    "palavra": "Edilidade",
+    "correta": "Câmara municipal."
+  },
+  {
+    "palavra": "Édito",
+    "correta": "Ordem oficial publicada por rei ou juiz."
+  },
+  {
+    "palavra": "Edulcorante",
+    "correta": "Adoçante."
+  },
+  {
+    "palavra": "Efabulatório",
+    "correta": "Cheio de imaginação e histórias inventadas."
+  },
+  {
+    "palavra": "Efebo",
+    "correta": "Jovem grego na flor da idade."
+  },
+  {
+    "palavra": "Efélide",
+    "correta": "Sarda."
+  },
+  {
+    "palavra": "Efeminado",
+    "correta": "Com trejeitos femininos."
+  },
+  {
+    "palavra": "Efésio",
+    "correta": "Natural da antiga cidade de Éfeso."
+  },
+  {
+    "palavra": "Efígie",
+    "correta": "Retrato gravado em moeda."
+  },
+  {
+    "palavra": "Eflorescência",
+    "correta": "Manchas na pele ou pó branco em muro."
+  },
+  {
+    "palavra": "Efluxo",
+    "correta": "Escoamento."
+  },
+  {
+    "palavra": "Éforo",
+    "correta": "Magistrado que fiscalizava os reis de Esparta."
+  },
+  {
+    "palavra": "Efúgio",
+    "correta": "Desculpa para escapar de obrigação."
+  },
+  {
+    "palavra": "Égide",
+    "correta": "Escudo protetor ou amparo."
+  },
+  {
+    "palavra": "Egipã",
+    "correta": "Divindade campestre com pés de bode."
+  },
+  {
+    "palavra": "Egipcíaco",
+    "correta": "Antigo egípcio."
+  },
+  {
+    "palavra": "Eidético",
+    "correta": "Que reproduz mentalmente uma imagem com grande nitidez."
+  },
+  {
+    "palavra": "Eira",
+    "correta": "Lugar onde se secam ou debulham cereais e outros grãos."
+  },
+  {
+    "palavra": "Eirado",
+    "correta": "Terraço alto."
+  },
+  {
+    "palavra": "Elafebolíon",
+    "correta": "Mês do calendário ateniense em que se celebrava uma festa em honra de Ártemis."
+  },
+  {
+    "palavra": "Elanguescer",
+    "correta": "Enfraquecer."
+  },
+  {
+    "palavra": "Elastério",
+    "correta": "Força elástica."
+  },
+  {
+    "palavra": "Elater",
+    "correta": "Besouro saltador."
+  },
+  {
+    "palavra": "Elatério",
+    "correta": "Mola vegetal que lança sementes longe."
+  },
+  {
+    "palavra": "Electrão",
+    "correta": "Liga antiga de ouro e prata."
+  },
+  {
+    "palavra": "Elefantíase",
+    "correta": "Aumento acentuado de uma parte do corpo por acúmulo de linfa."
+  },
+  {
+    "palavra": "Elegíaco",
+    "correta": "Triste e choroso."
+  },
+  {
+    "palavra": "Elenco",
+    "correta": "Grupo de atores."
+  },
+  {
+    "palavra": "Eleusino",
+    "correta": "Relativo aos mistérios sagrados de Elêusis."
+  },
+  {
+    "palavra": "Elfa",
+    "correta": "Fada da floresta."
+  },
+  {
+    "palavra": "Elixir",
+    "correta": "Líquido medicinal aromático."
+  },
+  {
+    "palavra": "Elmo",
+    "correta": "Capacete que fazia parte de uma armadura."
+  },
+  {
+    "palavra": "Elocução",
+    "correta": "Modo de expressar o pensamento pela fala."
+  },
+  {
+    "palavra": "Elucubração",
+    "correta": "Reflexão ou trabalho intelectual laborioso."
+  },
+  {
+    "palavra": "Elucubrário",
+    "correta": "Pensador perdido em teorias difíceis."
+  },
+  {
+    "palavra": "Emadeirar",
+    "correta": "Pôr vigas de madeira no telhado."
+  },
+  {
+    "palavra": "Embarricar",
+    "correta": "Guardar em barricas."
+  },
+  {
+    "palavra": "Embasbacar",
+    "correta": "Deixar pasmo."
+  },
+  {
+    "palavra": "Embastar",
+    "correta": "Prender pano com pontos largos."
+  },
+  {
+    "palavra": "Embaucador",
+    "correta": "Farsante astuto."
+  },
+  {
+    "palavra": "Embaucar",
+    "correta": "Enganar ou iludir."
+  },
+  {
+    "palavra": "Embelecar",
+    "correta": "Enganar conversando."
+  },
+  {
+    "palavra": "Embeleco",
+    "correta": "Enfeite enganoso."
+  },
+  {
+    "palavra": "Embiocar",
+    "correta": "Cobrir ou esconder o rosto."
+  },
+  {
+    "palavra": "Emboçar",
+    "correta": "Passar a primeira camada de reboco."
+  },
+  {
+    "palavra": "Embófia",
+    "correta": "Arrogância."
+  },
+  {
+    "palavra": "Embolalia",
+    "correta": "Inserção recorrente de sons ou palavras supérfluos na fala."
+  },
+  {
+    "palavra": "Embono",
+    "correta": "Flutuador preso ao casco do barco."
+  },
+  {
+    "palavra": "Emborcar",
+    "correta": "Virar de boca para baixo."
+  },
+  {
+    "palavra": "Embotado",
+    "correta": "Sem fio ou com a sensibilidade reduzida."
+  },
+  {
+    "palavra": "Embotar",
+    "correta": "Tirar o fio ou diminuir a sensibilidade."
+  },
+  {
+    "palavra": "Embraçar",
+    "correta": "Prender a alça do escudo no braço."
+  },
+  {
+    "palavra": "Embrechado",
+    "correta": "Decorado com conchas, pedras ou fragmentos de cerâmica."
+  },
+  {
+    "palavra": "Embridar",
+    "correta": "Refrear cavalo."
+  },
+  {
+    "palavra": "Embrocação",
+    "correta": "Pincelada medicinal."
+  },
+  {
+    "palavra": "Ementa",
+    "correta": "Resumo de um texto ou lista de pratos."
+  },
+  {
+    "palavra": "Ementário",
+    "correta": "Caderno de resumos."
+  },
+  {
+    "palavra": "Emetropia",
+    "correta": "Condição do olho que focaliza corretamente sem correção óptica."
+  },
+  {
+    "palavra": "Empalar",
+    "correta": "Espetar condenado em estaca."
+  },
+  {
+    "palavra": "Empalmar",
+    "correta": "Esconder na palma da mão ou furtar com destreza."
+  },
+  {
+    "palavra": "Emparceirar",
+    "correta": "Juntar como sócio."
+  },
+  {
+    "palavra": "Empastelar",
+    "correta": "Destruir jornal ou misturar tipos gráficos."
+  },
+  {
+    "palavra": "Empeçar",
+    "correta": "Criar estorvo."
+  },
+  {
+    "palavra": "Empeçonhar",
+    "correta": "Envenenar com peçonha."
+  },
+  {
+    "palavra": "Empedrar",
+    "correta": "Endurecer como pedra."
+  },
+  {
+    "palavra": "Empena",
+    "correta": "Parte superior da parede que acompanha a inclinação do telhado."
+  },
+  {
+    "palavra": "Empeno",
+    "correta": "Entortamento da madeira."
+  },
+  {
+    "palavra": "Empestar",
+    "correta": "Encher de mau cheiro ou peste."
+  },
+  {
+    "palavra": "Empirismo",
+    "correta": "Doutrina que atribui à experiência a origem do conhecimento."
+  },
+  {
+    "palavra": "Emplumar",
+    "correta": "Enfeitar com plumas."
+  },
+  {
+    "palavra": "Empolado",
+    "correta": "Pomposo, sobretudo no modo de falar ou escrever."
+  },
+  {
+    "palavra": "Emprenhada",
+    "correta": "Que carrega filhotes no ventre."
+  },
+  {
+    "palavra": "Empulhar",
+    "correta": "Zombar enganando."
+  },
+  {
+    "palavra": "Emulação",
+    "correta": "Esforço para igualar ou superar alguém."
+  },
+  {
+    "palavra": "Emular",
+    "correta": "Tentar igualar ou superar alguém."
+  },
+  {
+    "palavra": "Enantema",
+    "correta": "Erupção nas mucosas."
+  },
+  {
+    "palavra": "Enantiodromia",
+    "correta": "Transformação de algo em seu oposto."
+  },
+  {
+    "palavra": "Enantiossemia",
+    "correta": "Presença de dois sentidos opostos na mesma palavra."
+  },
+  {
+    "palavra": "Enapupado",
+    "correta": "Vaiado."
+  },
+  {
+    "palavra": "Enarcar",
+    "correta": "Curvar em arco."
+  },
+  {
+    "palavra": "Encafuar",
+    "correta": "Esconder em quarto escuro."
+  },
+  {
+    "palavra": "Encalacrar",
+    "correta": "Meter em dívidas ou apuros."
+  },
+  {
+    "palavra": "Encamisada",
+    "correta": "Ataque noturno de surpresa."
+  },
+  {
+    "palavra": "Encampar",
+    "correta": "Assumir negócio ou ideia alheia."
+  },
+  {
+    "palavra": "Encantador",
+    "correta": "Sedutor."
+  },
+  {
+    "palavra": "Encapelado",
+    "correta": "Revolto e coberto de espuma, como o mar agitado."
+  },
+  {
+    "palavra": "Encarquilhar",
+    "correta": "Enrugar."
+  },
+  {
+    "palavra": "Encarrapitar",
+    "correta": "Trepar no alto."
+  },
+  {
+    "palavra": "Encastelar",
+    "correta": "Cercar de castelos ou acumular."
+  },
+  {
+    "palavra": "Encáustica",
+    "correta": "Técnica de pintura que usa cera como aglutinante."
+  },
+  {
+    "palavra": "Encavacar",
+    "correta": "Ficar amuado."
+  },
+  {
+    "palavra": "Encavar",
+    "correta": "Colocar cabo na ferramenta."
+  },
+  {
+    "palavra": "Enchova",
+    "correta": "Peixe marinho voraz."
+  },
+  {
+    "palavra": "Ênclise",
+    "correta": "Colocação de um pronome átono depois do verbo."
+  },
+  {
+    "palavra": "Encoimar",
+    "correta": "Aplicar multa."
+  },
+  {
+    "palavra": "Encomiástico",
+    "correta": "Cheio de elogios."
+  },
+  {
+    "palavra": "Encômio",
+    "correta": "Louvor."
+  },
+  {
+    "palavra": "Encouraçar",
+    "correta": "Revestir com couraça de ferro."
+  },
+  {
+    "palavra": "Encubar",
+    "correta": "Guardar vinho na cuba."
+  },
+  {
+    "palavra": "Endechas",
+    "correta": "Cantiga fúnebre."
+  },
+  {
+    "palavra": "Endez",
+    "correta": "Ovo deixado no ninho para induzir a galinha a pôr ali."
+  },
+  {
+    "palavra": "Endocarpo",
+    "correta": "Camada interna do fruto, que pode endurecer e formar o caroço."
+  },
+  {
+    "palavra": "Endogamia",
+    "correta": "Casamento entre pessoas do mesmo grupo."
+  },
+  {
+    "palavra": "Endoudar",
+    "correta": "Ficar louco."
+  },
+  {
+    "palavra": "Eneágono",
+    "correta": "Figura de nove lados."
+  },
+  {
+    "palavra": "Eneassílabo",
+    "correta": "Verso de nove sílabas métricas."
+  },
+  {
+    "palavra": "Enfaro",
+    "correta": "Enjoo forte."
+  },
+  {
+    "palavra": "Enfezar",
+    "correta": "Irritar ou tornar raquítico."
+  },
+  {
+    "palavra": "Enfiteuse",
+    "correta": "Aforamento perpétuo."
+  },
+  {
+    "palavra": "Enfiteuta",
+    "correta": "Foreiro perpétuo."
+  },
+  {
+    "palavra": "Enfronhar",
+    "correta": "Pôr em fronha ou familiarizar com um assunto."
+  },
+  {
+    "palavra": "Enfunar",
+    "correta": "Inchar as velas com o vento."
+  },
+  {
+    "palavra": "Engalanar",
+    "correta": "Enfeitar para festa."
+  },
+  {
+    "palavra": "Engastar",
+    "correta": "Prender joia no metal."
+  },
+  {
+    "palavra": "Engavelar",
+    "correta": "Amarrar espigas."
+  },
+  {
+    "palavra": "Engendrar",
+    "correta": "Conceber ou gerar."
+  },
+  {
+    "palavra": "Engodativo",
+    "correta": "Sedutor."
+  },
+  {
+    "palavra": "Engodo",
+    "correta": "Isca ou artifício para enganar."
+  },
+  {
+    "palavra": "Engolfar",
+    "correta": "Mergulhar fundo no mar ou nos pensamentos."
+  },
+  {
+    "palavra": "Enho",
+    "correta": "Corça nova."
+  },
+  {
+    "palavra": "Enliçar",
+    "correta": "Tramar fios."
+  },
+  {
+    "palavra": "Enovelar",
+    "correta": "Enrolar em novelo."
+  },
+  {
+    "palavra": "Enrijar",
+    "correta": "Ficar forte e rijo."
+  },
+  {
+    "palavra": "Ensalmador",
+    "correta": "Pessoa que usa rezas para tentar curar."
+  },
+  {
+    "palavra": "Ensalmo",
+    "correta": "Reza curandeira."
+  },
+  {
+    "palavra": "Ensebar",
+    "correta": "Sujar de sebo."
+  },
+  {
+    "palavra": "Ensejar",
+    "correta": "Dar oportunidade."
+  },
+  {
+    "palavra": "Ensimesmado",
+    "correta": "Mergulhado nos próprios pensamentos."
+  },
+  {
+    "palavra": "Ensinança",
+    "correta": "Antigo ensino."
+  },
+  {
+    "palavra": "Entabular",
+    "correta": "Iniciar conversa ou negociação."
+  },
+  {
+    "palavra": "Entaramelar",
+    "correta": "Travar a língua ao falar."
+  },
+  {
+    "palavra": "Enteléquia",
+    "correta": "Realização da essência."
+  },
+  {
+    "palavra": "Entibiado",
+    "correta": "Frouxo desanimado."
+  },
+  {
+    "palavra": "Entibiamento",
+    "correta": "Perda do entusiasmo."
+  },
+  {
+    "palavra": "Entimema",
+    "correta": "Silogismo incompleto."
+  },
+  {
+    "palavra": "Entomofagia",
+    "correta": "Costume de comer insetos."
+  },
+  {
+    "palavra": "Entrechocar",
+    "correta": "Bater um no outro."
+  },
+  {
+    "palavra": "Entrecosto",
+    "correta": "Carne das costelas."
+  },
+  {
+    "palavra": "Entredentes",
+    "correta": "Em voz baixa, quase sem abrir a boca."
+  },
+  {
+    "palavra": "Entrefolhas",
+    "correta": "Espaço entre folhas."
+  },
+  {
+    "palavra": "Entreluzir",
+    "correta": "Brilhar fracamente no escuro."
+  },
+  {
+    "palavra": "Entremear",
+    "correta": "Misturar pelo meio."
+  },
+  {
+    "palavra": "Entremês",
+    "correta": "Peça teatral curta e engraçada."
+  },
+  {
+    "palavra": "Entretecer",
+    "correta": "Tramar fios."
+  },
+  {
+    "palavra": "Entrevado",
+    "correta": "Paralítico preso à cama."
+  },
+  {
+    "palavra": "Entrincheirar",
+    "correta": "Proteger atrás de trincheiras."
+  },
+  {
+    "palavra": "Entroncar",
+    "correta": "Ligar-se a um tronco comum ou a uma linhagem."
+  },
+  {
+    "palavra": "Entronizar",
+    "correta": "Colocar no trono ou no altar."
+  },
+  {
+    "palavra": "Entrouxar",
+    "correta": "Fazer trouxa de roupa."
+  },
+  {
+    "palavra": "Entrudo",
+    "correta": "Antigo carnaval popular."
+  },
+  {
+    "palavra": "Entumescer",
+    "correta": "Inchar."
+  },
+  {
+    "palavra": "Enturvar",
+    "correta": "Deixar turvo."
+  },
+  {
+    "palavra": "Enucleação",
+    "correta": "Remoção de uma estrutura inteira de seu envoltório."
+  },
+  {
+    "palavra": "Enuclear",
+    "correta": "Remover uma estrutura inteira de seu envoltório."
+  },
+  {
+    "palavra": "Enveredar",
+    "correta": "Seguir por um caminho."
+  },
+  {
+    "palavra": "Envinagrar",
+    "correta": "Azedar como vinagre."
+  },
+  {
+    "palavra": "Enxamel",
+    "correta": "Técnica construtiva com armação de madeira e vãos preenchidos."
+  },
+  {
+    "palavra": "Enxárcia",
+    "correta": "Cordas que seguram o mastro do navio."
+  },
+  {
+    "palavra": "Enxota-cães",
+    "correta": "Guarda antigo que expulsava cães da igreja."
+  },
+  {
+    "palavra": "Eólio",
+    "correta": "Relativo ao deus dos ventos."
+  },
+  {
+    "palavra": "Epacta",
+    "correta": "Número que indica a idade da Lua no início do ano para fins de calendário."
+  },
+  {
+    "palavra": "Epanadiplose",
+    "correta": "Repetição, no fim de uma unidade, da palavra que a iniciou."
+  },
+  {
+    "palavra": "Epanáfora",
+    "correta": "Repetição de uma palavra no início de frases ou versos sucessivos."
+  },
+  {
+    "palavra": "Epânodo",
+    "correta": "Retomada explicativa de palavras ditas antes."
+  },
+  {
+    "palavra": "Epanortose",
+    "correta": "Correção imediata do que se acabou de dizer."
+  },
+  {
+    "palavra": "Epêntese",
+    "correta": "Inserção de um som no interior de uma palavra."
+  },
+  {
+    "palavra": "Epêntico",
+    "correta": "Som acrescentado na palavra."
+  },
+  {
+    "palavra": "Epicédio",
+    "correta": "Canto fúnebre."
+  },
+  {
+    "palavra": "Epiclese",
+    "correta": "Oração que invoca o Espírito Santo."
+  },
+  {
+    "palavra": "Epifonema",
+    "correta": "Exclamação que encerra ou sintetiza um pensamento."
+  },
+  {
+    "palavra": "Epífora",
+    "correta": "Repetição de uma palavra no fim de frases ou versos sucessivos."
+  },
+  {
+    "palavra": "Epígono",
+    "correta": "Seguidor sem originalidade de um mestre."
+  },
+  {
+    "palavra": "Epígrafe",
+    "correta": "Frase curta posta no início de livro."
+  },
+  {
+    "palavra": "Epigrafia",
+    "correta": "Estudo de inscrições gravadas em materiais duráveis."
+  },
+  {
+    "palavra": "Epigrama",
+    "correta": "Poema curto e irônico."
+  },
+  {
+    "palavra": "Epilogar",
+    "correta": "Resumir no final."
+  },
+  {
+    "palavra": "Epimone",
+    "correta": "Repetição enfática."
+  },
+  {
+    "palavra": "Epinício",
+    "correta": "Canto grego em honra de uma vitória."
+  },
+  {
+    "palavra": "Episcopado",
+    "correta": "Conjunto dos bispos."
+  },
+  {
+    "palavra": "Epistaxe",
+    "correta": "Sangramento pelo nariz."
+  },
+  {
+    "palavra": "Epistemologia",
+    "correta": "Estudo da natureza, dos fundamentos e dos limites do conhecimento."
+  },
+  {
+    "palavra": "Epitalâmio",
+    "correta": "Canto nupcial."
+  },
+  {
+    "palavra": "Epíteto",
+    "correta": "Palavra ou expressão que qualifica alguém ou algo."
+  },
+  {
+    "palavra": "Epítome",
+    "correta": "Resumo."
+  },
+  {
+    "palavra": "Epítrope",
+    "correta": "Concessão, muitas vezes irônica, para que o interlocutor faça o que pretende."
+  },
+  {
+    "palavra": "Epizeuxe",
+    "correta": "Repetição seguida da mesma palavra."
+  },
+  {
+    "palavra": "Epizootia",
+    "correta": "Surto de doença entre animais de uma região."
+  },
+  {
+    "palavra": "Epopeico",
+    "correta": "Grandioso e em estilo épico."
+  },
+  {
+    "palavra": "Equânime",
+    "correta": "Justo."
+  },
+  {
+    "palavra": "Equanimidade",
+    "correta": "Serenidade de ânimo."
+  },
+  {
+    "palavra": "Equinócio",
+    "correta": "Momento do ano em que dia e noite têm duração aproximadamente igual."
+  },
+  {
+    "palavra": "Equipagem",
+    "correta": "Tripulação de navio."
+  },
+  {
+    "palavra": "Equóreo",
+    "correta": "Marinho."
+  },
+  {
+    "palavra": "Eremitério",
+    "correta": "Retiro solitário."
+  },
+  {
+    "palavra": "Eretismo",
+    "correta": "Irritação nervosa."
+  },
+  {
+    "palavra": "Ergastério",
+    "correta": "Oficina de trabalho na Antiguidade."
+  },
+  {
+    "palavra": "Ergástulo",
+    "correta": "Prisão antiga, geralmente subterrânea."
+  },
+  {
+    "palavra": "Eriçar",
+    "correta": "Arrepiar pelos ou espinhos."
+  },
+  {
+    "palavra": "Erisipela",
+    "correta": "Infecção bacteriana da pele que causa vermelhidão e inchaço."
+  },
+  {
+    "palavra": "Erística",
+    "correta": "Arte de argumentar para vencer uma disputa."
+  },
+  {
+    "palavra": "Erpetologia",
+    "correta": "Estudo dos répteis e anfíbios."
+  },
+  {
+    "palavra": "Eructação",
+    "correta": "Arroto."
+  },
+  {
+    "palavra": "Eructar",
+    "correta": "Arrotar."
+  },
+  {
+    "palavra": "Ervanário",
+    "correta": "Vendedor de ervas medicinais."
+  },
+  {
+    "palavra": "Esboroar",
+    "correta": "Desmanchar em pó como terra seca."
+  },
+  {
+    "palavra": "Esbulhar",
+    "correta": "Privar alguém da posse de um bem."
+  },
+  {
+    "palavra": "Escabelo",
+    "correta": "Banquinho baixo."
+  },
+  {
+    "palavra": "Escabiose",
+    "correta": "Infestação da pele por ácaro, com coceira intensa."
+  },
+  {
+    "palavra": "Escachoar",
+    "correta": "Ferver fazendo espuma e barulho."
+  },
+  {
+    "palavra": "Escaiola",
+    "correta": "Gesso fino que imita mármore."
+  },
+  {
+    "palavra": "Escalavrão",
+    "correta": "Arranhão grande."
+  },
+  {
+    "palavra": "Escalda-pés",
+    "correta": "Banho quente nos pés."
+  },
+  {
+    "palavra": "Escaleno",
+    "correta": "Diz-se do triângulo cujos lados têm três comprimentos diferentes."
+  },
+  {
+    "palavra": "Escalímetro",
+    "correta": "Régua triangular de arquiteto."
+  },
+  {
+    "palavra": "Escalpelar",
+    "correta": "Dissecar com bisturi."
+  },
+  {
+    "palavra": "Escalracho",
+    "correta": "Erva daninha de raízes fundas."
+  },
+  {
+    "palavra": "Escanção",
+    "correta": "Copeiro real que servia o vinho."
+  },
+  {
+    "palavra": "Escanchar",
+    "correta": "Sentar-se com uma perna de cada lado."
+  },
+  {
+    "palavra": "Escandir",
+    "correta": "Analisar a métrica de um verso."
+  },
+  {
+    "palavra": "Escano",
+    "correta": "Banco antigo de madeira com encosto."
+  },
+  {
+    "palavra": "Escansão",
+    "correta": "Análise da métrica de um verso."
+  },
+  {
+    "palavra": "Escantilhão",
+    "correta": "Régua padrão."
+  },
+  {
+    "palavra": "Escaparate",
+    "correta": "Vitrine ou armário de vidro."
+  },
+  {
+    "palavra": "Escápula",
+    "correta": "Osso plano situado na parte posterior do ombro."
+  },
+  {
+    "palavra": "Escara",
+    "correta": "Camada de tecido morto que pode cobrir uma ferida."
+  },
+  {
+    "palavra": "Escardear",
+    "correta": "Arrancar cardos."
+  },
+  {
+    "palavra": "Escarlatina",
+    "correta": "Febre infantil que deixa a pele vermelha."
+  },
+  {
+    "palavra": "Escarmentado",
+    "correta": "Que aprendeu com experiências dolorosas."
+  },
+  {
+    "palavra": "Escarninho",
+    "correta": "Zombeteiro."
+  },
+  {
+    "palavra": "Escarrapachar",
+    "correta": "Esparramar no chão."
+  },
+  {
+    "palavra": "Escatel",
+    "correta": "Entalhe na madeira para encaixar peça."
+  },
+  {
+    "palavra": "Escatímano",
+    "correta": "De mãos tortas."
+  },
+  {
+    "palavra": "Escatimar",
+    "correta": "Regatear ou diminuir no peso."
+  },
+  {
+    "palavra": "Escavacar",
+    "correta": "Lascar em pedaços."
+  },
+  {
+    "palavra": "Esclavagista",
+    "correta": "Defensor da escravidão."
+  },
+  {
+    "palavra": "Esclerótica",
+    "correta": "Parte branca do olho."
+  },
+  {
+    "palavra": "Escoicear",
+    "correta": "Dar coices."
+  },
+  {
+    "palavra": "Escolástica",
+    "correta": "Filosofia cristã da Idade Média."
+  },
+  {
+    "palavra": "Esconjurar",
+    "correta": "Afastar um mal por meio de esconjuros."
+  },
+  {
+    "palavra": "Esconso",
+    "correta": "Escondido."
+  },
+  {
+    "palavra": "Escoriar",
+    "correta": "Ralar a pele."
+  },
+  {
+    "palavra": "Escorjar",
+    "correta": "Machucar ralando."
+  },
+  {
+    "palavra": "Escorva",
+    "correta": "Pólvora fina para iniciar o tiro."
+  },
+  {
+    "palavra": "Escotoma",
+    "correta": "Área de visão reduzida ou ausente no campo visual."
+  },
+  {
+    "palavra": "Escotopia",
+    "correta": "Visão adaptada à escuridão."
+  },
+  {
+    "palavra": "Escoucear",
+    "correta": "Dar coices."
+  },
+  {
+    "palavra": "Escovilhão",
+    "correta": "Escova cilíndrica para limpar canos ou garrafas."
+  },
+  {
+    "palavra": "Escrófula",
+    "correta": "Inflamação tuberculosa dos gânglios, sobretudo do pescoço."
+  },
+  {
+    "palavra": "Escrofulose",
+    "correta": "Forma de tuberculose que afeta os gânglios linfáticos."
+  },
+  {
+    "palavra": "Escrutar",
+    "correta": "Sondar."
+  },
+  {
+    "palavra": "Escudar",
+    "correta": "Proteger."
+  },
+  {
+    "palavra": "Escuma",
+    "correta": "Espuma de caldo fervendo."
+  },
+  {
+    "palavra": "Escuso",
+    "correta": "Escondido ou ilícito."
+  },
+  {
+    "palavra": "Esfaimado",
+    "correta": "Faminto."
+  },
+  {
+    "palavra": "Esfalfamento",
+    "correta": "Cansaço extremo."
+  },
+  {
+    "palavra": "Esfumar",
+    "correta": "Suavizar traços do desenho."
+  },
+  {
+    "palavra": "Esgaravatador",
+    "correta": "Palito de limpar unhas, dentes ou ouvidos."
+  },
+  {
+    "palavra": "Esgote",
+    "correta": "Retirada da água acumulada em uma embarcação."
+  },
+  {
+    "palavra": "Esgrimir",
+    "correta": "Manejar uma arma branca ou defender um argumento."
+  },
+  {
+    "palavra": "Esguelhar",
+    "correta": "Andar de lado."
+  },
+  {
+    "palavra": "Eslabão",
+    "correta": "Ferro de afiar facas ou gancho de candeeiro."
+  },
+  {
+    "palavra": "Esladroar",
+    "correta": "Podar brotos."
+  },
+  {
+    "palavra": "Esmeril",
+    "correta": "Pedra áspera de afiar ferro."
+  },
+  {
+    "palavra": "Esmiunçar",
+    "correta": "Examinar ou explicar minuciosamente."
+  },
+  {
+    "palavra": "Esmo",
+    "correta": "Falta de direção ou de cálculo."
+  },
+  {
+    "palavra": "Esópico",
+    "correta": "Relativo às fábulas de Esopo."
+  },
+  {
+    "palavra": "Espadelar",
+    "correta": "Bater o linho com pá de madeira."
+  },
+  {
+    "palavra": "Espalda",
+    "correta": "Costas ou encosto de cadeira."
+  },
+  {
+    "palavra": "Espaldeira",
+    "correta": "Correia de puxar os ombros para trás."
+  },
+  {
+    "palavra": "Esparto",
+    "correta": "Capim resistente usado para trançar cordas."
+  },
+  {
+    "palavra": "Especar",
+    "correta": "Escorar muro."
+  },
+  {
+    "palavra": "Especioso",
+    "correta": "Enganador."
+  },
+  {
+    "palavra": "Espia",
+    "correta": "Cabo grosso usado para amarrar uma embarcação."
+  },
+  {
+    "palavra": "Espicaçar",
+    "correta": "Bicar com força ou atormentar."
+  },
+  {
+    "palavra": "Espicha",
+    "correta": "Fileira de peixes enfiados pelo olho."
+  },
+  {
+    "palavra": "Espinoteado",
+    "correta": "Agitado que pula sem parar."
+  },
+  {
+    "palavra": "Espira",
+    "correta": "Volta de mola ou caracol."
+  },
+  {
+    "palavra": "Espiráculo",
+    "correta": "Orifício respiratório."
+  },
+  {
+    "palavra": "Espontão",
+    "correta": "Meia-lança usada por antigos oficiais."
+  },
+  {
+    "palavra": "Esposar",
+    "correta": "Casar ou defender uma ideia."
+  },
+  {
+    "palavra": "Espraiar",
+    "correta": "Espalhar-se pela praia ou por uma extensão ampla."
+  },
+  {
+    "palavra": "Esputo",
+    "correta": "Escarro."
+  },
+  {
+    "palavra": "Esqualidez",
+    "correta": "Aspecto magro, abatido ou sujo."
+  },
+  {
+    "palavra": "Esquálido",
+    "correta": "Muito magro ou malcuidado."
+  },
+  {
+    "palavra": "Esqualo",
+    "correta": "Tubarão."
+  },
+  {
+    "palavra": "Esquila",
+    "correta": "Pequeno sino preso ao pescoço do gado."
+  },
+  {
+    "palavra": "Estadulho",
+    "correta": "Pau vertical do carro de bois."
+  },
+  {
+    "palavra": "Estalingar",
+    "correta": "Amarrar o cabo na argola da âncora."
+  },
+  {
+    "palavra": "Estame",
+    "correta": "Estrutura da flor que produz pólen."
+  },
+  {
+    "palavra": "Estamenha",
+    "correta": "Lã áspera."
+  },
+  {
+    "palavra": "Estanhado",
+    "correta": "Revestido de estanho ou sem vergonha."
+  },
+  {
+    "palavra": "Estase",
+    "correta": "Interrupção ou lentidão da circulação de um fluido."
+  },
+  {
+    "palavra": "Estaurolatria",
+    "correta": "Culto religioso à cruz."
+  },
+  {
+    "palavra": "Esteatose",
+    "correta": "Acúmulo de gordura em um órgão, especialmente no fígado."
+  },
+  {
+    "palavra": "Esteganografia",
+    "correta": "Técnica de ocultar uma mensagem dentro de outro conteúdo."
+  },
+  {
+    "palavra": "Estenografia",
+    "correta": "Escrita rápida com sinais curtos."
+  },
+  {
+    "palavra": "Estentor",
+    "correta": "Voz trovejante."
+  },
+  {
+    "palavra": "Estepe",
+    "correta": "Planície de clima relativamente seco, coberta por vegetação rasteira."
+  },
+  {
+    "palavra": "Esticomitia",
+    "correta": "Diálogo rápido de teatro verso a verso."
+  },
+  {
+    "palavra": "Estilita",
+    "correta": "Antigo monge que vivia no topo de uma coluna."
+  },
+  {
+    "palavra": "Estilóbata",
+    "correta": "Base sobre a qual se apoiam as colunas."
+  },
+  {
+    "palavra": "Estio",
+    "correta": "Verão ou época de seca."
+  },
+  {
+    "palavra": "Estiolamento",
+    "correta": "Definhamento."
+  },
+  {
+    "palavra": "Estíptico",
+    "correta": "Adstringente ou capaz de conter sangramentos."
+  },
+  {
+    "palavra": "Estirada",
+    "correta": "Caminhada longa."
+  },
+  {
+    "palavra": "Estólido",
+    "correta": "Tolo."
+  },
+  {
+    "palavra": "Estomatite",
+    "correta": "Inflamação da mucosa da boca."
+  },
+  {
+    "palavra": "Estremeção",
+    "correta": "Susto rápido."
+  },
+  {
+    "palavra": "Estrênuo",
+    "correta": "Valoroso."
+  },
+  {
+    "palavra": "Estrepitoso",
+    "correta": "Ruidoso."
+  },
+  {
+    "palavra": "Estribar",
+    "correta": "Apoiar o pé no estribo."
+  },
+  {
+    "palavra": "Estribeira",
+    "correta": "Estribo ou calma que se perde."
+  },
+  {
+    "palavra": "Estricnina",
+    "correta": "Veneno amargo muito forte."
+  },
+  {
+    "palavra": "Estriga",
+    "correta": "Mecha de linho pronta para fiar."
+  },
+  {
+    "palavra": "Estrige",
+    "correta": "Vampiro noturno."
+  },
+  {
+    "palavra": "Estrincar",
+    "correta": "Estalar."
+  },
+  {
+    "palavra": "Estrompar",
+    "correta": "Cansar o cavalo demais."
+  },
+  {
+    "palavra": "Estrondear",
+    "correta": "Fazer estrondo."
+  },
+  {
+    "palavra": "Estrotejar",
+    "correta": "Andar a trote."
+  },
+  {
+    "palavra": "Estrumeira",
+    "correta": "Monte de esterco."
+  },
+  {
+    "palavra": "Esturdia",
+    "correta": "Travessura de estudante."
+  },
+  {
+    "palavra": "Estúrdio",
+    "correta": "Extravagante."
+  },
+  {
+    "palavra": "Esturricar",
+    "correta": "Queimar até ficar seco e duro."
+  },
+  {
+    "palavra": "Esturro",
+    "correta": "Tabaco torrado."
+  },
+  {
+    "palavra": "Esvair",
+    "correta": "Dissipar."
+  },
+  {
+    "palavra": "Esvanecer",
+    "correta": "Desaparecer."
+  },
+  {
+    "palavra": "Etiologia",
+    "correta": "Estudo das causas de um fenômeno ou de uma doença."
+  },
+  {
+    "palavra": "Etnografia",
+    "correta": "Descrição dos costumes dos povos."
+  },
+  {
+    "palavra": "Etnologia",
+    "correta": "Estudo comparativo das culturas humanas."
+  },
+  {
+    "palavra": "Etologia",
+    "correta": "Estudo do comportamento dos animais."
+  },
+  {
+    "palavra": "Etopeia",
+    "correta": "Descrição do caráter e dos costumes de uma pessoa."
+  },
+  {
+    "palavra": "Eudiômetro",
+    "correta": "Tubo graduado para medir gases."
+  },
+  {
+    "palavra": "Eugenia",
+    "correta": "Doutrina que propõe controlar a reprodução humana para selecionar características hereditárias."
+  },
+  {
+    "palavra": "Eulogia",
+    "correta": "Pão bento."
+  },
+  {
+    "palavra": "Eutimia",
+    "correta": "Serenidade e equilíbrio do humor."
+  },
+  {
+    "palavra": "Eutrapelia",
+    "correta": "Bom humor leve e educado."
+  },
+  {
+    "palavra": "Evanescente",
+    "correta": "Passageiro."
+  },
+  {
+    "palavra": "Eversão",
+    "correta": "Ato de virar para fora."
+  },
+  {
+    "palavra": "Evulsão",
+    "correta": "Arrancamento forçado."
+  },
+  {
+    "palavra": "Exantema",
+    "correta": "Erupção cutânea."
+  },
+  {
+    "palavra": "Exarca",
+    "correta": "Bispo oriental."
+  },
+  {
+    "palavra": "Exautorar",
+    "correta": "Privar de autoridade ou de honras."
+  },
+  {
+    "palavra": "Execração",
+    "correta": "Ódio profundo e maldição."
+  },
+  {
+    "palavra": "Execrar",
+    "correta": "Abominar."
+  },
+  {
+    "palavra": "Exedra",
+    "correta": "Recinto ou banco semicircular, geralmente destinado à conversação."
+  },
+  {
+    "palavra": "Exegeta",
+    "correta": "Intérprete de textos sagrados."
+  },
+  {
+    "palavra": "Exegético",
+    "correta": "De interpretação textual."
+  },
+  {
+    "palavra": "Exéquias",
+    "correta": "Cerimônias fúnebres."
+  },
+  {
+    "palavra": "Exergasia",
+    "correta": "Reiteração de uma ideia por meio de formulações diferentes."
+  },
+  {
+    "palavra": "Exinanido",
+    "correta": "Exausto."
+  },
+  {
+    "palavra": "Exinanir",
+    "correta": "Esgotar todas as forças."
+  },
+  {
+    "palavra": "Exordial",
+    "correta": "Inicial."
+  },
+  {
+    "palavra": "Exortação",
+    "correta": "Conselho firme para animar alguém."
+  },
+  {
+    "palavra": "Exotérico",
+    "correta": "Acessível ao público em geral."
+  },
+  {
+    "palavra": "Expansivo",
+    "correta": "Comunicativo."
+  },
+  {
+    "palavra": "Expatriar",
+    "correta": "Fazer sair da pátria ou sair dela."
+  },
+  {
+    "palavra": "Expropriar",
+    "correta": "Tomar propriedade para uso público."
+  },
+  {
+    "palavra": "Expungir",
+    "correta": "Cancelar."
+  },
+  {
+    "palavra": "Expurgar",
+    "correta": "Limpar o que está sujo ou errado."
+  },
+  {
+    "palavra": "Exsicata",
+    "correta": "Espécime vegetal seco e prensado para estudo."
+  },
+  {
+    "palavra": "Exsudar",
+    "correta": "Transpirar."
+  },
+  {
+    "palavra": "Exsudato",
+    "correta": "Líquido que sai dos vasos e se acumula nos tecidos durante uma inflamação."
+  },
+  {
+    "palavra": "Extático",
+    "correta": "Arrebatado."
+  },
+  {
+    "palavra": "Extemporâneo",
+    "correta": "Fora de época ou de ocasião."
+  },
+  {
+    "palavra": "Extirpador",
+    "correta": "Arrancador."
+  },
+  {
+    "palavra": "Extramuros",
+    "correta": "Fora das muralhas da cidade."
+  },
+  {
+    "palavra": "Extremar",
+    "correta": "Separar por divisas."
+  },
+  {
+    "palavra": "Êxul",
+    "correta": "Exilado."
+  },
+  {
+    "palavra": "Fabordão",
+    "correta": "Canto monótono."
+  },
+  {
+    "palavra": "Faceto",
+    "correta": "Brincalhão."
+  },
+  {
+    "palavra": "Fácies",
+    "correta": "Aparência ou expressão facial, especialmente quando característica de uma condição."
+  },
+  {
+    "palavra": "Falaz",
+    "correta": "Enganoso."
+  },
+  {
+    "palavra": "Falbalá",
+    "correta": "Babado pregueado na barra da saia."
+  },
+  {
+    "palavra": "Falca",
+    "correta": "Tábua posta na borda da canoa."
+  },
+  {
+    "palavra": "Falripas",
+    "correta": "Cabelos ralos."
+  },
+  {
+    "palavra": "Famulato",
+    "correta": "Serviço de empregado doméstico."
+  },
+  {
+    "palavra": "Fâmulo",
+    "correta": "Criado."
+  },
+  {
+    "palavra": "Fancaria",
+    "correta": "Obra malfeita."
+  },
+  {
+    "palavra": "Farináceo",
+    "correta": "Farinhento."
+  },
+  {
+    "palavra": "Fastígio",
+    "correta": "Ápice."
+  },
+  {
+    "palavra": "Fátuo",
+    "correta": "Ilusório."
+  },
+  {
+    "palavra": "Fautor",
+    "correta": "Defensor."
+  },
+  {
+    "palavra": "Felonia",
+    "correta": "Traição."
+  },
+  {
+    "palavra": "Feraz",
+    "correta": "Fértil."
+  },
+  {
+    "palavra": "Feruláceo",
+    "correta": "Parecido com cana ou talo oco."
+  },
+  {
+    "palavra": "Filaucia",
+    "correta": "Vaidade."
+  },
+  {
+    "palavra": "Filhó",
+    "correta": "Bolinho frito."
+  },
+  {
+    "palavra": "Filomatia",
+    "correta": "Amor pelos estudos."
+  },
+  {
+    "palavra": "Fímbria",
+    "correta": "Borda."
+  },
+  {
+    "palavra": "Fisiognomonia",
+    "correta": "Leitura facial."
+  },
+  {
+    "palavra": "Flavescente",
+    "correta": "Amarelado."
+  },
+  {
+    "palavra": "Flébil",
+    "correta": "Triste e choroso."
+  },
+  {
+    "palavra": "Flegmático",
+    "correta": "Calmo e difícil de irritar."
+  },
+  {
+    "palavra": "Fletir",
+    "correta": "Dobrar ou curvar."
+  },
+  {
+    "palavra": "Flibustaria",
+    "correta": "Pirataria."
+  },
+  {
+    "palavra": "Florão",
+    "correta": "Enfeite em forma de flor no teto."
+  },
+  {
+    "palavra": "Folar",
+    "correta": "Bolo pascal."
+  },
+  {
+    "palavra": "Fona",
+    "correta": "Avarento mísero."
+  },
+  {
+    "palavra": "Forcípula",
+    "correta": "Pinça tenaz."
+  },
+  {
+    "palavra": "Fosca",
+    "correta": "Ameaça fingida."
+  },
+  {
+    "palavra": "Fosfenos",
+    "correta": "Clarões percebidos sem estímulo luminoso externo."
+  },
+  {
+    "palavra": "Fota",
+    "correta": "Turbante mourisco."
+  },
+  {
+    "palavra": "Fouveiro",
+    "correta": "De pelagem amarelo-clara."
+  },
+  {
+    "palavra": "Fragor",
+    "correta": "Estrondo."
+  },
+  {
+    "palavra": "Friável",
+    "correta": "Quebradiço."
+  },
+  {
+    "palavra": "Frugífero",
+    "correta": "Frutífero."
+  },
+  {
+    "palavra": "Fulcro",
+    "correta": "Apoio."
+  },
+  {
+    "palavra": "Fúlgido",
+    "correta": "Brilhante."
+  },
+  {
+    "palavra": "Fulvo",
+    "correta": "Ruivo ou amarelo-tostado."
+  },
+  {
+    "palavra": "Furtacor",
+    "correta": "Que muda de cor conforme a luz."
+  },
+  {
+    "palavra": "Gabão",
+    "correta": "Casaco de lã."
+  },
+  {
+    "palavra": "Gaje",
+    "correta": "Recompensa extra."
+  },
+  {
+    "palavra": "Gajeiro",
+    "correta": "Vigia do mastro."
+  },
+  {
+    "palavra": "Galardão",
+    "correta": "Prêmio."
+  },
+  {
+    "palavra": "Galênico",
+    "correta": "Farmacêutico."
+  },
+  {
+    "palavra": "Galeota",
+    "correta": "Pequena galé."
+  },
+  {
+    "palavra": "Galimatias",
+    "correta": "Discurso confuso e difícil de entender."
+  },
+  {
+    "palavra": "Galipódio",
+    "correta": "Resina seca tirada do pinheiro."
+  },
+  {
+    "palavra": "Gandulo",
+    "correta": "Vadio."
+  },
+  {
+    "palavra": "Ganhão",
+    "correta": "Jornaleiro rural."
+  },
+  {
+    "palavra": "Ganimedes",
+    "correta": "Jovem de grande beleza."
+  },
+  {
+    "palavra": "Garabulha",
+    "correta": "Letra ilegível."
+  },
+  {
+    "palavra": "Gárrulo",
+    "correta": "Tagarela."
+  },
+  {
+    "palavra": "Gatear",
+    "correta": "Grampear pedra."
+  },
+  {
+    "palavra": "Gáudio",
+    "correta": "Alegria."
+  },
+  {
+    "palavra": "Gebo",
+    "correta": "Velho corcunda."
+  },
+  {
+    "palavra": "Genciana",
+    "correta": "Raiz amarga."
+  },
+  {
+    "palavra": "Geognosia",
+    "correta": "Conhecimento das rochas e da terra."
+  },
+  {
+    "palavra": "Gibão",
+    "correta": "Casaco curto de couro de vaqueiro."
+  },
+  {
+    "palavra": "Glabro",
+    "correta": "Sem pelos."
+  },
+  {
+    "palavra": "Glauco",
+    "correta": "Verde-azulado."
+  },
+  {
+    "palavra": "Glíptica",
+    "correta": "Arte de esculpir pedras preciosas."
+  },
+  {
+    "palavra": "Gliptoteca",
+    "correta": "Museu de esculturas em pedra."
+  },
+  {
+    "palavra": "Glosar",
+    "correta": "Comentar um texto ou criticar com ironia."
+  },
+  {
+    "palavra": "Glotofagia",
+    "correta": "Desaparecimento de uma língua sob a pressão de outra dominante."
+  },
+  {
+    "palavra": "Gnomônica",
+    "correta": "Arte de fazer relógios de sol."
+  },
+  {
+    "palavra": "Gnoseológico",
+    "correta": "Relativo à teoria do conhecimento."
+  },
+  {
+    "palavra": "Godo",
+    "correta": "Povo germânico antigo ou pedra de rio."
+  },
+  {
+    "palavra": "Golilha",
+    "correta": "Argola de ferro que prendia o pescoço de prisioneiros."
+  },
+  {
+    "palavra": "Gorgomilos",
+    "correta": "Garganta ou goela."
+  },
+  {
+    "palavra": "Granar",
+    "correta": "Criar grãos."
+  },
+  {
+    "palavra": "Granjeio",
+    "correta": "Cultivo cuidadoso."
+  },
+  {
+    "palavra": "Grimpa",
+    "correta": "Cata-vento de telhado."
+  },
+  {
+    "palavra": "Griséu",
+    "correta": "Manto cinzento."
   },
   {
     "palavra": "Gualdrapa",
-    "correta": "Cobertura ou caparazão de pano ou couro bordado que cobre a anca do cavalo; por extensão, aba de casaco comprida e suja.",
-    "falsas": [
-      "Fivela de latão maciço usada para prender o cinturão das armaduras medievais.",
-      "Armadilha de madeira usada por caçadores para capturar raposas e texugos.",
-      "Goteira persistente que se forma no beiral dos telhados de barro antigos."
-    ]
+    "correta": "Manta que vai por baixo da sela."
+  },
+  {
+    "palavra": "Guisa",
+    "correta": "Jeito ou modo de fazer algo."
+  },
+  {
+    "palavra": "Halieto",
+    "correta": "Águia pescadora."
+  },
+  {
+    "palavra": "Hansa",
+    "correta": "Liga comercial."
+  },
+  {
+    "palavra": "Hápax",
+    "correta": "Palavra ou forma registrada uma única vez em determinado corpus."
+  },
+  {
+    "palavra": "Haplografia",
+    "correta": "Omissão de uma letra ou sílaba por ser igual ou semelhante à vizinha."
+  },
+  {
+    "palavra": "Haptonomia",
+    "correta": "Cuidado de saúde pelo toque das mãos."
+  },
+  {
+    "palavra": "Hebdomada",
+    "correta": "Uma semana."
+  },
+  {
+    "palavra": "Hebdomadário",
+    "correta": "Publicação semanal."
+  },
+  {
+    "palavra": "Hendíadis",
+    "correta": "Expressão de uma ideia por dois termos coordenados, em vez de um termo qualificado."
+  },
+  {
+    "palavra": "Heptágono",
+    "correta": "Figura geométrica de sete lados."
+  },
+  {
+    "palavra": "Heptalogia",
+    "correta": "Conjunto de sete obras relacionadas."
+  },
+  {
+    "palavra": "Heteroglossia",
+    "correta": "Mistura de vários modos de falar."
+  },
+  {
+    "palavra": "Hialoide",
+    "correta": "Parecido com vidro transparente."
+  },
+  {
+    "palavra": "Hidrópico",
+    "correta": "Que sofre de acúmulo anormal de líquido nos tecidos ou cavidades do corpo."
   },
   {
     "palavra": "Hierofante",
-    "correta": "Sacerdote supremo da Grécia Antiga que presidia os mistérios sagrados de Elêusis e iniciava os novos adeptos.",
-    "falsas": [
-      "Escriba real do Antigo Egito responsável por decifrar inscrições funerárias.",
-      "Animal mitológico com corpo de leão e chifres de carneiro dourado.",
-      "Instrumento musical de sopro feito de chifre de marfim usado em coroações."
-    ]
+    "correta": "Sacerdote de mistérios."
+  },
+  {
+    "palavra": "Hipálage",
+    "correta": "Atribuição a uma palavra de uma característica que, pelo sentido, cabe a outra."
+  },
+  {
+    "palavra": "Hipóstase",
+    "correta": "Essência profunda de alguma coisa."
+  },
+  {
+    "palavra": "Hipotimia",
+    "correta": "Queda do ânimo."
+  },
+  {
+    "palavra": "Hircino",
+    "correta": "Próprio de bode ou com cheiro forte."
+  },
+  {
+    "palavra": "Hircismo",
+    "correta": "Cheiro forte de suor nas axilas."
+  },
+  {
+    "palavra": "Hirtidão",
+    "correta": "Rigidez."
+  },
+  {
+    "palavra": "Hodierno",
+    "correta": "Atual."
+  },
+  {
+    "palavra": "Hodometria",
+    "correta": "Medição da distância percorrida."
+  },
+  {
+    "palavra": "Holófrase",
+    "correta": "Uma palavra só que vale por uma frase."
+  },
+  {
+    "palavra": "Homilética",
+    "correta": "Arte de pregar."
+  },
+  {
+    "palavra": "Homoiotéleuton",
+    "correta": "Repetição de sons semelhantes no fim de palavras ou segmentos de frase."
+  },
+  {
+    "palavra": "Iátrico",
+    "correta": "Médico."
+  },
+  {
+    "palavra": "Iconóstase",
+    "correta": "Divisória com ícones que separa o santuário da nave em igrejas orientais."
+  },
+  {
+    "palavra": "Idioletal",
+    "correta": "Relativo ao modo de falar próprio de uma pessoa."
+  },
+  {
+    "palavra": "Ignoscível",
+    "correta": "Perdoável."
+  },
+  {
+    "palavra": "Ignoto",
+    "correta": "Desconhecido."
+  },
+  {
+    "palavra": "Ilapso",
+    "correta": "Entrada ou penetração suave e insensível."
   },
   {
     "palavra": "Imarcescível",
-    "correta": "Que não pode murchar nem perder o viço ou frescor; que é incorruptível, imperecível, duradouro ou eterno.",
-    "falsas": [
-      "Substância mineral extremamente dura que não pode ser riscada pelo aço.",
-      "Terreno pantanoso impossível de ser atravessado a pé ou a cavalo.",
-      "Decreto judicial soberano contra o qual não cabe qualquer recurso legal."
-    ]
+    "correta": "Que não murcha ou não perde o viço."
+  },
+  {
+    "palavra": "Imberbe",
+    "correta": "Jovem que ainda não tem barba."
+  },
+  {
+    "palavra": "Imbrífero",
+    "correta": "Chuvoso."
+  },
+  {
+    "palavra": "Imiscível",
+    "correta": "Que não se mistura."
+  },
+  {
+    "palavra": "Impavidez",
+    "correta": "Coragem."
+  },
+  {
+    "palavra": "Incoativo",
+    "correta": "Que está começando a acontecer."
+  },
+  {
+    "palavra": "Incólume",
+    "correta": "Ileso."
+  },
+  {
+    "palavra": "Incompossível",
+    "correta": "Que não pode existir junto com outro."
+  },
+  {
+    "palavra": "Inconcussão",
+    "correta": "Solidez sem dúvida."
+  },
+  {
+    "palavra": "Inconcusso",
+    "correta": "Inabalável."
+  },
+  {
+    "palavra": "Incontinenti",
+    "correta": "Sem perda de tempo."
+  },
+  {
+    "palavra": "Increpitar",
+    "correta": "Repreender com dureza."
+  },
+  {
+    "palavra": "Incréu",
+    "correta": "Descrente."
+  },
+  {
+    "palavra": "Indigitado",
+    "correta": "Apontado ou indicado."
+  },
+  {
+    "palavra": "Inelidível",
+    "correta": "Que não pode ser suprimido ou anulado."
+  },
+  {
+    "palavra": "Infausto",
+    "correta": "Trágico."
+  },
+  {
+    "palavra": "Ingênito",
+    "correta": "Inato."
+  },
+  {
+    "palavra": "Inópia",
+    "correta": "Miséria."
+  },
+  {
+    "palavra": "Insciência",
+    "correta": "Ignorância."
+  },
+  {
+    "palavra": "Insigne",
+    "correta": "Ilustre."
+  },
+  {
+    "palavra": "Insipiente",
+    "correta": "Ignorante."
+  },
+  {
+    "palavra": "Ínsua",
+    "correta": "Ilhazinha no meio de um rio."
+  },
+  {
+    "palavra": "Intemerato",
+    "correta": "Puro."
+  },
+  {
+    "palavra": "Intersticial",
+    "correta": "Situado no espaço entre duas partes."
+  },
+  {
+    "palavra": "Interstício",
+    "correta": "Intervalo de tempo."
+  },
+  {
+    "palavra": "Intróito",
+    "correta": "Começo da missa ou discurso."
+  },
+  {
+    "palavra": "Invectiva",
+    "correta": "Ofensa."
+  },
+  {
+    "palavra": "Ínvio",
+    "correta": "Sem caminho ou de acesso difícil."
+  },
+  {
+    "palavra": "Irrupção",
+    "correta": "Entrada violenta e repentina."
+  },
+  {
+    "palavra": "Isagoge",
+    "correta": "Introdução a um estudo."
+  },
+  {
+    "palavra": "Isagógico",
+    "correta": "Introdutório."
+  },
+  {
+    "palavra": "Isoglossia",
+    "correta": "Existência de traços linguísticos comuns a uma região ou a línguas distintas."
+  },
+  {
+    "palavra": "Jacente",
+    "correta": "Deitado no solo."
+  },
+  {
+    "palavra": "Jactância",
+    "correta": "Orgulho vaidoso."
+  },
+  {
+    "palavra": "Jactancioso",
+    "correta": "Gabarola."
+  },
+  {
+    "palavra": "Jalde",
+    "correta": "Amarelo."
+  },
+  {
+    "palavra": "Jângal",
+    "correta": "Floresta tropical densa."
+  },
+  {
+    "palavra": "Janota",
+    "correta": "Muito bem vestido."
+  },
+  {
+    "palavra": "Jarrete",
+    "correta": "Região posterior do joelho."
+  },
+  {
+    "palavra": "Javardo",
+    "correta": "Homem sem modos."
+  },
+  {
+    "palavra": "Jeremiada",
+    "correta": "Lamentação sem fim."
+  },
+  {
+    "palavra": "Jubileu",
+    "correta": "Celebração de um aniversário importante, especialmente o de cinquenta anos."
+  },
+  {
+    "palavra": "Judicatura",
+    "correta": "Cargo ou poder de juiz."
+  },
+  {
+    "palavra": "Jusante",
+    "correta": "Rumo à foz."
+  },
+  {
+    "palavra": "Labéu",
+    "correta": "Mancha."
+  },
+  {
+    "palavra": "Labrego",
+    "correta": "Caipira rude e sem modos."
+  },
+  {
+    "palavra": "Laconismo",
+    "correta": "Economia de palavras."
+  },
+  {
+    "palavra": "Laivo",
+    "correta": "Sinal ou mancha."
+  },
+  {
+    "palavra": "Lambdacismo",
+    "correta": "Pronúncia do som de L no lugar de outro som."
   },
   {
     "palavra": "Lambisgoia",
-    "correta": "Pessoa afetada, intrometida, fofoqueira, mesquinha e de convívio antipático.",
-    "falsas": [
-      "Espécie de enguia de água doce de corpo muito escorregadio e prateado.",
-      "Doce de colher feito com calda rala de abóbora e cravo-da-índia.",
-      "Pequena embarcação a remo usada para pesca noturna em lagoas costeiras."
-    ]
+    "correta": "Mulher fofoqueira e metida."
   },
   {
-    "palavra": "Macambúzio",
-    "correta": "Indivíduo de aspecto melancólico, tristonho, sombrio e de poucas palavras; taciturno, cabisbaixo.",
-    "falsas": [
-      "Búzios marinhos de coloração escura utilizados como moeda de troca na África.",
-      "Vento abafado que antecede as tempestades tropicais no litoral.",
-      "Antigo instrumento de percussão feito com cabaça seca e sementes."
-    ]
+    "palavra": "Lampana",
+    "correta": "Mentira inventada."
   },
   {
-    "palavra": "Nefelibata",
-    "correta": "Aquele que vive nas nuvens ou no mundo da imaginação; indivíduo sonhador, distraído e alheio à realidade prática.",
-    "falsas": [
-      "Alpinista especializado em escalar picos nevados sem auxílio de cordas.",
-      "Estudioso da formação das neblinas e dos ventos de grande altitude.",
-      "Monge andarilho que fazia voto de silêncio absoluto nas montanhas."
-    ]
+    "palavra": "Latescente",
+    "correta": "Que começa a ficar escondido."
   },
   {
-    "palavra": "Obnubilar",
-    "correta": "Cobrir de nuvens ou névoa; tornar escuro, turvo ou confuso o pensamento, a razão ou a consciência.",
-    "falsas": [
-      "Polir peças de prata oxidada utilizando cinzas vegetais e óleo de amêndoas.",
-      "Anular um contrato matrimonial por ausência de testemunhas oficiais.",
-      "Orientar a rota de um navio observando exclusivamente o brilho das estrelas."
-    ]
+    "palavra": "Lavradio",
+    "correta": "Próprio para a lavoura."
   },
   {
-    "palavra": "Pantagruélico",
-    "correta": "Diz-se de um banquete, refeição ou apetite desmedido, colossal, gigantesco e de extrema fartura.",
-    "falsas": [
-      "Estilo arquitetônico caracterizado por colunas retorcidas e gárgulas monstruosas.",
-      "Discurso político excessivamente longo, pomposo e vazio de sentido prático.",
-      "Movimento teatral satírico surgido na França durante o século XVI."
-    ]
+    "palavra": "Legatário",
+    "correta": "Pessoa que recebe um bem ou direito específico por testamento."
+  },
+  {
+    "palavra": "Legífero",
+    "correta": "Que cria leis."
+  },
+  {
+    "palavra": "Lemniscata",
+    "correta": "Curva em formato de oito deitado."
+  },
+  {
+    "palavra": "Lenitivo",
+    "correta": "Calmante."
+  },
+  {
+    "palavra": "Leotardo",
+    "correta": "Roupa colada usada por ginastas."
+  },
+  {
+    "palavra": "Lépido",
+    "correta": "Ágil."
+  },
+  {
+    "palavra": "Letífero",
+    "correta": "Mortífero."
+  },
+  {
+    "palavra": "Levigação",
+    "correta": "Separação de partículas por meio de uma corrente de água."
+  },
+  {
+    "palavra": "Lhaneza",
+    "correta": "Sinceridade."
+  },
+  {
+    "palavra": "Libação",
+    "correta": "Oferenda ritual de um líquido."
+  },
+  {
+    "palavra": "Livor",
+    "correta": "Mancha arroxeada cadavérica."
+  },
+  {
+    "palavra": "Lôbrego",
+    "correta": "Sombrio."
+  },
+  {
+    "palavra": "Logomaquia",
+    "correta": "Discussão puramente verbal."
+  },
+  {
+    "palavra": "Longânimo",
+    "correta": "Paciente."
+  },
+  {
+    "palavra": "Loxodromia",
+    "correta": "Trajeto que cruza todos os meridianos sob o mesmo ângulo."
+  },
+  {
+    "palavra": "Lubricidade",
+    "correta": "Lascívia."
+  },
+  {
+    "palavra": "Lucífero",
+    "correta": "Brilhante."
+  },
+  {
+    "palavra": "Lucífugo",
+    "correta": "Que foge da claridade."
+  },
+  {
+    "palavra": "Luculento",
+    "correta": "Luminoso."
+  },
+  {
+    "palavra": "Lustração",
+    "correta": "Purificação."
+  },
+  {
+    "palavra": "Macilento",
+    "correta": "Pálido."
+  },
+  {
+    "palavra": "Macróbio",
+    "correta": "Longevo."
+  },
+  {
+    "palavra": "Macrologia",
+    "correta": "Discurso mais longo do que o necessário."
+  },
+  {
+    "palavra": "Madraço",
+    "correta": "Vadio."
+  },
+  {
+    "palavra": "Malbaratar",
+    "correta": "Vender barato demais ou jogar dinheiro fora."
+  },
+  {
+    "palavra": "Mancebo",
+    "correta": "Homem jovem ou cabide de pé."
+  },
+  {
+    "palavra": "Mandrião",
+    "correta": "Preguiçoso."
+  },
+  {
+    "palavra": "Mangona",
+    "correta": "Preguiça de levantar da cama."
+  },
+  {
+    "palavra": "Manicaca",
+    "correta": "Covarde e medroso."
+  },
+  {
+    "palavra": "Manietado",
+    "correta": "Com as mãos atadas ou impedido de agir."
+  },
+  {
+    "palavra": "Manjadoura",
+    "correta": "Cocho onde se põe alimento para os animais."
+  },
+  {
+    "palavra": "Mansuetude",
+    "correta": "Brandura."
+  },
+  {
+    "palavra": "Marcescível",
+    "correta": "Que pode murchar."
+  },
+  {
+    "palavra": "Marciscível",
+    "correta": "Que pode murchar."
+  },
+  {
+    "palavra": "Margarita",
+    "correta": "Pérola."
+  },
+  {
+    "palavra": "Mástique",
+    "correta": "Resina de árvore usada como cola."
+  },
+  {
+    "palavra": "Matinada",
+    "correta": "Cantoria de pássaros ao amanhecer."
+  },
+  {
+    "palavra": "Matraz",
+    "correta": "Frasco de vidro de pescoço longo."
+  },
+  {
+    "palavra": "Mavioso",
+    "correta": "Suave."
+  },
+  {
+    "palavra": "Mediatizar",
+    "correta": "Submeter a uma mediação ou difundir por meios de comunicação."
+  },
+  {
+    "palavra": "Mefítico",
+    "correta": "Fedorento."
+  },
+  {
+    "palavra": "Melopeia",
+    "correta": "Canto ou declamação de ritmo cadenciado."
+  },
+  {
+    "palavra": "Memento",
+    "correta": "Reza pelos vivos e mortos."
+  },
+  {
+    "palavra": "Mendacioso",
+    "correta": "Mentiroso."
+  },
+  {
+    "palavra": "Mendaz",
+    "correta": "Mentiroso."
+  },
+  {
+    "palavra": "Merencório",
+    "correta": "Melancólico."
+  },
+  {
+    "palavra": "Metalepsia",
+    "correta": "Trocar o que veio antes pelo que veio depois."
+  },
+  {
+    "palavra": "Metaplasmo",
+    "correta": "Alteração na estrutura sonora de uma palavra."
+  },
+  {
+    "palavra": "Mezinha",
+    "correta": "Remédio caseiro."
+  },
+  {
+    "palavra": "Minudência",
+    "correta": "Detalhe."
+  },
+  {
+    "palavra": "Mirífico",
+    "correta": "Maravilhoso."
+  },
+  {
+    "palavra": "Mirmecófago",
+    "correta": "Animal que come formigas."
+  },
+  {
+    "palavra": "Mirmecologia",
+    "correta": "Estudo das formigas."
+  },
+  {
+    "palavra": "Misoneísmo",
+    "correta": "Aversão a novidades."
+  },
+  {
+    "palavra": "Mocambo",
+    "correta": "Cabana simples no meio do mato."
+  },
+  {
+    "palavra": "Mofino",
+    "correta": "Covarde."
+  },
+  {
+    "palavra": "Mojar",
+    "correta": "Encher-se de leite, como o úbere."
+  },
+  {
+    "palavra": "Mondar",
+    "correta": "Retirar ervas daninhas de uma plantação."
+  },
+  {
+    "palavra": "Monodia",
+    "correta": "Canto de uma voz só."
+  },
+  {
+    "palavra": "Monódico",
+    "correta": "Cantado por uma só pessoa."
+  },
+  {
+    "palavra": "Monturo",
+    "correta": "Monte de lixo ou esterco."
+  },
+  {
+    "palavra": "Morgado",
+    "correta": "Patrimônio indivisível transmitido segundo regras de sucessão, geralmente ao primogênito."
+  },
+  {
+    "palavra": "Motejo",
+    "correta": "Piada curta para provocar alguém."
+  },
+  {
+    "palavra": "Mourão",
+    "correta": "Tronco grosso que segura a cerca."
+  },
+  {
+    "palavra": "Municiar",
+    "correta": "Abastecer com balas e comida."
+  },
+  {
+    "palavra": "Múnus",
+    "correta": "Dever oficial ou encargo público."
+  },
+  {
+    "palavra": "Murça",
+    "correta": "Capa curta usada por bispos."
+  },
+  {
+    "palavra": "Murilho",
+    "correta": "Muro baixinho de pedras."
+  },
+  {
+    "palavra": "Natalício",
+    "correta": "Relativo ao dia do aniversário."
+  },
+  {
+    "palavra": "Nefando",
+    "correta": "Abominável."
+  },
+  {
+    "palavra": "Negaça",
+    "correta": "Isca ou artifício para atrair."
+  },
+  {
+    "palavra": "Nemoral",
+    "correta": "Relativo a bosques e matas."
+  },
+  {
+    "palavra": "Neotenia",
+    "correta": "Conservação de traços juvenis na fase adulta."
+  },
+  {
+    "palavra": "Nequícia",
+    "correta": "Maldade."
+  },
+  {
+    "palavra": "Néscio",
+    "correta": "Ignorante."
+  },
+  {
+    "palavra": "Nictalopia",
+    "correta": "Dificuldade de enxergar com pouca luz."
+  },
+  {
+    "palavra": "Nictêmero",
+    "correta": "Período de vinte e quatro horas que abrange um dia e uma noite."
+  },
+  {
+    "palavra": "Nictitante",
+    "correta": "Que pisca ou se fecha como uma pálpebra."
+  },
+  {
+    "palavra": "Nímio",
+    "correta": "Excessivo."
+  },
+  {
+    "palavra": "Níveo",
+    "correta": "Alvo."
+  },
+  {
+    "palavra": "Nobiliarquia",
+    "correta": "Nobreza."
+  },
+  {
+    "palavra": "Nômeno",
+    "correta": "Na filosofia kantiana, a coisa considerada em si mesma."
+  },
+  {
+    "palavra": "Nugacidade",
+    "correta": "Futilidade."
+  },
+  {
+    "palavra": "Nugatório",
+    "correta": "Inútil."
+  },
+  {
+    "palavra": "Numinoso",
+    "correta": "Sagrado."
+  },
+  {
+    "palavra": "Núpcias",
+    "correta": "Casamento."
+  },
+  {
+    "palavra": "Nutrício",
+    "correta": "Nutritivo."
+  },
+  {
+    "palavra": "Oblação",
+    "correta": "Oferenda."
+  },
+  {
+    "palavra": "Obliterar",
+    "correta": "Apagar."
+  },
+  {
+    "palavra": "Obnóxio",
+    "correta": "Submisso."
+  },
+  {
+    "palavra": "Obnubilação",
+    "correta": "Turvação da consciência ou da visão."
+  },
+  {
+    "palavra": "Obquente",
+    "correta": "Que aquece de leve."
+  },
+  {
+    "palavra": "Obsequioso",
+    "correta": "Prestativo."
+  },
+  {
+    "palavra": "Obstrepar",
+    "correta": "Fazer barulho batendo os pés."
+  },
+  {
+    "palavra": "Obtemperar",
+    "correta": "Obedecer."
+  },
+  {
+    "palavra": "Obviar",
+    "correta": "Evitar."
+  },
+  {
+    "palavra": "Oclocracia",
+    "correta": "Forma de governo em que a multidão exerce o poder de maneira desordenada."
+  },
+  {
+    "palavra": "Odorífero",
+    "correta": "Que exala cheiro, geralmente agradável."
+  },
+  {
+    "palavra": "Omnímodo",
+    "correta": "Completo."
+  },
+  {
+    "palavra": "Onipresente",
+    "correta": "Que está em todo lugar ao mesmo tempo."
+  },
+  {
+    "palavra": "Onirocrítico",
+    "correta": "Intérprete de sonhos."
+  },
+  {
+    "palavra": "Oniromancia",
+    "correta": "Adivinhação do futuro pelos sonhos."
+  },
+  {
+    "palavra": "Onisciente",
+    "correta": "Que sabe de todas as coisas."
+  },
+  {
+    "palavra": "Onomasiologia",
+    "correta": "Estudo das formas de nomear um conceito."
+  },
+  {
+    "palavra": "Opiniático",
+    "correta": "Teimoso que não muda de opinião."
+  },
+  {
+    "palavra": "Oprobrioso",
+    "correta": "Vergonhoso."
+  },
+  {
+    "palavra": "Opulência",
+    "correta": "Grande riqueza e luxo."
+  },
+  {
+    "palavra": "Oscitante",
+    "correta": "Bocejante."
+  },
+  {
+    "palavra": "Padieira",
+    "correta": "Viga que fica em cima da porta."
+  },
+  {
+    "palavra": "Palinódia",
+    "correta": "Retratação do que se disse ou escreveu."
+  },
+  {
+    "palavra": "Palinopsia",
+    "correta": "Persistência ou reaparecimento de uma imagem depois que o estímulo visual desaparece."
+  },
+  {
+    "palavra": "Pálio",
+    "correta": "Toldo de pano usado em procissões."
+  },
+  {
+    "palavra": "Pampsiquismo",
+    "correta": "Crença de que tudo na natureza tem alma."
+  },
+  {
+    "palavra": "Pancrônico",
+    "correta": "Que vale para todas as épocas."
+  },
+  {
+    "palavra": "Panlogismo",
+    "correta": "Ideia de que tudo no universo segue a razão."
+  },
+  {
+    "palavra": "Pantomimo",
+    "correta": "Ator que faz mímica sem falar."
+  },
+  {
+    "palavra": "Papelório",
+    "correta": "Pilha de documentos e papéis velhos."
+  },
+  {
+    "palavra": "Paragoge",
+    "correta": "Acréscimo de um som no fim de uma palavra."
+  },
+  {
+    "palavra": "Paralaxe",
+    "correta": "Deslocamento aparente de um objeto quando muda o ponto de observação."
+  },
+  {
+    "palavra": "Paramnésia",
+    "correta": "Alteração da memória que pode gerar falsa sensação de familiaridade."
+  },
+  {
+    "palavra": "Paranomásia",
+    "correta": "Jogo de palavras baseado na semelhança sonora."
+  },
+  {
+    "palavra": "Parapeto",
+    "correta": "Mureta de proteção na beira da varanda."
+  },
+  {
+    "palavra": "Parapraxia",
+    "correta": "Lapso involuntário na fala, na memória ou em uma ação."
+  },
+  {
+    "palavra": "Paratático",
+    "correta": "Que se constrói por justaposição ou coordenação."
+  },
+  {
+    "palavra": "Parêmia",
+    "correta": "Ditado popular."
+  },
+  {
+    "palavra": "Paremiologia",
+    "correta": "Estudo ou coleção de provérbios."
+  },
+  {
+    "palavra": "Parergon",
+    "correta": "Enfeite secundário ao redor de uma obra."
+  },
+  {
+    "palavra": "Paronomásia",
+    "correta": "Trocadilho com palavras de som parecido."
+  },
+  {
+    "palavra": "Parvoíce",
+    "correta": "Tolice."
+  },
+  {
+    "palavra": "Pasinomia",
+    "correta": "Coleção de leis de um país."
+  },
+  {
+    "palavra": "Passadiço",
+    "correta": "Ponte estreita ou passarela de madeira."
   },
   {
     "palavra": "Patuscada",
-    "correta": "Festança ruidosa e alegre entre amigos, com grande fartura de comida e bebida; pândega, farra.",
-    "falsas": [
-      "Bando de patos selvagens que alçam voo simultaneamente ao amanhecer.",
-      "Pancada súbita dada com a palma da mão sobre a água para espantar peixes.",
-      "Mancha de lama ou graxa que respinga na barra das calças ao caminhar."
-    ]
+    "correta": "Farra."
   },
   {
-    "palavra": "Quintessência",
-    "correta": "O que há de mais puro, refinado, sublime ou perfeito numa substância, obra ou ideia; o grau máximo de algo.",
-    "falsas": [
-      "Perfume raro obtido após cinco destilações sucessivas de pétalas de rosa.",
-      "Imposto equivalente à quinta parte da colheita pago aos senhores feudais.",
-      "Intervalo musical composto por cinco tons inteiros na escala gregoriana."
-    ]
+    "palavra": "Pecilotermia",
+    "correta": "Variação da temperatura corporal conforme a do ambiente."
   },
   {
-    "palavra": "Salamaleque",
-    "correta": "Cumprimento ou reverência exagerada, cheia de curvaturas e afetação cerimoniosa; bajulação ostensiva.",
-    "falsas": [
-      "Tapete persa de pequenas dimensões usado para adornar paredes de salões.",
-      "Doce árabe folhado recheado com pistache moído e água de flor de laranjeira.",
-      "Adaga cerimonial de lâmina curva cravejada de pedras semipreciosas."
-    ]
+    "palavra": "Pégaso",
+    "correta": "Cavalo branco com asas da mitologia."
   },
   {
-    "palavra": "Xerimbabo",
-    "correta": "Animal selvagem criado domesticamente como bicho de estimação nas aldeias indígenas; pessoa muito mimada ou protegida.",
-    "falsas": [
-      "Cesto de palha trançada com tampa usado para guardar farinha de mandioca.",
-      "Chocalho ritualístico feito de cascos secos de veado preso aos tornozelos.",
-      "Pequeno riacho temporário que se forma após as chuvas de verão no cerrado."
-    ]
+    "palavra": "Pelorismo",
+    "correta": "Ocorrência de simetria radial em flor normalmente bilateral."
   },
   {
-    "palavra": "Zaragata",
-    "correta": "Desordem ruidosa, confusão, algazarra, briga desordenada ou pequeno motim com muita gritaria.",
-    "falsas": [
-      "Instrumento cirúrgico antigo semelhante a uma seringa de estanho para lavagens.",
-      "Dança folclórica espanhola executada com castanholas e lenços vermelhos.",
-      "Mistura condimentada de pimentas secas e alho usada para marinar carnes."
-    ]
+    "palavra": "Perfunctório",
+    "correta": "Superficial."
+  },
+  {
+    "palavra": "Perissologia",
+    "correta": "Repetição inútil da mesma ideia."
+  },
+  {
+    "palavra": "Perístase",
+    "correta": "Circunstância que envolve um acontecimento."
+  },
+  {
+    "palavra": "Perlocução",
+    "correta": "Efeito que uma fala causa em quem ouve."
+  },
+  {
+    "palavra": "Peroração",
+    "correta": "Parte final de um discurso, geralmente enfática."
+  },
+  {
+    "palavra": "Perorata",
+    "correta": "Discurso comprido e chato."
+  },
+  {
+    "palavra": "Perquirir",
+    "correta": "Investigar."
+  },
+  {
+    "palavra": "Petricor",
+    "correta": "Cheiro da chuva ao cair sobre solo seco."
+  },
+  {
+    "palavra": "Pilhéria",
+    "correta": "Piada."
+  },
+  {
+    "palavra": "Piroclasto",
+    "correta": "Fragmento de material sólido expelido em uma erupção vulcânica."
+  },
+  {
+    "palavra": "Pirografia",
+    "correta": "Desenho gravado em madeira com ferro quente."
+  },
+  {
+    "palavra": "Platel",
+    "correta": "Prato fundo antigo de metal."
+  },
+  {
+    "palavra": "Pletora",
+    "correta": "Excesso."
+  },
+  {
+    "palavra": "Pletórico",
+    "correta": "Repleto ou abundante."
+  },
+  {
+    "palavra": "Plúmbeo",
+    "correta": "Cinzento e pesado como chumbo."
+  },
+  {
+    "palavra": "Pneumatologia",
+    "correta": "Doutrina sobre os espíritos e a alma."
+  },
+  {
+    "palavra": "Podomancia",
+    "correta": "Leitura da sorte pelas linhas dos pés."
+  },
+  {
+    "palavra": "Polimatia",
+    "correta": "Sabedoria variada em muitos assuntos."
+  },
+  {
+    "palavra": "Poliptoto",
+    "correta": "Repetição de uma palavra em diferentes formas flexionadas."
+  },
+  {
+    "palavra": "Porfia",
+    "correta": "Disputa."
+  },
+  {
+    "palavra": "Potestade",
+    "correta": "Poder."
+  },
+  {
+    "palavra": "Preâmbulo",
+    "correta": "Introdução."
+  },
+  {
+    "palavra": "Pregoeiro",
+    "correta": "Quem anuncia os lances no leilão."
+  },
+  {
+    "palavra": "Preito",
+    "correta": "Homenagem respeitosa a alguém."
+  },
+  {
+    "palavra": "Prelibação",
+    "correta": "Degustação prévia ou antecipação de um prazer."
+  },
+  {
+    "palavra": "Presciência",
+    "correta": "Conhecimento antecipado de acontecimentos futuros."
+  },
+  {
+    "palavra": "Presteza",
+    "correta": "Rapidez e prontidão."
+  },
+  {
+    "palavra": "Prístino",
+    "correta": "Original."
+  },
+  {
+    "palavra": "Pródromo",
+    "correta": "Sinal inicial que anuncia uma doença."
+  },
+  {
+    "palavra": "Prolegômenos",
+    "correta": "Introdução."
+  },
+  {
+    "palavra": "Prolepse",
+    "correta": "Antecipação de uma possível objeção para respondê-la de antemão."
+  },
+  {
+    "palavra": "Promanar",
+    "correta": "Brotar ou nascer de uma fonte."
+  },
+  {
+    "palavra": "Propínquo",
+    "correta": "Muito próximo."
+  },
+  {
+    "palavra": "Psicopompo",
+    "correta": "Guia que leva as almas ao além."
+  },
+  {
+    "palavra": "Psicostasia",
+    "correta": "Pesagem da alma após a morte."
+  },
+  {
+    "palavra": "Pteridologia",
+    "correta": "Estudo das samambaias."
+  },
+  {
+    "palavra": "Ptilologia",
+    "correta": "Estudo da plumagem das aves."
+  },
+  {
+    "palavra": "Pudibundo",
+    "correta": "Envergonhado."
+  },
+  {
+    "palavra": "Pugnaz",
+    "correta": "Combativo."
+  },
+  {
+    "palavra": "Pulcro",
+    "correta": "Belo."
+  },
+  {
+    "palavra": "Pusilanimidade",
+    "correta": "Falta de coragem."
+  },
+  {
+    "palavra": "Quelha",
+    "correta": "Viela."
+  },
+  {
+    "palavra": "Quiasmo",
+    "correta": "Disposição cruzada de termos ou estruturas correspondentes."
+  },
+  {
+    "palavra": "Quididade",
+    "correta": "Aquilo que faz uma coisa ser o que é."
+  },
+  {
+    "palavra": "Quiescente",
+    "correta": "Em repouso."
+  },
+  {
+    "palavra": "Quimérico",
+    "correta": "Fantástico."
+  },
+  {
+    "palavra": "Quinquilharia",
+    "correta": "Objetos velhos de pouco valor."
+  },
+  {
+    "palavra": "Ramerrão",
+    "correta": "Rotina."
+  },
+  {
+    "palavra": "Ratiocinar",
+    "correta": "Pensar."
+  },
+  {
+    "palavra": "Raucidade",
+    "correta": "Qualidade de quem está com a voz rouca."
+  },
+  {
+    "palavra": "Rebosteio",
+    "correta": "Bagunça."
+  },
+  {
+    "palavra": "Recalcitrância",
+    "correta": "Teimosia."
+  },
+  {
+    "palavra": "Recalcitrante",
+    "correta": "Desobediente."
+  },
+  {
+    "palavra": "Reconditório",
+    "correta": "Esconderijo."
+  },
+  {
+    "palavra": "Redarguição",
+    "correta": "Resposta que rebate um argumento."
+  },
+  {
+    "palavra": "Redintegrar",
+    "correta": "Restaurar por inteiro."
+  },
+  {
+    "palavra": "Refolhado",
+    "correta": "Fingido."
+  },
+  {
+    "palavra": "Refrangível",
+    "correta": "Que pode sofrer refração."
+  },
+  {
+    "palavra": "Refrega",
+    "correta": "Batalha."
+  },
+  {
+    "palavra": "Regougar",
+    "correta": "Gritar de forma rouca como a raposa."
+  },
+  {
+    "palavra": "Rejubilar",
+    "correta": "Alegrar-se intensamente."
+  },
+  {
+    "palavra": "Remanescência",
+    "correta": "Vestígio ou lembrança do passado."
+  },
+  {
+    "palavra": "Remansoso",
+    "correta": "Tranquilo."
+  },
+  {
+    "palavra": "Rematado",
+    "correta": "Completo."
+  },
+  {
+    "palavra": "Renícola",
+    "correta": "Habitante ou natural de um reino."
+  },
+  {
+    "palavra": "Reticência",
+    "correta": "Interrupção da fala que deixa algo subentendido."
+  },
+  {
+    "palavra": "Retouçar",
+    "correta": "Brincar."
+  },
+  {
+    "palavra": "Ríctus",
+    "correta": "Careta."
+  },
+  {
+    "palavra": "Sáfaro",
+    "correta": "Árido."
+  },
+  {
+    "palavra": "Salaz",
+    "correta": "Lascivo."
+  },
+  {
+    "palavra": "Salobra",
+    "correta": "Ligeiramente salgada, como a água de certos estuários."
+  },
+  {
+    "palavra": "Saturnino",
+    "correta": "Tristonho."
+  },
+  {
+    "palavra": "Sazón",
+    "correta": "Madureza."
+  },
+  {
+    "palavra": "Sediço",
+    "correta": "Velho."
+  },
+  {
+    "palavra": "Segredo",
+    "correta": "Informação mantida em reserva."
+  },
+  {
+    "palavra": "Selenografia",
+    "correta": "Descrição e mapeamento da superfície lunar."
+  },
+  {
+    "palavra": "Semasiologia",
+    "correta": "Estudo dos sentidos das palavras."
+  },
+  {
+    "palavra": "Sematologia",
+    "correta": "Estudo dos sinais e gestos."
+  },
+  {
+    "palavra": "Semblante",
+    "correta": "Expressão do rosto de alguém."
+  },
+  {
+    "palavra": "Sêmola",
+    "correta": "Produto granulado da moagem de cereais, especialmente do trigo."
+  },
+  {
+    "palavra": "Sensaborão",
+    "correta": "Sem-graça."
+  },
+  {
+    "palavra": "Sestro",
+    "correta": "Cacoete."
+  },
+  {
+    "palavra": "Sibilar",
+    "correta": "Assobiar fino como cobra ou vento."
+  },
+  {
+    "palavra": "Sibilino",
+    "correta": "Misterioso."
+  },
+  {
+    "palavra": "Sigilo",
+    "correta": "Reserva sobre informação confidencial."
+  },
+  {
+    "palavra": "Silveira",
+    "correta": "Moita cheia de espinhos."
+  },
+  {
+    "palavra": "Sinecismo",
+    "correta": "União de várias aldeias formando uma cidade."
+  },
+  {
+    "palavra": "Sinecura",
+    "correta": "Cargo remunerado que exige pouco ou nenhum trabalho."
+  },
+  {
+    "palavra": "Sirtes",
+    "correta": "Bancos de areia perigosos no mar."
+  },
+  {
+    "palavra": "Sizígia",
+    "correta": "Alinhamento aproximado de três corpos celestes."
+  },
+  {
+    "palavra": "Sobredito",
+    "correta": "Citado antes."
+  },
+  {
+    "palavra": "Solércia",
+    "correta": "Esperteza."
+  },
+  {
+    "palavra": "Solerte",
+    "correta": "Astuto."
+  },
+  {
+    "palavra": "Somítico",
+    "correta": "Avarento."
+  },
+  {
+    "palavra": "Soteriologia",
+    "correta": "Estudo das doutrinas religiosas sobre a salvação."
+  },
+  {
+    "palavra": "Sotoposto",
+    "correta": "Colocado embaixo."
+  },
+  {
+    "palavra": "Subitâneo",
+    "correta": "Súbito."
+  },
+  {
+    "palavra": "Superno",
+    "correta": "Celestial."
+  },
+  {
+    "palavra": "Suputação",
+    "correta": "Cálculo."
+  },
+  {
+    "palavra": "Tabefe",
+    "correta": "Tapa na cara."
+  },
+  {
+    "palavra": "Tacanho",
+    "correta": "De mente fechada ou mesquinho."
+  },
+  {
+    "palavra": "Talisco",
+    "correta": "Fresta estreita em pedra ou parede."
+  },
+  {
+    "palavra": "Taquipsiquia",
+    "correta": "Aceleração do curso do pensamento."
+  },
+  {
+    "palavra": "Tautegoria",
+    "correta": "Interpretação que toma o mito como expressão do seu próprio conteúdo."
+  },
+  {
+    "palavra": "Telestesia",
+    "correta": "Suposta percepção de acontecimentos distantes sem o uso dos sentidos."
+  },
+  {
+    "palavra": "Tematologia",
+    "correta": "Estudo dos temas das histórias."
+  },
+  {
+    "palavra": "Tépido",
+    "correta": "Morno."
+  },
+  {
+    "palavra": "Térgeo",
+    "correta": "Limpo."
+  },
+  {
+    "palavra": "Terpsícore",
+    "correta": "Musa antiga da dança."
+  },
+  {
+    "palavra": "Tessitura",
+    "correta": "Faixa de notas em que uma voz ou instrumento atua com mais naturalidade."
+  },
+  {
+    "palavra": "Testilha",
+    "correta": "Briga."
+  },
+  {
+    "palavra": "Tibieza",
+    "correta": "Frouxidão."
+  },
+  {
+    "palavra": "Tmese",
+    "correta": "Divisão de uma palavra pela inserção de outra."
+  },
+  {
+    "palavra": "Tombilho",
+    "correta": "Banquinho."
+  },
+  {
+    "palavra": "Tônico",
+    "correta": "Substância usada como fortificante."
+  },
+  {
+    "palavra": "Tororó",
+    "correta": "Jorro curto de água na fonte."
+  },
+  {
+    "palavra": "Torpedeiro",
+    "correta": "Embarcação de guerra equipada para lançar torpedos."
+  },
+  {
+    "palavra": "Tórrido",
+    "correta": "Muito quente."
+  },
+  {
+    "palavra": "Trânsfuga",
+    "correta": "Desertor."
+  },
+  {
+    "palavra": "Trasfega",
+    "correta": "Baldeação."
+  },
+  {
+    "palavra": "Trebelho",
+    "correta": "Peça do jogo de xadrez."
+  },
+  {
+    "palavra": "Trépido",
+    "correta": "Trêmulo."
+  },
+  {
+    "palavra": "Tríptico",
+    "correta": "Obra composta de três painéis."
+  },
+  {
+    "palavra": "Ubiquista",
+    "correta": "Quem parece estar em todo lugar."
+  },
+  {
+    "palavra": "Ucronismo",
+    "correta": "Construção de uma história alternativa a partir de um passado imaginado."
+  },
+  {
+    "palavra": "Uliginoso",
+    "correta": "Encharcado ou pantanoso."
+  },
+  {
+    "palavra": "Ultriz",
+    "correta": "Vingadora."
+  },
+  {
+    "palavra": "Umbrífero",
+    "correta": "Sombrio."
+  },
+  {
+    "palavra": "Uncinado",
+    "correta": "Em forma de gancho."
+  },
+  {
+    "palavra": "Uranometria",
+    "correta": "Determinação da posição e do brilho das estrelas."
+  },
+  {
+    "palavra": "Valdevinos",
+    "correta": "Boêmio."
+  },
+  {
+    "palavra": "Valhacouto",
+    "correta": "Esconderijo."
+  },
+  {
+    "palavra": "Varação",
+    "correta": "Ato de pôr uma embarcação em seco."
+  },
+  {
+    "palavra": "Vedeta",
+    "correta": "Sentinela."
+  },
+  {
+    "palavra": "Velívolo",
+    "correta": "Que se desloca velozmente à vela."
+  },
+  {
+    "palavra": "Velo",
+    "correta": "Conjunto da lã tosquiada de uma ovelha."
+  },
+  {
+    "palavra": "Venefício",
+    "correta": "Envenenamento."
+  },
+  {
+    "palavra": "Venustidade",
+    "correta": "Formosura."
+  },
+  {
+    "palavra": "Venusto",
+    "correta": "Formoso."
+  },
+  {
+    "palavra": "Veranico",
+    "correta": "Período de calor e tempo seco em uma estação geralmente fria ou chuvosa."
+  },
+  {
+    "palavra": "Verberar",
+    "correta": "Censurar."
+  },
+  {
+    "palavra": "Vergôntea",
+    "correta": "Ramo novo ou broto."
+  },
+  {
+    "palavra": "Vesânia",
+    "correta": "Loucura."
+  },
+  {
+    "palavra": "Viático",
+    "correta": "Comunhão dada a quem está em perigo de morte."
+  },
+  {
+    "palavra": "Vicariante",
+    "correta": "Substituto."
+  },
+  {
+    "palavra": "Vicissitudinário",
+    "correta": "Cheio de altos e baixos."
+  },
+  {
+    "palavra": "Vindicta",
+    "correta": "Vingança."
+  },
+  {
+    "palavra": "Vinhateiro",
+    "correta": "Produtor ou comerciante de vinho."
+  },
+  {
+    "palavra": "Viripotente",
+    "correta": "Em idade de casar ou vigoroso."
+  },
+  {
+    "palavra": "Viscoso",
+    "correta": "Espesso e pegajoso."
+  },
+  {
+    "palavra": "Vituperar",
+    "correta": "Insultar."
+  },
+  {
+    "palavra": "Vivaça",
+    "correta": "Esperta e vivaz."
+  },
+  {
+    "palavra": "Xantocroico",
+    "correta": "De pele clara e cabelo loiro."
+  },
+  {
+    "palavra": "Xenismo",
+    "correta": "Palavra ou expressão estrangeira usada sem adaptação."
+  },
+  {
+    "palavra": "Xenólito",
+    "correta": "Fragmento de rocha incorporado a outra rocha de origem diferente."
+  },
+  {
+    "palavra": "Xilófilo",
+    "correta": "Que vive ou se desenvolve na madeira."
+  },
+  {
+    "palavra": "Xiloteca",
+    "correta": "Coleção de amostras de madeira."
+  },
+  {
+    "palavra": "Zéfiro",
+    "correta": "Brisa suave."
+  },
+  {
+    "palavra": "Zênite",
+    "correta": "Ponto do céu situado diretamente acima do observador."
+  },
+  {
+    "palavra": "Zoantropia",
+    "correta": "Delírio em que a pessoa acredita ser ou ter se transformado em animal."
+  },
+  {
+    "palavra": "Zoilo",
+    "correta": "Crítico invejoso e maldoso."
+  },
+  {
+    "palavra": "Zombeteiro",
+    "correta": "Que costuma fazer troça."
+  },
+  {
+    "palavra": "Zoonímia",
+    "correta": "Conjunto ou estudo dos nomes dos animais."
+  },
+  {
+    "palavra": "Zootomia",
+    "correta": "Dissecação de animais."
+  },
+  {
+    "palavra": "Zuavo",
+    "correta": "Soldado de um corpo de infantaria de uniforme característico, com calças largas."
+  },
+  {
+    "palavra": "Zugzwang",
+    "correta": "Posição no xadrez em que qualquer lance possível piora a situação do jogador."
   }
 ]

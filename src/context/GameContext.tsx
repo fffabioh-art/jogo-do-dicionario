@@ -943,17 +943,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isConnected: true,
     };
 
-    const defaultBots: Player[] = BOT_PRESETS.slice(0, 3).map((preset, idx) => ({
-      id: `bot_init_${idx}_${Date.now()}`,
-      name: preset.name,
-      avatar: preset.avatar,
-      color: preset.color,
-      score: 0,
-      isHost: false,
-      isBot: true,
-      isConnected: true,
-    }));
-
     const newRoom: RoomState = {
       roomCode,
       hostId: hostPlayer.id,
@@ -967,7 +956,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         readingMode: settings?.readingMode === 'leader_read' ? 'leader_read' : 'visible',
         twoPlayerDecoyCount: 2,
       },
-      players: [hostPlayer, ...defaultBots],
+      players: [hostPlayer],
       currentRound: null,
       roundHistory: [],
       isTieBreakActive: false,
@@ -1127,17 +1116,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     if (next.players.length < 2) {
-      const preset = BOT_PRESETS[0];
-      next.players.push({
-        id: 'bot_auto_' + Date.now(),
-        name: preset.name,
-        avatar: preset.avatar,
-        color: preset.color,
-        score: 0,
-        isHost: false,
-        isBot: true,
-        isConnected: true,
-      });
+      setError('É necessário pelo menos 2 participantes (ou adicione um Bot) para começar!');
+      return;
     }
 
     next.players.forEach((p) => {

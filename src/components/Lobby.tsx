@@ -411,13 +411,23 @@ export const Lobby: React.FC = () => {
               />
             )}
             <p className="font-mono font-bold text-amber-300 text-sm">Código: {roomCode}</p>
-            <button
-              type="button"
-              onClick={() => setShowQrModal(false)}
-              className="w-full py-2 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium hover:bg-stone-700"
-            >
-              Fechar
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={copyInviteLink}
+                className="flex-1 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+              >
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copied ? 'Copiado!' : 'Copiar Link'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowQrModal(false)}
+                className="py-2 px-4 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium hover:bg-stone-700"
+              >
+                Fechar
+              </button>
+            </div>
           </div>
         </div>
       )}

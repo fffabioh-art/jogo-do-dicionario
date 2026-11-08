@@ -578,9 +578,502 @@ function prepareNextRound(roomCode: string) {
   }
 }
 
+// --- Central Shared Room Logic (invoked by both HTTP REST API and WebSockets) ---
+
+export function createRoomLogic(payload: {
+  playerId: string;
+  playerName: string;
+  avatar: string;
+  color: string;
+  settings?: any;
+}) {
+  const { playerId, playerName, avatar, color, settings } = payload;
+  const roomCode = generateRoomCode();
+  const hostPlayer: Player = {
+    id: playerId,
+    name: playerName || 'Jogador 1',
+    avatar: avatar || 'palito_classico',
+    color: color || '#F59E0B',
+    score: 0,
+    isHost: true,
+    isConnected: true,
+  };
+
+  const newRoom: RoomState = {
+    roomCode,
+    hostId: hostPlayer.id,
+    settings: {
+      targetScore: settings?.targetScore !== undefined ? Number(settings.targetScore) : 20,
+      submissionTimeLimit:
+        settings?.submissionTimeLimit !== undefined ? Number(settings.submissionTimeLimit) : 0,
+      votingTimeLimit:
+        settings?.votingTimeLimit !== undefined ? Number(settings.votingTimeLimit) : 0,
+      leaderBluffsRule: settings?.leaderBluffsRule === 'always' ? 'always' : 'never',
+      readingMode: settings?.readingMode === 'leader_read' ? 'leader_read' : 'visible',
+      twoPlayerDecoyCount: 2,
+    },
+    players: [hostPlayer], // No bots added by default, as requested!
+    currentRound: null,
+    roundHistory: [],
+    isTieBreakActive: false,
+    usedWordIds: [],
+  };
+
+  rooms.set(roomCode, newRoom);
+  broadcastRoom(roomCode);
+  return { success: true, roomCode, room: getSanitizedRoomForPlayer(newRoom, hostPlayer.id) };
+}
+
+export function joinRoomLogic(payload: {
+  roomCode: string;
+  playerId: string;
+  playerName: string;
+  avatar?: string;
+  color?: string;
+}) {
+  const { roomCode: rawCode, playerId, playerName, avatar, color } = payload;
+  const roomCode = (rawCode || '').toUpperCase().trim();
+  const room = rooms.get(roomCode);
+
+  if (!room) {
+    return { success: false, error: 'Sala não encontrada! Verifique o código digitado.' };
+  }
+
+  // 1. Check by exact playerId OR by normalized playerName (recovering slot and score!)
+  const normTarget = normalizePlayerName(playerName);
+  let existingPlayer = room.players.find((p) => p.id === playerId);
+  if (!existingPlayer && normTarget) {
+    existingPlayer = room.players.find(
+      (p) => !p.isBot && normalizePlayerName(p.name) === normTarget
+    );
+  }
+
+  if (existingPlayer) {
+    const oldId = existingPlayer.id;
+    existingPlayer.id = playerId;
+    migratePlayerIdInRoom(room, oldId, playerId);
+    existingPlayer.isConnected = true;
+    existingPlayer.name = playerName || existingPlayer.name;
+    if (avatar) existingPlayer.avatar = avatar;
+    if (color) existingPlayer.color = color;
+  } else {
+    if (room.players.length >= 10) {
+      return { success: false, error: 'A sala atingiu o limite máximo de 10 participantes!' };
+    }
+    const newPlayer: Player = {
+      id: playerId,
+      name: playerName || `Jogador ${room.players.length + 1}`,
+      avatar: avatar || 'palito_classico',
+      color: color || '#EC4899',
+      score: 0,
+      isHost: false,
+      isConnected: true,
+    };
+    room.players.push(newPlayer);
+  }
+
+  broadcastRoom(roomCode);
+  return { success: true, roomCode, room: getSanitizedRoomForPlayer(room, playerId) };
+}
+
+export function getRoomLogic(roomCode: string, playerId: string) {
+  const code = (roomCode || '').toUpperCase().trim();
+  const room = rooms.get(code);
+  if (!room) {
+    return { success: false, error: 'Sala não encontrada' };
+  }
+  return { success: true, room: getSanitizedRoomForPlayer(room, playerId) };
+}
+
+export function leaveRoomLogic(roomCode: string, playerId: string) {
+  const code = (roomCode || '').toUpperCase().trim();
+  const room = rooms.get(code);
+  if (room) {
+    const player = room.players.find((p) => p.id === playerId);
+    if (player) {
+      player.isConnected = false;
+    }
+    broadcastRoom(code);
+  }
+  return { success: true };
+}
+
+export function executeActionLogic(roomCode: string, playerId: string, type: string, payload: any) {
+  const code = (roomCode || '').toUpperCase().trim();
+  const room = rooms.get(code);
+  if (!room) {
+    return { success: false, error: 'Sala não encontrada' };
+  }
+
+  switch (type) {
+    case 'UPDATE_SETTINGS': {
+      if (room.hostId !== playerId) return { success: false, error: 'Apenas o Host pode alterar configurações.' };
+      room.settings = { ...room.settings, ...payload };
+      broadcastRoom(code);
+      break;
+    }
+
+    case 'ADD_BOT': {
+      if (room.hostId !== playerId) return { success: false, error: 'Apenas o Host pode adicionar bots.' };
+      if (room.players.length >= 10) return { success: false, error: 'Limite de 10 participantes atingido.' };
+
+      const currentBots = room.players.filter((p) => p.isBot).length;
+      const preset = BOT_PRESETS[currentBots % BOT_PRESETS.length];
+      const botPlayer: Player = {
+        id: 'bot_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5),
+        name: preset.name,
+        avatar: preset.avatar,
+        color: preset.color,
+        score: 0,
+        isHost: false,
+        isBot: true,
+        isConnected: true,
+      };
+
+      room.players.push(botPlayer);
+      broadcastRoom(code);
+      break;
+    }
+
+    case 'REMOVE_BOT': {
+      if (room.hostId !== playerId) return { success: false, error: 'Apenas o Host pode remover bots.' };
+      const botIndex = room.players.map((p) => p.isBot).lastIndexOf(true);
+      if (botIndex !== -1) {
+        room.players.splice(botIndex, 1);
+        broadcastRoom(code);
+      }
+      break;
+    }
+
+    case 'KICK_PLAYER': {
+      if (room.hostId !== playerId) return { success: false, error: 'Apenas o Host pode remover jogadores.' };
+      const targetId = payload?.playerId;
+      if (targetId === room.hostId) return { success: false, error: 'Não é possível remover o Host.' };
+      room.players = room.players.filter((p) => p.id !== targetId);
+      broadcastRoom(code);
+      break;
+    }
+
+    case 'START_GAME': {
+      if (room.hostId !== playerId) return { success: false, error: 'Apenas o Host pode iniciar a partida.' };
+      if (room.players.length < 2) {
+        return { success: false, error: 'É necessário pelo menos 2 participantes (ou adicione um Bot) para começar!' };
+      }
+
+      room.players.forEach((p) => {
+        p.score = 0;
+        p.hasSubmitted = false;
+        p.hasVoted = false;
+        p.totalVotesReceived = 0;
+        p.receivedVotesHistory = [];
+      });
+      room.roundHistory = [];
+      room.winnerId = undefined;
+      room.isTieBreakActive = false;
+      room.usedWordIds = [];
+
+      const leader = room.players[0];
+      const wordChoices = getRandomWordChoices(3, []);
+
+      room.currentRound = {
+        roundNumber: 1,
+        leaderId: leader.id,
+        word: wordChoices[0],
+        phase: 'WORD_CHOICE',
+        wordChoices,
+        bluffs: [],
+        votes: {},
+      };
+
+      broadcastRoom(code);
+
+      if (leader.isBot) {
+        setTimeout(() => {
+          const currentRoom = rooms.get(code);
+          if (currentRoom?.currentRound?.phase === 'WORD_CHOICE') {
+            const chosen = wordChoices[0];
+            if (!currentRoom.usedWordIds) currentRoom.usedWordIds = [];
+            currentRoom.usedWordIds.push(chosen.id);
+            startRoundWithWord(code, chosen);
+          }
+        }, 1400);
+      }
+      break;
+    }
+
+    case 'REROLL_WORDS': {
+      if (!room.currentRound) return { success: false };
+      if (room.currentRound.leaderId !== playerId && room.hostId !== playerId) {
+        return { success: false, error: 'Apenas o líder ou host pode sortear novas palavras.' };
+      }
+
+      const currentIds = (room.currentRound.wordChoices || []).map((w) => w.id);
+      const newChoices = getRandomWordChoices(3, [...(room.usedWordIds || []), ...currentIds]);
+      room.currentRound.wordChoices = newChoices;
+      broadcastRoom(code);
+      break;
+    }
+
+    case 'SELECT_WORD': {
+      if (!room.currentRound) return { success: false };
+      if (room.currentRound.leaderId !== playerId && room.hostId !== playerId) {
+        return { success: false, error: 'Apenas o líder pode escolher a palavra.' };
+      }
+
+      const selectedWord: WordItem = payload.word;
+      const authenticWord =
+        DICTIONARY_WORDS.find(
+          (w) =>
+            w.id === selectedWord.id ||
+            w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
+        ) || selectedWord;
+
+      if (!room.usedWordIds) room.usedWordIds = [];
+      if (!room.usedWordIds.includes(authenticWord.id)) {
+        room.usedWordIds.push(authenticWord.id);
+      }
+      startRoundWithWord(code, authenticWord);
+      break;
+    }
+
+    case 'SUBMIT_BLUFF': {
+      if (!room.currentRound || room.currentRound.phase !== 'SUBMISSION') return { success: false };
+
+      const player = room.players.find((p) => p.id === playerId);
+      if (!player) return { success: false };
+
+      const isLeader = player.id === room.currentRound.leaderId;
+      const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+      if (isLeader && !leaderBluffs) {
+        return { success: false, error: 'O líder não escreve nem vota nesta configuração!' };
+      }
+
+      const bluffText = formatConcept(payload.text || '');
+      if (!bluffText) return { success: false };
+
+      const existingIndex = room.currentRound.bluffs.findIndex((b) => b.authorId === player.id);
+      const newEntry: BluffEntry = {
+        id: 'bluff_' + player.id + '_' + Date.now(),
+        authorId: player.id,
+        text: bluffText,
+        isReal: false,
+      };
+
+      if (existingIndex !== -1) {
+        room.currentRound.bluffs[existingIndex] = newEntry;
+      } else {
+        room.currentRound.bluffs.push(newEntry);
+      }
+
+      player.hasSubmitted = true;
+      checkSubmissionCompletion(code);
+      break;
+    }
+
+    case 'SUBMIT_VOTE': {
+      if (!room.currentRound || room.currentRound.phase !== 'VOTING') return { success: false };
+
+      const player = room.players.find((p) => p.id === playerId);
+      if (!player) return { success: false };
+
+      const isLeader = player.id === room.currentRound.leaderId;
+      const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
+      const leaderHasBluff = room.currentRound.bluffs.some((b) => b.authorId === player.id);
+
+      if (isLeader && !leaderBluffs && !leaderHasBluff) {
+        return { success: false };
+      }
+
+      const optionId: string = payload.optionId;
+      const chosenOption = room.currentRound.bluffs.find((b) => b.id === optionId);
+      if (chosenOption && chosenOption.authorId === player.id) {
+        return { success: false, error: 'Você não pode votar no seu próprio blefe!' };
+      }
+
+      room.currentRound.votes[player.id] = optionId;
+      player.hasVoted = true;
+      checkVotingCompletion(code);
+      break;
+    }
+
+    case 'REVEAL_RESULTS': {
+      if (!room.currentRound || room.currentRound.phase !== 'VOTING') return { success: false };
+      if (room.currentRound.leaderId !== playerId && room.hostId !== playerId) return { success: false };
+
+      handleStartRevealPhase(code);
+      break;
+    }
+
+    case 'REQUEST_NEXT_ROUND':
+    case 'NEXT_ROUND': {
+      if (!room.currentRound) return { success: false };
+
+      if (!room.currentRound.nextRoundConfirmations) {
+        room.currentRound.nextRoundConfirmations = [];
+      }
+
+      room.currentRound.nextRoundRequested = true;
+      room.currentRound.nextRoundRequesterId = playerId;
+
+      if (!room.currentRound.nextRoundConfirmations.includes(playerId)) {
+        room.currentRound.nextRoundConfirmations.push(playerId);
+      }
+
+      room.players
+        .filter((p) => p.isBot)
+        .forEach((b) => {
+          if (!room.currentRound?.nextRoundConfirmations?.includes(b.id)) {
+            room.currentRound?.nextRoundConfirmations?.push(b.id);
+          }
+        });
+
+      const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
+      const allConfirmed =
+        activePlayers.length > 0 &&
+        activePlayers.every((p) => room.currentRound?.nextRoundConfirmations?.includes(p.id));
+
+      if (allConfirmed) {
+        prepareNextRound(code);
+      } else {
+        broadcastRoom(code);
+      }
+      break;
+    }
+
+    case 'CONFIRM_NEXT_ROUND': {
+      if (!room.currentRound) return { success: false };
+
+      if (!room.currentRound.nextRoundConfirmations) {
+        room.currentRound.nextRoundConfirmations = [];
+      }
+
+      if (!room.currentRound.nextRoundConfirmations.includes(playerId)) {
+        room.currentRound.nextRoundConfirmations.push(playerId);
+      }
+
+      room.players
+        .filter((p) => p.isBot)
+        .forEach((b) => {
+          if (!room.currentRound?.nextRoundConfirmations?.includes(b.id)) {
+            room.currentRound?.nextRoundConfirmations?.push(b.id);
+          }
+        });
+
+      const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
+      const allConfirmed =
+        activePlayers.length > 0 &&
+        activePlayers.every((p) => room.currentRound?.nextRoundConfirmations?.includes(p.id));
+
+      if (allConfirmed) {
+        prepareNextRound(code);
+      } else {
+        broadcastRoom(code);
+      }
+      break;
+    }
+
+    case 'RESTART_GAME': {
+      if (room.hostId !== playerId) return { success: false, error: 'Apenas o host pode reiniciar.' };
+
+      clearRoomTimer(code);
+      room.currentRound = null;
+      room.winnerId = undefined;
+      room.isTieBreakActive = false;
+      room.players.forEach((p) => {
+        p.score = 0;
+        p.hasSubmitted = false;
+        p.hasVoted = false;
+      });
+
+      broadcastRoom(code);
+      break;
+    }
+  }
+
+  const updatedRoom = rooms.get(code);
+  return {
+    success: true,
+    room: updatedRoom ? getSanitizedRoomForPlayer(updatedRoom, playerId) : undefined,
+  };
+}
+
 async function startServer() {
   const app = express();
   app.use(express.json({ limit: '10mb' }));
+
+  // CORS support for mobile devices and preview frames
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+    next();
+  });
+
+  // --- HTTP REST API ENDPOINTS (100% Reliable on all cell phones, QR codes, and proxies) ---
+  app.post('/api/rooms', (req, res) => {
+    try {
+      const result = createRoomLogic(req.body);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err?.message || 'Erro ao criar sala' });
+    }
+  });
+
+  app.get('/api/rooms/:code', (req, res) => {
+    try {
+      const roomCode = req.params.code;
+      const playerId = (req.query.playerId as string) || '';
+      const result = getRoomLogic(roomCode, playerId);
+      if (!result.success) {
+        return res.status(404).json(result);
+      }
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err?.message || 'Erro ao buscar sala' });
+    }
+  });
+
+  app.post('/api/rooms/:code/join', (req, res) => {
+    try {
+      const roomCode = req.params.code;
+      const result = joinRoomLogic({ ...req.body, roomCode });
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err?.message || 'Erro ao entrar na sala' });
+    }
+  });
+
+  app.post('/api/rooms/:code/action', (req, res) => {
+    try {
+      const roomCode = req.params.code;
+      const { playerId, type, payload } = req.body;
+      const result = executeActionLogic(roomCode, playerId, type, payload);
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err?.message || 'Erro na ação' });
+    }
+  });
+
+  app.post('/api/rooms/:code/leave', (req, res) => {
+    try {
+      const roomCode = req.params.code;
+      const { playerId } = req.body;
+      const result = leaveRoomLogic(roomCode, playerId);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err?.message || 'Erro ao sair' });
+    }
+  });
+
   const server = http.createServer(app);
 
   const wss = new WebSocketServer({ noServer: true });
@@ -621,115 +1114,25 @@ async function startServer() {
           }
 
           case 'CREATE_ROOM': {
-            const { playerId, playerName, avatar, color, settings } = payload;
-            const roomCode = generateRoomCode();
-            const hostPlayer: Player = {
-              id: playerId,
-              name: playerName || 'Jogador 1',
-              avatar: avatar || 'palito_classico',
-              color: color || '#F59E0B',
-              score: 0,
-              isHost: true,
-              isConnected: true,
-            };
-
-            const newRoom: RoomState = {
-              roomCode,
-              hostId: hostPlayer.id,
-              settings: {
-                targetScore: settings?.targetScore !== undefined ? Number(settings.targetScore) : 20,
-                submissionTimeLimit:
-                  settings?.submissionTimeLimit !== undefined ? Number(settings.submissionTimeLimit) : 0,
-                votingTimeLimit:
-                  settings?.votingTimeLimit !== undefined ? Number(settings.votingTimeLimit) : 0,
-                leaderBluffsRule: settings?.leaderBluffsRule === 'always' ? 'always' : 'never',
-                readingMode: settings?.readingMode === 'leader_read' ? 'leader_read' : 'visible',
-                twoPlayerDecoyCount: 2,
-              },
-              players: [hostPlayer],
-              currentRound: null,
-              roundHistory: [],
-              isTieBreakActive: false,
-              usedWordIds: [],
-            };
-
-            rooms.set(roomCode, newRoom);
-            clientMap.set(ws, { roomCode, playerId: hostPlayer.id });
-            broadcastRoom(roomCode);
+            const res = createRoomLogic(payload);
+            clientMap.set(ws, { roomCode: res.roomCode, playerId: payload.playerId });
             break;
           }
 
           case 'JOIN_ROOM': {
-            const { roomCode: rawCode, playerId, playerName, avatar, color } = payload;
-            const roomCode = (rawCode || '').toUpperCase().trim();
-            const room = rooms.get(roomCode);
-
-            if (!room) {
-              sendError(ws, 'Sala não encontrada! Verifique o código digitado.');
-              return;
-            }
-
-            // 1. Check by exact playerId OR by normalized playerName (so a player who fell out of the match can rejoin with preserved points!)
-            const normTarget = normalizePlayerName(playerName);
-            let existingPlayer = room.players.find((p) => p.id === playerId);
-            if (!existingPlayer && normTarget) {
-              existingPlayer = room.players.find(
-                (p) => !p.isBot && normalizePlayerName(p.name) === normTarget
-              );
-            }
-
-            if (existingPlayer) {
-              const oldId = existingPlayer.id;
-              existingPlayer.id = playerId;
-              migratePlayerIdInRoom(room, oldId, playerId);
-              existingPlayer.isConnected = true;
-              existingPlayer.name = playerName || existingPlayer.name;
-              existingPlayer.avatar = avatar || existingPlayer.avatar;
-              existingPlayer.color = color || existingPlayer.color;
-              // Score, receivedVotesHistory, totalVotesReceived are 100% preserved!
+            const res = joinRoomLogic(payload);
+            if (!res.success || !res.roomCode) {
+              sendError(ws, res.error || 'Erro ao entrar na sala');
             } else {
-              if (room.players.length >= 10) {
-                sendError(ws, 'A sala atingiu o limite máximo de 10 participantes!');
-                return;
-              }
-              const newPlayer: Player = {
-                id: playerId,
-                name: playerName || `Jogador ${room.players.length + 1}`,
-                avatar: avatar || 'palito_classico',
-                color: color || '#EC4899',
-                score: 0,
-                isHost: false,
-                isConnected: true,
-              };
-              room.players.push(newPlayer);
+              clientMap.set(ws, { roomCode: res.roomCode, playerId: payload.playerId });
             }
-
-            clientMap.set(ws, { roomCode, playerId });
-            broadcastRoom(roomCode);
             break;
           }
 
           case 'RECONNECT': {
-            const { roomCode: rawCode, playerId, playerName } = payload;
-            const roomCode = (rawCode || '').toUpperCase().trim();
-            const room = rooms.get(roomCode);
-            if (!room) return;
-
-            const normTarget = normalizePlayerName(playerName || '');
-            let existingPlayer = room.players.find((p) => p.id === playerId);
-            if (!existingPlayer && normTarget) {
-              existingPlayer = room.players.find(
-                (p) => !p.isBot && normalizePlayerName(p.name) === normTarget
-              );
-            }
-
-            if (existingPlayer) {
-              const oldId = existingPlayer.id;
-              existingPlayer.id = playerId;
-              migratePlayerIdInRoom(room, oldId, playerId);
-              existingPlayer.isConnected = true;
-              clientMap.set(ws, { roomCode, playerId });
-              broadcastRoom(roomCode);
+            const res = joinRoomLogic(payload);
+            if (res.success && res.roomCode) {
+              clientMap.set(ws, { roomCode: res.roomCode, playerId: payload.playerId });
             }
             break;
           }
@@ -737,353 +1140,20 @@ async function startServer() {
           case 'LEAVE_ROOM': {
             const info = clientMap.get(ws);
             if (info) {
-              const room = rooms.get(info.roomCode);
-              if (room) {
-                const player = room.players.find((p) => p.id === info.playerId);
-                if (player) {
-                  player.isConnected = false;
-                }
-                clientMap.delete(ws);
-                broadcastRoom(info.roomCode);
+              leaveRoomLogic(info.roomCode, info.playerId);
+              clientMap.delete(ws);
+            }
+            break;
+          }
+
+          default: {
+            const info = clientMap.get(ws);
+            if (info) {
+              const res = executeActionLogic(info.roomCode, info.playerId, type, payload);
+              if (!res.success && res.error) {
+                sendError(ws, res.error);
               }
             }
-            break;
-          }
-
-          case 'UPDATE_SETTINGS': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || room.hostId !== info.playerId) return;
-
-            room.settings = {
-              ...room.settings,
-              ...payload,
-            };
-            broadcastRoom(info.roomCode);
-            break;
-          }
-
-          case 'ADD_BOT': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || room.hostId !== info.playerId) return;
-
-            if (room.players.length >= 10) {
-              sendError(ws, 'Limite máximo de 10 participantes atingido.');
-              return;
-            }
-
-            const currentBots = room.players.filter((p) => p.isBot).length;
-            const preset = BOT_PRESETS[currentBots % BOT_PRESETS.length];
-            const botPlayer: Player = {
-              id: 'bot_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5),
-              name: preset.name,
-              avatar: preset.avatar,
-              color: preset.color,
-              score: 0,
-              isHost: false,
-              isBot: true,
-              isConnected: true,
-            };
-
-            room.players.push(botPlayer);
-            broadcastRoom(info.roomCode);
-            break;
-          }
-
-          case 'REMOVE_BOT': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || room.hostId !== info.playerId) return;
-
-            const botIndex = room.players.map((p) => p.isBot).lastIndexOf(true);
-            if (botIndex !== -1) {
-              room.players.splice(botIndex, 1);
-              broadcastRoom(info.roomCode);
-            }
-            break;
-          }
-
-          case 'KICK_PLAYER': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || room.hostId !== info.playerId) return;
-
-            const targetId = payload.playerId;
-            if (targetId === room.hostId) return;
-            room.players = room.players.filter((p) => p.id !== targetId);
-            broadcastRoom(info.roomCode);
-            break;
-          }
-
-          case 'START_GAME': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || room.hostId !== info.playerId) return;
-
-            if (room.players.length < 2) {
-              sendError(ws, 'É necessário pelo menos 2 participantes (ou adicione um Bot) para começar!');
-              return;
-            }
-
-            room.players.forEach((p) => {
-              p.score = 0;
-              p.hasSubmitted = false;
-              p.hasVoted = false;
-              p.totalVotesReceived = 0;
-              p.receivedVotesHistory = [];
-            });
-            room.roundHistory = [];
-            room.winnerId = undefined;
-            room.isTieBreakActive = false;
-            room.usedWordIds = [];
-
-            const leader = room.players[0];
-            const wordChoices = getRandomWordChoices(3, []);
-
-            room.currentRound = {
-              roundNumber: 1,
-              leaderId: leader.id,
-              word: wordChoices[0],
-              phase: 'WORD_CHOICE',
-              wordChoices,
-              bluffs: [],
-              votes: {},
-            };
-
-            broadcastRoom(info.roomCode);
-
-            if (leader.isBot) {
-              setTimeout(() => {
-                const currentRoom = rooms.get(info.roomCode);
-                if (currentRoom?.currentRound?.phase === 'WORD_CHOICE') {
-                  const chosen = wordChoices[0];
-                  if (!currentRoom.usedWordIds) currentRoom.usedWordIds = [];
-                  currentRoom.usedWordIds.push(chosen.id);
-                  startRoundWithWord(info.roomCode, chosen);
-                }
-              }, 1400);
-            }
-            break;
-          }
-
-          case 'REROLL_WORDS': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound) return;
-            if (room.currentRound.leaderId !== info.playerId && room.hostId !== info.playerId) return;
-
-            const currentIds = (room.currentRound.wordChoices || []).map((w) => w.id);
-            const newChoices = getRandomWordChoices(3, [
-              ...(room.usedWordIds || []),
-              ...currentIds,
-            ]);
-            room.currentRound.wordChoices = newChoices;
-            broadcastRoom(info.roomCode);
-            break;
-          }
-
-          case 'SELECT_WORD': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound) return;
-            if (room.currentRound.leaderId !== info.playerId && room.hostId !== info.playerId) return;
-
-            const selectedWord: WordItem = payload.word;
-            const authenticWord =
-              DICTIONARY_WORDS.find(
-                (w) =>
-                  w.id === selectedWord.id ||
-                  w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
-              ) || selectedWord;
-
-            if (!room.usedWordIds) room.usedWordIds = [];
-            if (!room.usedWordIds.includes(authenticWord.id)) {
-              room.usedWordIds.push(authenticWord.id);
-            }
-            startRoundWithWord(info.roomCode, authenticWord);
-            break;
-          }
-
-          case 'SUBMIT_BLUFF': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound || room.currentRound.phase !== 'SUBMISSION') return;
-
-            const player = room.players.find((p) => p.id === info.playerId);
-            if (!player) return;
-
-            const isLeader = player.id === room.currentRound.leaderId;
-            const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
-            if (isLeader && !leaderBluffs) {
-              sendError(ws, 'O líder não escreve nem vota nesta configuração!');
-              return;
-            }
-
-            const bluffText = formatConcept(payload.text || '');
-            if (!bluffText) return;
-
-            const existingIndex = room.currentRound.bluffs.findIndex(
-              (b) => b.authorId === player.id
-            );
-            const newEntry: BluffEntry = {
-              id: 'bluff_' + player.id + '_' + Date.now(),
-              authorId: player.id,
-              text: bluffText,
-              isReal: false,
-            };
-
-            if (existingIndex !== -1) {
-              room.currentRound.bluffs[existingIndex] = newEntry;
-            } else {
-              room.currentRound.bluffs.push(newEntry);
-            }
-
-            player.hasSubmitted = true;
-            checkSubmissionCompletion(info.roomCode);
-            break;
-          }
-
-          case 'SUBMIT_VOTE': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound || room.currentRound.phase !== 'VOTING') return;
-
-            const player = room.players.find((p) => p.id === info.playerId);
-            if (!player) return;
-
-            const isLeader = player.id === room.currentRound.leaderId;
-            const leaderBluffs = isLeaderBluffing(room.settings, room.players.length);
-            const leaderHasBluff = room.currentRound.bluffs.some((b) => b.authorId === player.id);
-
-            if (isLeader && !leaderBluffs && !leaderHasBluff) {
-              return;
-            }
-
-            const optionId: string = payload.optionId;
-            const chosenOption = room.currentRound.bluffs.find((b) => b.id === optionId);
-            if (chosenOption && chosenOption.authorId === player.id) {
-              sendError(ws, 'Você não pode votar no seu próprio blefe!');
-              return;
-            }
-
-            room.currentRound.votes[player.id] = optionId;
-            player.hasVoted = true;
-            checkVotingCompletion(info.roomCode);
-            break;
-          }
-
-          case 'REVEAL_RESULTS': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound || room.currentRound.phase !== 'VOTING') return;
-            if (room.currentRound.leaderId !== info.playerId && room.hostId !== info.playerId) return;
-
-            handleStartRevealPhase(info.roomCode);
-            break;
-          }
-
-          case 'REQUEST_NEXT_ROUND':
-          case 'NEXT_ROUND': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound) return;
-
-            if (!room.currentRound.nextRoundConfirmations) {
-              room.currentRound.nextRoundConfirmations = [];
-            }
-
-            room.currentRound.nextRoundRequested = true;
-            room.currentRound.nextRoundRequesterId = info.playerId;
-
-            if (!room.currentRound.nextRoundConfirmations.includes(info.playerId)) {
-              room.currentRound.nextRoundConfirmations.push(info.playerId);
-            }
-
-            room.players
-              .filter((p) => p.isBot)
-              .forEach((b) => {
-                if (!room.currentRound?.nextRoundConfirmations?.includes(b.id)) {
-                  room.currentRound?.nextRoundConfirmations?.push(b.id);
-                }
-              });
-
-            const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-            const allConfirmed =
-              activePlayers.length > 0 &&
-              activePlayers.every((p) => room.currentRound?.nextRoundConfirmations?.includes(p.id));
-
-            if (allConfirmed) {
-              prepareNextRound(info.roomCode);
-            } else {
-              broadcastRoom(info.roomCode);
-            }
-            break;
-          }
-
-          case 'CONFIRM_NEXT_ROUND': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || !room.currentRound) return;
-
-            if (!room.currentRound.nextRoundConfirmations) {
-              room.currentRound.nextRoundConfirmations = [];
-            }
-
-            if (!room.currentRound.nextRoundConfirmations.includes(info.playerId)) {
-              room.currentRound.nextRoundConfirmations.push(info.playerId);
-            }
-
-            room.players
-              .filter((p) => p.isBot)
-              .forEach((b) => {
-                if (!room.currentRound?.nextRoundConfirmations?.includes(b.id)) {
-                  room.currentRound?.nextRoundConfirmations?.push(b.id);
-                }
-              });
-
-            const activePlayers = room.players.filter((p) => p.isConnected || p.isBot);
-            const allConfirmed =
-              activePlayers.length > 0 &&
-              activePlayers.every((p) => room.currentRound?.nextRoundConfirmations?.includes(p.id));
-
-            if (allConfirmed) {
-              prepareNextRound(info.roomCode);
-            } else {
-              broadcastRoom(info.roomCode);
-            }
-            break;
-          }
-
-          case 'RESTART_GAME': {
-            const info = clientMap.get(ws);
-            if (!info) return;
-            const room = rooms.get(info.roomCode);
-            if (!room || room.hostId !== info.playerId) return;
-
-            clearRoomTimer(info.roomCode);
-            room.currentRound = null;
-            room.winnerId = undefined;
-            room.isTieBreakActive = false;
-            room.players.forEach((p) => {
-              p.score = 0;
-              p.hasSubmitted = false;
-              p.hasVoted = false;
-            });
-
-            broadcastRoom(info.roomCode);
             break;
           }
         }
@@ -1095,15 +1165,7 @@ async function startServer() {
     ws.on('close', () => {
       const info = clientMap.get(ws);
       if (info) {
-        const room = rooms.get(info.roomCode);
-        if (room) {
-          const player = room.players.find((p) => p.id === info.playerId);
-          if (player) {
-            // Preserve player and all their points in room.players when connection drops!
-            player.isConnected = false;
-          }
-          broadcastRoom(info.roomCode);
-        }
+        leaveRoomLogic(info.roomCode, info.playerId);
         clientMap.delete(ws);
       }
     });

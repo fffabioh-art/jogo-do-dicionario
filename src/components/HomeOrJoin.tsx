@@ -79,12 +79,16 @@ export const HomeOrJoin: React.FC = () => {
   const [readingMode, setReadingMode] = useState<'visible' | 'leader_read'>('visible');
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  const [isInvited, setIsInvited] = useState(false);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const codeFromUrl = params.get('room');
     if (codeFromUrl) {
-      setRoomCode(codeFromUrl.toUpperCase());
+      const cleanCode = codeFromUrl.toUpperCase().trim();
+      setRoomCode(cleanCode);
       setMode('join');
+      setIsInvited(true);
     }
   }, []);
 
@@ -468,6 +472,15 @@ export const HomeOrJoin: React.FC = () => {
         ) : (
           /* Join Form */
           <form onSubmit={handleJoin} className="space-y-4 pt-2 border-t border-stone-800">
+            {isInvited && (
+              <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-200 text-xs flex items-center justify-between animate-fade-in">
+                <span>
+                  🎉 Você foi convidado para a <strong>Sala {roomCode}</strong>!
+                </span>
+                <span className="text-[11px] font-mono text-amber-400">QR / Link</span>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
                 Código da Sala

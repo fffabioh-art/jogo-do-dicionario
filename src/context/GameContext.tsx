@@ -195,6 +195,26 @@ function persistReconnectInfo(info: SavedReconnectInfo | null) {
   } catch {}
 }
 
+async function apiCall(endpoint: string, method = 'GET', body?: any): Promise<any> {
+  try {
+    const res = await fetch(endpoint, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      return { success: false, error: data?.error || `Erro HTTP ${res.status}` };
+    }
+    return data;
+  } catch (err) {
+    console.warn('API network error:', endpoint, err);
+    return null;
+  }
+}
+
 function computeRoundPoints(room: RoomState): {
   scoreDetails: RoundScoreDetail[];
   realOptionId: string;
@@ -305,6 +325,16 @@ function checkEndGameCondition(room: RoomState): boolean {
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [room, setRoom] = useState<RoomState | null>(() => {
+    // If the user arrived with a ?room= URL parameter from a QR code or invite link,
+    // do not load a stale old room from localStorage so the user can easily join the new room!
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlRoom = urlParams.get('room');
+      const lastRoomCode = localStorage.getItem(STORAGE_KEYS.LAST_ROOM);
+      if (urlRoom && urlRoom.toUpperCase() !== (lastRoomCode || '').toUpperCase()) {
+        return null;
+      }
+    }
     const lastRoomCode = localStorage.getItem(STORAGE_KEYS.LAST_ROOM);
     if (lastRoomCode) {
       const savedRooms = loadRoomsFromStorage();
@@ -410,7 +440,70 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [myPlayerId]
   );
 
-  // WebSocket connection for multi-device play (with automatic fallback to client-side mode on static hosts like Vercel)
+  // Send action via WebSocket if available
+  const sendWs = useCallback((type: string, payload?: any): boolean => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      try {
+        wsRef.current.send(JSON.stringify({ type, payload }));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }, []);
+
+  // Execute an action on the active room via HTTP REST API and WebSocket simultaneously
+  const sendAction = useCallback(
+    async (type: string, payload: any = {}): Promise<boolean> => {
+      sendWs(type, payload);
+
+      if (roomRef.current?.roomCode) {
+        const code = roomRef.current.roomCode;
+        const res = await apiCall(`/api/rooms/${code}/action`, 'POST', {
+          playerId: myPlayerId,
+          type,
+          payload,
+        });
+        if (res && res.success && res.room) {
+          commitRoom(res.room, false);
+          return true;
+        } else if (res && res.error) {
+          setError(res.error);
+          return false;
+        }
+      }
+      return false;
+    },
+    [myPlayerId, sendWs, commitRoom]
+  );
+
+  // Active room real-time polling (ensures all mobile devices and browsers stay in sync every 1 second)
+  useEffect(() => {
+    if (!room?.roomCode) return;
+    const code = room.roomCode;
+    let isMounted = true;
+
+    const poll = async () => {
+      if (document.visibilityState !== 'visible') return;
+      const res = await apiCall(`/api/rooms/${code}?playerId=${myPlayerId}`);
+      if (isMounted && res && res.success && res.room) {
+        const currentJson = JSON.stringify(roomRef.current);
+        const incomingJson = JSON.stringify(res.room);
+        if (currentJson !== incomingJson) {
+          commitRoom(res.room, true);
+        }
+      }
+    };
+
+    const pollInterval = setInterval(poll, 1000);
+    return () => {
+      isMounted = false;
+      clearInterval(pollInterval);
+    };
+  }, [room?.roomCode, myPlayerId, commitRoom]);
+
+  // WebSocket connection for instant low-latency delivery when supported
   useEffect(() => {
     let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
     let pingInterval: ReturnType<typeof setInterval> | null = null;
@@ -467,16 +560,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (isUnmounted) return;
           if (pingInterval) clearInterval(pingInterval);
           if (wsAvailableRef.current) {
-            // Reconnect automatically if we had a WS server
             reconnectTimeout = setTimeout(connectWs, 2500);
           } else {
-            // Static host (Vercel) — stay connected in client-side mode
             setConnectionStatus('connected');
           }
         };
 
         ws.onerror = () => {
-          // Silent fallback to client-side mode when hosted statically on Vercel
+          // HTTP polling gracefully handles communication if WebSocket is blocked
           setConnectionStatus('connected');
         };
       } catch {
@@ -503,8 +594,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
               })
             );
           }
-        } else if (wsAvailableRef.current) {
-          connectWs();
         }
       }
     };
@@ -520,7 +609,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [myPlayerId, commitRoom]);
 
-  // Multi-tab BroadcastChannel & storage listener for static/client-side mode
+  // Multi-tab BroadcastChannel & storage listener
   useEffect(() => {
     if (typeof BroadcastChannel !== 'undefined') {
       const bc = new BroadcastChannel('jdd_local_sync_v1');
@@ -558,15 +647,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [clearTimers]);
 
-  const sendWs = (type: string, payload?: any): boolean => {
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ type, payload }));
-      return true;
-    }
-    return false;
-  };
-
-  // --- Client-Side Fallback Engine (used when running 100% static on Vercel without WS server) ---
+  // --- Client-Side Fallback Engine (when completely offline or server unreachable) ---
 
   const handleStartRevealPhase = useCallback(
     (targetRoom: RoomState) => {
@@ -906,8 +987,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [clearTimers, commitRoom, startRoundWithWord]
   );
 
-  // Actions
-  const createRoom = (
+  // --- ACTIONS ---
+
+  const createRoom = async (
     name: string,
     avatar: string,
     color: string,
@@ -917,19 +999,29 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.PLAYER_AVATAR, avatar);
     localStorage.setItem(STORAGE_KEYS.PLAYER_COLOR, color);
 
-    if (
-      sendWs('CREATE_ROOM', {
-        playerId: myPlayerId,
-        playerName: name,
-        avatar,
-        color,
-        settings,
-      })
-    ) {
+    sendWs('CREATE_ROOM', {
+      playerId: myPlayerId,
+      playerName: name,
+      avatar,
+      color,
+      settings,
+    });
+
+    const res = await apiCall('/api/rooms', 'POST', {
+      playerId: myPlayerId,
+      playerName: name,
+      avatar,
+      color,
+      settings,
+    });
+
+    if (res && res.success && res.room) {
+      commitRoom(res.room, false);
       soundManager.playPop();
       return;
     }
 
+    // Fallback if network/server is offline
     const allRooms = loadRoomsFromStorage();
     const roomCode = generateRoomCode(new Set(Object.keys(allRooms)));
 
@@ -956,7 +1048,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         readingMode: settings?.readingMode === 'leader_read' ? 'leader_read' : 'visible',
         twoPlayerDecoyCount: 2,
       },
-      players: [hostPlayer],
+      players: [hostPlayer], // Zero bots by default
       currentRound: null,
       roundHistory: [],
       isTieBreakActive: false,
@@ -967,26 +1059,39 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundManager.playPop();
   };
 
-  const joinRoom = (roomCode: string, name: string, avatar: string, color: string) => {
+  const joinRoom = async (roomCode: string, name: string, avatar: string, color: string) => {
     localStorage.setItem(STORAGE_KEYS.PLAYER_NAME, name);
     localStorage.setItem(STORAGE_KEYS.PLAYER_AVATAR, avatar);
     localStorage.setItem(STORAGE_KEYS.PLAYER_COLOR, color);
 
     const code = roomCode.toUpperCase().trim();
+    if (!code) return;
 
-    if (
-      sendWs('JOIN_ROOM', {
-        roomCode: code,
-        playerId: myPlayerId,
-        playerName: name,
-        avatar,
-        color,
-      })
-    ) {
+    sendWs('JOIN_ROOM', {
+      roomCode: code,
+      playerId: myPlayerId,
+      playerName: name,
+      avatar,
+      color,
+    });
+
+    const res = await apiCall(`/api/rooms/${code}/join`, 'POST', {
+      playerId: myPlayerId,
+      playerName: name,
+      avatar,
+      color,
+    });
+
+    if (res && res.success && res.room) {
+      commitRoom(res.room, false);
       soundManager.playPop();
+      return;
+    } else if (res && res.error) {
+      setError(res.error);
       return;
     }
 
+    // Fallback to local storage if server unreachable
     const allRooms = loadRoomsFromStorage();
     const existingRoom = allRooms[code];
 
@@ -1037,357 +1142,336 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     joinRoom(info.roomCode, info.playerName, info.avatar, info.color);
   };
 
-  const updateSettings = (settings: Partial<GameSettings>) => {
-    if (sendWs('UPDATE_SETTINGS', settings)) return;
-    if (!roomRef.current) return;
-    const next = {
-      ...roomRef.current,
-      settings: {
-        ...roomRef.current.settings,
-        ...settings,
-      },
-    };
-    commitRoom(next, false);
+  const updateSettings = async (settings: Partial<GameSettings>) => {
+    const ok = await sendAction('UPDATE_SETTINGS', settings);
+    if (!ok && roomRef.current) {
+      const next = {
+        ...roomRef.current,
+        settings: {
+          ...roomRef.current.settings,
+          ...settings,
+        },
+      };
+      commitRoom(next, false);
+    }
   };
 
-  const addBot = () => {
-    if (sendWs('ADD_BOT')) {
-      soundManager.playPop();
-      return;
+  const addBot = async () => {
+    const ok = await sendAction('ADD_BOT');
+    if (!ok && roomRef.current) {
+      const next = { ...roomRef.current, players: [...roomRef.current.players] };
+      if (next.players.length >= 10) return;
+
+      const currentBots = next.players.filter((p) => p.isBot).length;
+      const preset = BOT_PRESETS[currentBots % BOT_PRESETS.length];
+
+      next.players.push({
+        id: 'bot_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5),
+        name: preset.name,
+        avatar: preset.avatar,
+        color: preset.color,
+        score: 0,
+        isHost: false,
+        isBot: true,
+        isConnected: true,
+      });
+
+      commitRoom(next, false);
     }
-    if (!roomRef.current) return;
-    const next = { ...roomRef.current, players: [...roomRef.current.players] };
-    if (next.players.length >= 10) return;
-
-    const currentBots = next.players.filter((p) => p.isBot).length;
-    const preset = BOT_PRESETS[currentBots % BOT_PRESETS.length];
-
-    next.players.push({
-      id: 'bot_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5),
-      name: preset.name,
-      avatar: preset.avatar,
-      color: preset.color,
-      score: 0,
-      isHost: false,
-      isBot: true,
-      isConnected: true,
-    });
-
-    commitRoom(next, false);
     soundManager.playPop();
   };
 
-  const removeBot = () => {
-    if (sendWs('REMOVE_BOT')) {
-      soundManager.playPop();
-      return;
+  const removeBot = async () => {
+    const ok = await sendAction('REMOVE_BOT');
+    if (!ok && roomRef.current) {
+      const next = { ...roomRef.current, players: [...roomRef.current.players] };
+      const botIndex = next.players.map((p) => p.isBot).lastIndexOf(true);
+      if (botIndex !== -1) {
+        next.players.splice(botIndex, 1);
+        commitRoom(next, false);
+      }
     }
-    if (!roomRef.current) return;
-    const next = { ...roomRef.current, players: [...roomRef.current.players] };
-    const botIndex = next.players.map((p) => p.isBot).lastIndexOf(true);
-    if (botIndex !== -1) {
-      next.players.splice(botIndex, 1);
+    soundManager.playPop();
+  };
+
+  const kickPlayer = async (playerId: string) => {
+    const ok = await sendAction('KICK_PLAYER', { playerId });
+    if (!ok && roomRef.current) {
+      const next = {
+        ...roomRef.current,
+        players: roomRef.current.players.filter(
+          (p) => p.id !== playerId || p.id === roomRef.current?.hostId
+        ),
+      };
       commitRoom(next, false);
-      soundManager.playPop();
     }
   };
 
-  const kickPlayer = (playerId: string) => {
-    if (sendWs('KICK_PLAYER', { playerId })) return;
-    if (!roomRef.current) return;
-    const next = {
-      ...roomRef.current,
-      players: roomRef.current.players.filter(
-        (p) => p.id !== playerId || p.id === roomRef.current?.hostId
-      ),
-    };
-    commitRoom(next, false);
-  };
-
-  const startGame = () => {
-    if (sendWs('START_GAME')) {
-      soundManager.playPop();
-      return;
-    }
-    if (!roomRef.current) return;
-    const next = {
-      ...roomRef.current,
-      players: [...roomRef.current.players],
-    };
-
-    if (next.players.length < 2) {
+  const startGame = async () => {
+    if (roomRef.current && roomRef.current.players.length < 2) {
       setError('É necessário pelo menos 2 participantes (ou adicione um Bot) para começar!');
       return;
     }
 
-    next.players.forEach((p) => {
-      p.score = 0;
-      p.hasSubmitted = false;
-      p.hasVoted = false;
-      p.totalVotesReceived = 0;
-      p.receivedVotesHistory = [];
-    });
+    const ok = await sendAction('START_GAME');
+    if (!ok && roomRef.current) {
+      const next = {
+        ...roomRef.current,
+        players: [...roomRef.current.players],
+      };
 
-    next.roundHistory = [];
-    next.winnerId = undefined;
-    next.isTieBreakActive = false;
-    next.usedWordIds = [];
+      next.players.forEach((p) => {
+        p.score = 0;
+        p.hasSubmitted = false;
+        p.hasVoted = false;
+        p.totalVotesReceived = 0;
+        p.receivedVotesHistory = [];
+      });
 
-    const leader = next.players[0];
-    const rawChoices = getRandomWordChoices(3, []);
-    const wordChoices = rawChoices.map((w) => ({
-      ...w,
-      definition: '',
-    }));
+      next.roundHistory = [];
+      next.winnerId = undefined;
+      next.isTieBreakActive = false;
+      next.usedWordIds = [];
 
-    next.currentRound = {
-      roundNumber: 1,
-      leaderId: leader.id,
-      word: { ...rawChoices[0], definition: '' },
-      phase: 'WORD_CHOICE',
-      wordChoices,
-      bluffs: [],
-      votes: {},
-    };
+      const leader = next.players[0];
+      const rawChoices = getRandomWordChoices(3, []);
+      const wordChoices = rawChoices.map((w) => ({
+        ...w,
+        definition: '',
+      }));
 
-    commitRoom(next, false);
-    soundManager.playPop();
+      next.currentRound = {
+        roundNumber: 1,
+        leaderId: leader.id,
+        word: { ...rawChoices[0], definition: '' },
+        phase: 'WORD_CHOICE',
+        wordChoices,
+        bluffs: [],
+        votes: {},
+      };
 
-    if (leader.isBot) {
-      botTimerRef.current = setTimeout(() => {
-        if (roomRef.current?.currentRound?.phase === 'WORD_CHOICE') {
-          const chosen = rawChoices[0];
-          const updated = { ...roomRef.current };
-          if (!updated.usedWordIds) updated.usedWordIds = [];
-          updated.usedWordIds.push(chosen.id);
-          startRoundWithWord(updated, chosen);
-        }
-      }, 1400);
+      commitRoom(next, false);
+
+      if (leader.isBot) {
+        botTimerRef.current = setTimeout(() => {
+          if (roomRef.current?.currentRound?.phase === 'WORD_CHOICE') {
+            const chosen = rawChoices[0];
+            const updated = { ...roomRef.current };
+            if (!updated.usedWordIds) updated.usedWordIds = [];
+            updated.usedWordIds.push(chosen.id);
+            startRoundWithWord(updated, chosen);
+          }
+        }, 1400);
+      }
     }
-  };
-
-  const rerollWordChoices = () => {
-    if (sendWs('REROLL_WORDS')) {
-      soundManager.playPop();
-      return;
-    }
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    const next = { ...roomRef.current, currentRound: { ...roomRef.current.currentRound } };
-    const currentIds = (next.currentRound.wordChoices || []).map((w) => w.id);
-    const rawChoices = getRandomWordChoices(3, [...(next.usedWordIds || []), ...currentIds]);
-    next.currentRound.wordChoices = rawChoices.map((w) => ({
-      ...w,
-      definition: '',
-    }));
-    commitRoom(next, false);
     soundManager.playPop();
   };
 
-  const selectWord = (selectedWord: WordItem) => {
-    if (sendWs('SELECT_WORD', { word: selectedWord })) {
-      soundManager.playPop();
-      return;
+  const rerollWordChoices = async () => {
+    const ok = await sendAction('REROLL_WORDS');
+    if (!ok && roomRef.current && roomRef.current.currentRound) {
+      const next = { ...roomRef.current, currentRound: { ...roomRef.current.currentRound } };
+      const currentIds = (next.currentRound.wordChoices || []).map((w) => w.id);
+      const rawChoices = getRandomWordChoices(3, [...(next.usedWordIds || []), ...currentIds]);
+      next.currentRound.wordChoices = rawChoices.map((w) => ({
+        ...w,
+        definition: '',
+      }));
+      commitRoom(next, false);
     }
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    const next = { ...roomRef.current, currentRound: { ...roomRef.current.currentRound } };
-
-    const authenticWord =
-      DICTIONARY_WORDS.find(
-        (w) =>
-          w.id === selectedWord.id ||
-          w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
-      ) || selectedWord;
-
-    if (!next.usedWordIds) next.usedWordIds = [];
-    if (!next.usedWordIds.includes(authenticWord.id)) {
-      next.usedWordIds.push(authenticWord.id);
-    }
-
     soundManager.playPop();
-    startRoundWithWord(next, authenticWord);
   };
 
-  const submitBluff = (text: string) => {
-    if (sendWs('SUBMIT_BLUFF', { text })) {
-      soundManager.playPop();
-      return;
+  const selectWord = async (selectedWord: WordItem) => {
+    const ok = await sendAction('SELECT_WORD', { word: selectedWord });
+    if (!ok && roomRef.current && roomRef.current.currentRound) {
+      const next = { ...roomRef.current, currentRound: { ...roomRef.current.currentRound } };
+      const authenticWord =
+        DICTIONARY_WORDS.find(
+          (w) =>
+            w.id === selectedWord.id ||
+            w.word.toLowerCase() === String(selectedWord.word || '').toLowerCase()
+        ) || selectedWord;
+
+      if (!next.usedWordIds) next.usedWordIds = [];
+      if (!next.usedWordIds.includes(authenticWord.id)) {
+        next.usedWordIds.push(authenticWord.id);
+      }
+      startRoundWithWord(next, authenticWord);
     }
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    if (roomRef.current.currentRound.phase !== 'SUBMISSION') return;
+    soundManager.playPop();
+  };
 
-    const next = {
-      ...roomRef.current,
-      players: roomRef.current.players.map((p) => ({ ...p })),
-      currentRound: {
-        ...roomRef.current.currentRound,
-        bluffs: [...roomRef.current.currentRound.bluffs],
-      },
-    };
-
-    const player = next.players.find((p) => p.id === myPlayerId);
-    if (!player) return;
-
-    const isPlayerLeader = player.id === next.currentRound.leaderId;
-    const leaderBluffs = isLeaderBluffing(next.settings, next.players.length);
-    if (isPlayerLeader && !leaderBluffs) {
-      setError('O líder não escreve nem vota nesta configuração!');
-      return;
-    }
-
+  const submitBluff = async (text: string) => {
     const bluffText = formatConcept(text || '');
     if (!bluffText) return;
 
-    const existingIndex = next.currentRound.bluffs.findIndex((b) => b.authorId === player.id);
-    const newEntry: BluffEntry = {
-      id: 'bluff_' + player.id + '_' + Date.now(),
-      authorId: player.id,
-      text: bluffText,
-      isReal: false,
-    };
+    const ok = await sendAction('SUBMIT_BLUFF', { text: bluffText });
+    if (!ok && roomRef.current && roomRef.current.currentRound?.phase === 'SUBMISSION') {
+      const next = {
+        ...roomRef.current,
+        players: roomRef.current.players.map((p) => ({ ...p })),
+        currentRound: {
+          ...roomRef.current.currentRound,
+          bluffs: [...roomRef.current.currentRound.bluffs],
+        },
+      };
 
-    if (existingIndex !== -1) {
-      next.currentRound.bluffs[existingIndex] = newEntry;
-    } else {
-      next.currentRound.bluffs.push(newEntry);
+      const player = next.players.find((p) => p.id === myPlayerId);
+      if (!player) return;
+
+      const isPlayerLeader = player.id === next.currentRound.leaderId;
+      const leaderBluffs = isLeaderBluffing(next.settings, next.players.length);
+      if (isPlayerLeader && !leaderBluffs) {
+        setError('O líder não escreve nem vota nesta configuração!');
+        return;
+      }
+
+      const existingIndex = next.currentRound.bluffs.findIndex((b) => b.authorId === player.id);
+      const newEntry: BluffEntry = {
+        id: 'bluff_' + player.id + '_' + Date.now(),
+        authorId: player.id,
+        text: bluffText,
+        isReal: false,
+      };
+
+      if (existingIndex !== -1) {
+        next.currentRound.bluffs[existingIndex] = newEntry;
+      } else {
+        next.currentRound.bluffs.push(newEntry);
+      }
+
+      player.hasSubmitted = true;
+      checkSubmissionCompletion(next);
     }
-
-    player.hasSubmitted = true;
     soundManager.playPop();
-    checkSubmissionCompletion(next);
   };
 
-  const submitVote = (optionId: string) => {
-    if (sendWs('SUBMIT_VOTE', { optionId })) {
-      soundManager.playVote();
-      return;
+  const submitVote = async (optionId: string) => {
+    const ok = await sendAction('SUBMIT_VOTE', { optionId });
+    if (!ok && roomRef.current && roomRef.current.currentRound?.phase === 'VOTING') {
+      const next = {
+        ...roomRef.current,
+        players: roomRef.current.players.map((p) => ({ ...p })),
+        currentRound: {
+          ...roomRef.current.currentRound,
+          votes: { ...roomRef.current.currentRound.votes },
+        },
+      };
+
+      const player = next.players.find((p) => p.id === myPlayerId);
+      if (!player) return;
+
+      const isPlayerLeader = player.id === next.currentRound.leaderId;
+      const leaderBluffs = isLeaderBluffing(next.settings, next.players.length);
+      const leaderHasBluff = next.currentRound.bluffs.some((b) => b.authorId === player.id);
+
+      if (isPlayerLeader && !leaderBluffs && !leaderHasBluff) {
+        return;
+      }
+
+      const chosenOption = next.currentRound.bluffs.find((b) => b.id === optionId);
+      if (chosenOption && chosenOption.authorId === player.id) {
+        setError('Você não pode votar no seu próprio blefe!');
+        return;
+      }
+
+      next.currentRound.votes[player.id] = optionId;
+      player.hasVoted = true;
+      checkVotingCompletion(next);
     }
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    if (roomRef.current.currentRound.phase !== 'VOTING') return;
-
-    const next = {
-      ...roomRef.current,
-      players: roomRef.current.players.map((p) => ({ ...p })),
-      currentRound: {
-        ...roomRef.current.currentRound,
-        votes: { ...roomRef.current.currentRound.votes },
-      },
-    };
-
-    const player = next.players.find((p) => p.id === myPlayerId);
-    if (!player) return;
-
-    const isPlayerLeader = player.id === next.currentRound.leaderId;
-    const leaderBluffs = isLeaderBluffing(next.settings, next.players.length);
-    const leaderHasBluff = next.currentRound.bluffs.some((b) => b.authorId === player.id);
-
-    if (isPlayerLeader && !leaderBluffs && !leaderHasBluff) {
-      return;
-    }
-
-    const chosenOption = next.currentRound.bluffs.find((b) => b.id === optionId);
-    if (chosenOption && chosenOption.authorId === player.id) {
-      setError('Você não pode votar no seu próprio blefe!');
-      return;
-    }
-
-    next.currentRound.votes[player.id] = optionId;
-    player.hasVoted = true;
     soundManager.playVote();
-    checkVotingCompletion(next);
   };
 
-  const revealResults = () => {
-    if (sendWs('REVEAL_RESULTS')) return;
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    handleStartRevealPhase({ ...roomRef.current });
+  const revealResults = async () => {
+    const ok = await sendAction('REVEAL_RESULTS');
+    if (!ok && roomRef.current && roomRef.current.currentRound) {
+      handleStartRevealPhase({ ...roomRef.current });
+    }
   };
 
-  const requestNextRound = () => {
-    if (sendWs('REQUEST_NEXT_ROUND')) {
-      soundManager.playPop();
-      return;
+  const requestNextRound = async () => {
+    const ok = await sendAction('REQUEST_NEXT_ROUND');
+    if (!ok && roomRef.current && roomRef.current.currentRound) {
+      const next = {
+        ...roomRef.current,
+        currentRound: {
+          ...roomRef.current.currentRound,
+          nextRoundConfirmations: [
+            ...(roomRef.current.currentRound.nextRoundConfirmations || []),
+          ],
+        },
+      };
+
+      next.currentRound.nextRoundRequested = true;
+      next.currentRound.nextRoundRequesterId = myPlayerId;
+      if (!next.currentRound.nextRoundConfirmations!.includes(myPlayerId)) {
+        next.currentRound.nextRoundConfirmations!.push(myPlayerId);
+      }
+
+      next.players
+        .filter((p) => p.isBot)
+        .forEach((b) => {
+          if (!next.currentRound?.nextRoundConfirmations?.includes(b.id)) {
+            next.currentRound?.nextRoundConfirmations?.push(b.id);
+          }
+        });
+
+      const activePlayers = next.players.filter((p) => p.isConnected || p.isBot);
+      const allConfirmed =
+        activePlayers.length > 0 &&
+        activePlayers.every((p) => next.currentRound?.nextRoundConfirmations?.includes(p.id));
+
+      if (allConfirmed) {
+        prepareNextRound(next);
+      } else {
+        commitRoom(next, false);
+      }
     }
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    const next = {
-      ...roomRef.current,
-      currentRound: {
-        ...roomRef.current.currentRound,
-        nextRoundConfirmations: [
-          ...(roomRef.current.currentRound.nextRoundConfirmations || []),
-        ],
-      },
-    };
-
-    next.currentRound.nextRoundRequested = true;
-    next.currentRound.nextRoundRequesterId = myPlayerId;
-    if (!next.currentRound.nextRoundConfirmations!.includes(myPlayerId)) {
-      next.currentRound.nextRoundConfirmations!.push(myPlayerId);
-    }
-
-    next.players
-      .filter((p) => p.isBot)
-      .forEach((b) => {
-        if (!next.currentRound?.nextRoundConfirmations?.includes(b.id)) {
-          next.currentRound?.nextRoundConfirmations?.push(b.id);
-        }
-      });
-
-    const activePlayers = next.players.filter((p) => p.isConnected || p.isBot);
-    const allConfirmed =
-      activePlayers.length > 0 &&
-      activePlayers.every((p) => next.currentRound?.nextRoundConfirmations?.includes(p.id));
-
     soundManager.playPop();
-    if (allConfirmed) {
-      prepareNextRound(next);
-    } else {
-      commitRoom(next, false);
-    }
   };
 
   const nextRound = () => {
     requestNextRound();
   };
 
-  const confirmNextRound = () => {
-    if (sendWs('CONFIRM_NEXT_ROUND')) {
-      soundManager.playPop();
-      return;
+  const confirmNextRound = async () => {
+    const ok = await sendAction('CONFIRM_NEXT_ROUND');
+    if (!ok && roomRef.current && roomRef.current.currentRound) {
+      const next = {
+        ...roomRef.current,
+        currentRound: {
+          ...roomRef.current.currentRound,
+          nextRoundConfirmations: [
+            ...(roomRef.current.currentRound.nextRoundConfirmations || []),
+          ],
+        },
+      };
+
+      if (!next.currentRound.nextRoundConfirmations!.includes(myPlayerId)) {
+        next.currentRound.nextRoundConfirmations!.push(myPlayerId);
+      }
+
+      next.players
+        .filter((p) => p.isBot)
+        .forEach((b) => {
+          if (!next.currentRound?.nextRoundConfirmations?.includes(b.id)) {
+            next.currentRound?.nextRoundConfirmations?.push(b.id);
+          }
+        });
+
+      const activePlayers = next.players.filter((p) => p.isConnected || p.isBot);
+      const allConfirmed =
+        activePlayers.length > 0 &&
+        activePlayers.every((p) => next.currentRound?.nextRoundConfirmations?.includes(p.id));
+
+      if (allConfirmed) {
+        prepareNextRound(next);
+      } else {
+        commitRoom(next, false);
+      }
     }
-    if (!roomRef.current || !roomRef.current.currentRound) return;
-    const next = {
-      ...roomRef.current,
-      currentRound: {
-        ...roomRef.current.currentRound,
-        nextRoundConfirmations: [
-          ...(roomRef.current.currentRound.nextRoundConfirmations || []),
-        ],
-      },
-    };
-
-    if (!next.currentRound.nextRoundConfirmations!.includes(myPlayerId)) {
-      next.currentRound.nextRoundConfirmations!.push(myPlayerId);
-    }
-
-    next.players
-      .filter((p) => p.isBot)
-      .forEach((b) => {
-        if (!next.currentRound?.nextRoundConfirmations?.includes(b.id)) {
-          next.currentRound?.nextRoundConfirmations?.push(b.id);
-        }
-      });
-
-    const activePlayers = next.players.filter((p) => p.isConnected || p.isBot);
-    const allConfirmed =
-      activePlayers.length > 0 &&
-      activePlayers.every((p) => next.currentRound?.nextRoundConfirmations?.includes(p.id));
-
     soundManager.playPop();
-    if (allConfirmed) {
-      prepareNextRound(next);
-    } else {
-      commitRoom(next, false);
-    }
   };
 
   const forceNextRound = () => {};
@@ -1400,37 +1484,35 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const adjustRoundPoints = () => {};
   const setRoundPoints = () => {};
 
-  const restartGame = () => {
-    if (sendWs('RESTART_GAME')) {
-      soundManager.playPop();
-      return;
+  const restartGame = async () => {
+    const ok = await sendAction('RESTART_GAME');
+    if (!ok && roomRef.current) {
+      clearTimers();
+      const next: RoomState = {
+        ...roomRef.current,
+        currentRound: null,
+        winnerId: undefined,
+        isTieBreakActive: false,
+        players: roomRef.current.players.map((p) => ({
+          ...p,
+          score: 0,
+          hasSubmitted: false,
+          hasVoted: false,
+        })),
+      };
+      commitRoom(next, false);
     }
-    if (!roomRef.current) return;
-    clearTimers();
-    const next: RoomState = {
-      ...roomRef.current,
-      currentRound: null,
-      winnerId: undefined,
-      isTieBreakActive: false,
-      players: roomRef.current.players.map((p) => ({
-        ...p,
-        score: 0,
-        hasSubmitted: false,
-        hasVoted: false,
-      })),
-    };
-    commitRoom(next, false);
     soundManager.playPop();
   };
 
-  const leaveRoom = () => {
+  const leaveRoom = async () => {
     clearTimers();
-    // Save reconnect info before leaving so the player can return with preserved points if needed
     if (roomRef.current) {
+      const code = roomRef.current.roomCode;
       const me = roomRef.current.players.find((p) => p.id === myPlayerId);
       if (me) {
         const info: SavedReconnectInfo = {
-          roomCode: roomRef.current.roomCode,
+          roomCode: code,
           playerName: me.name,
           avatar: me.avatar,
           color: me.color,
@@ -1440,12 +1522,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         persistReconnectInfo(info);
         setSavedReconnectInfo(info);
       }
+      sendWs('LEAVE_ROOM');
+      await apiCall(`/api/rooms/${code}/leave`, 'POST', { playerId: myPlayerId });
     }
 
-    sendWs('LEAVE_ROOM');
     localStorage.removeItem(STORAGE_KEYS.LAST_ROOM);
 
-    // Clean any ?room=XXXX parameter from the browser URL so mobile users aren't trapped in the room
     if (typeof window !== 'undefined' && window.location.search) {
       window.history.replaceState({}, '', window.location.pathname);
     }

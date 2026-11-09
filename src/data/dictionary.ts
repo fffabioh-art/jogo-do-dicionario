@@ -8,14 +8,19 @@ export { removeAccentsKeepCedilla, ensureConceptPeriod, formatConcept };
 // Somente alterável via código no repositório (src/data/dicionario.json)
 export const DICIONARIO_JSON_ITEMS: DicionarioJsonItem[] = dicionarioStaticJson as DicionarioJsonItem[];
 
-export const DICTIONARY_WORDS: WordItem[] = DICIONARIO_JSON_ITEMS.map((item, idx) => ({
-  id: `acervo_${idx + 1}`,
-  word: item.palavra.trim(),
-  partOfSpeech: 'substantivo',
-  definition: formatConcept(item.correta),
-  falsas: item.falsas ? item.falsas.map((f) => formatConcept(f)) : undefined,
-  difficulty: 'dificil',
-}));
+export const DICTIONARY_WORDS: WordItem[] = DICIONARIO_JSON_ITEMS.map((item, idx) => {
+  const word: WordItem = {
+    id: `acervo_${idx + 1}`,
+    word: item.palavra.trim(),
+    partOfSpeech: 'substantivo',
+    definition: formatConcept(item.correta),
+    difficulty: 'dificil',
+  };
+  if (item.falsas && Array.isArray(item.falsas) && item.falsas.length > 0) {
+    word.falsas = item.falsas.map((f) => formatConcept(f));
+  }
+  return word;
+});
 
 // Retorna sempre o acervo oficial do repositório com conceitos padronizados
 export function getAllWords(_customWords?: WordItem[], _exclusiveCustomWords?: boolean): WordItem[] {

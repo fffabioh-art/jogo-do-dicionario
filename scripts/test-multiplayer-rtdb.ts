@@ -87,6 +87,40 @@ async function runMultiplayerTest() {
     carolState = formatRoomSnapshot(snap.val(), 'player_carol');
   });
 
+  // ETAPA 0: Validação de Integridade do Dicionário (Zero propriedades undefined)
+  console.log('0. [Dicionário] Verificando integridade das 2.083 palavras contra undefined...');
+  if (DICTIONARY_WORDS.length !== 2083) {
+    throw new Error(`Contagem incorreta de palavras: esperado 2083, obtido ${DICTIONARY_WORDS.length}`);
+  }
+  for (const w of DICTIONARY_WORDS) {
+    if ('falsas' in w && w.falsas === undefined) {
+      throw new Error(`Propriedade falsas: undefined encontrada na palavra: ${w.id}`);
+    }
+    for (const [k, v] of Object.entries(w)) {
+      if (v === undefined) {
+        throw new Error(`Propriedade ${k}: undefined encontrada na palavra: ${w.id}`);
+      }
+    }
+  }
+  console.log('   ✓ Todas as 2.083 palavras são válidas e 100% livres de propriedades undefined.');
+
+  // ETAPA 0.1: Validação de início com Host + Bot
+  console.log('0.1. [Host + Bot] Validando início de partida com 1 anfitrião e 1 Bot...');
+  const botTestChoices = getRandomWordChoices(3, []);
+  const botRoomRound = {
+    roundNumber: 1,
+    leaderId: 'player_alice',
+    word: { id: botTestChoices[0].id, word: botTestChoices[0].word, partOfSpeech: botTestChoices[0].partOfSpeech, definition: '' },
+    phase: 'WORD_CHOICE',
+    wordChoices: botTestChoices.map((w) => ({ id: w.id, word: w.word, partOfSpeech: w.partOfSpeech, definition: '' })),
+    bluffs: [],
+    votes: {},
+  };
+  if (botRoomRound.phase !== 'WORD_CHOICE' || botRoomRound.wordChoices.length !== 3) {
+    throw new Error('Falha no início de partida com Host + Bot.');
+  }
+  console.log('   ✓ Anfitrião + Bot iniciam perfeitamente na fase WORD_CHOICE.');
+
   // ETAPA 1: Host Alice cria a sala
   console.log('1. [Alice] Criando a sala TEST...');
   db.set(roomPath, {

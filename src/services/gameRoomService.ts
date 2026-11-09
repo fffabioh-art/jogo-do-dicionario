@@ -56,6 +56,29 @@ function normalizePlayerName(name: string): string {
 }
 
 /**
+ * Remove recursivamente todas as propriedades com valor undefined de um objeto ou array,
+ * evitando que o Firebase Realtime Database dispare erro fatal de serialização.
+ */
+export function stripUndefined<T>(obj: T): T {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => stripUndefined(item)) as unknown as T;
+  }
+  if (typeof obj === 'object') {
+    const cleaned: Record<string, any> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== undefined) {
+        cleaned[key] = stripUndefined(value);
+      }
+    }
+    return cleaned as T;
+  }
+  return obj;
+}
+
+/**
  * Converte a estrutura de sala do Realtime Database para a tipagem RoomState utilizada pelos componentes React
  */
 export function formatRoomSnapshot(raw: any, playerId?: string): RoomState | null {
@@ -486,15 +509,30 @@ export async function startGameInDb(roomCode: string, hostId: string): Promise<{
 
   try {
     let errorMsg: string | undefined;
-    const wordChoices = getRandomWordChoices(3, []);
+    const rawWordChoices = getRandomWordChoices(3, []);
 
-    // 1. Salva definições reais no nó protegido de segredos
-    await set(secretsRef, {
-      wordChoices,
-      realDefinition: '',
-      realOptionId: '',
-      authorMap: {},
-    });
+    // 1. Garante que todos os objetos de palavras estejam 100% livres de propriedades undefined
+    const wordChoices = rawWordChoices.map((w) =>
+      stripUndefined({
+        id: w.id,
+        word: w.word,
+        partOfSpeech: w.partOfSpeech || 'substantivo',
+        definition: w.definition || '',
+        ...(w.falsas && w.falsas.length > 0 ? { falsas: w.falsas } : {}),
+        ...(w.difficulty ? { difficulty: w.difficulty } : {}),
+      })
+    );
+
+    // Salva definições reais no nó protegido de segredos
+    await set(
+      secretsRef,
+      stripUndefined({
+        wordChoices,
+        realDefinition: '',
+        realOptionId: '',
+        authorMap: {},
+      })
+    );
 
     // 2. Inicia a sala com escolhas sem expor as definições
     const txn = await runTransaction(roomRef, (room) => {
@@ -525,23 +563,36 @@ export async function startGameInDb(roomCode: string, hostId: string): Promise<{
 
       const leader = playersList.find((p) => p.isHost) || playersList[0];
 
-      room.currentRound = {
+      const publicChoices = wordChoices.map((w) => ({
+        id: w.id,
+        word: w.word,
+        partOfSpeech: w.partOfSpeech,
+        definition: '',
+      }));
+
+      room.currentRound = stripUndefined({
         roundNumber: 1,
         leaderId: leader.id,
-        word: { ...wordChoices[0], definition: '' },
+        word: {
+          id: wordChoices[0].id,
+          word: wordChoices[0].word,
+          partOfSpeech: wordChoices[0].partOfSpeech,
+          definition: '',
+        },
         phase: 'WORD_CHOICE',
-        wordChoices: wordChoices.map((w) => ({ ...w, definition: '' })),
+        wordChoices: publicChoices,
         bluffs: [],
         votes: {},
-      };
+      });
 
       room.updatedAt = Date.now();
-      return room;
+      return stripUndefined(room);
     });
 
     if (errorMsg) return { success: false, error: errorMsg };
     return { success: txn.committed };
   } catch (err: any) {
+    console.error('Erro ao iniciar partida:', err);
     return { success: false, error: err?.message || 'Falha ao iniciar partida.' };
   }
 }
@@ -564,15 +615,30 @@ export async function rerollWordsInDb(roomCode: string, requesterId: string): Pr
 
     const currentIds = (room.currentRound.wordChoices || []).map((w: WordItem) => w.id);
     const used = Array.isArray(room.usedWordIds) ? room.usedWordIds : [];
-    const newChoices = getRandomWordChoices(3, [...used, ...currentIds]);
+    const rawChoices = getRandomWordChoices(3, [...used, ...currentIds]);
+    const newChoices = rawChoices.map((w) =>
+      stripUndefined({
+        id: w.id,
+        word: w.word,
+        partOfSpeech: w.partOfSpeech || 'substantivo',
+        definition: w.definition || '',
+        ...(w.falsas && w.falsas.length > 0 ? { falsas: w.falsas } : {}),
+        ...(w.difficulty ? { difficulty: w.difficulty } : {}),
+      })
+    );
 
-    await update(secretsRef, { wordChoices: newChoices });
+    await update(secretsRef, stripUndefined({ wordChoices: newChoices }));
 
     await runTransaction(roomRef, (r) => {
       if (!r || !r.currentRound) return r;
-      r.currentRound.wordChoices = newChoices.map((w) => ({ ...w, definition: '' }));
+      r.currentRound.wordChoices = newChoices.map((w) => ({
+        id: w.id,
+        word: w.word,
+        partOfSpeech: w.partOfSpeech,
+        definition: '',
+      }));
       r.updatedAt = Date.now();
-      return r;
+      return stripUndefined(r);
     });
     return true;
   } catch {
@@ -631,7 +697,11 @@ export async function selectWordInDb(roomCode: string, leaderId: string, selecte
       room.currentRound.bluffs = [];
       room.currentRound.votes = {};
       room.currentRound.startTime = Date.now();
-      room.currentRound.deadline = timeLimit > 0 ? Date.now() + timeLimit * 1000 : undefined;
+      if (timeLimit > 0) {
+        room.currentRound.deadline = Date.now() + timeLimit * 1000;
+      } else {
+        delete room.currentRound.deadline;
+      }
 
       Object.keys(room.players || {}).forEach((id) => {
         room.players[id].hasSubmitted = false;
@@ -639,7 +709,7 @@ export async function selectWordInDb(roomCode: string, leaderId: string, selecte
       });
 
       room.updatedAt = Date.now();
-      return room;
+      return stripUndefined(room);
     });
     return true;
   } catch {
@@ -819,14 +889,18 @@ async function executeVotingTransition(roomCode: string, room: any) {
     r.currentRound.votes = {};
     r.currentRound.allVotesIn = false;
     r.currentRound.startTime = Date.now();
-    r.currentRound.deadline = votingLimit > 0 ? Date.now() + votingLimit * 1000 : undefined;
+    if (votingLimit > 0) {
+      r.currentRound.deadline = Date.now() + votingLimit * 1000;
+    } else {
+      delete r.currentRound.deadline;
+    }
 
     Object.keys(r.players || {}).forEach((id) => {
       r.players[id].hasVoted = false;
     });
 
     r.updatedAt = Date.now();
-    return r;
+    return stripUndefined(r);
   });
 }
 
@@ -1092,18 +1166,40 @@ export async function confirmNextRoundInDb(roomCode: string, playerId: string): 
 
           const roundNumber = (room.currentRound.roundNumber || 0) + 1;
           const used = Array.isArray(room.usedWordIds) ? room.usedWordIds : [];
-          newWordChoices = getRandomWordChoices(3, used);
+          const rawChoices = getRandomWordChoices(3, used);
+          newWordChoices = rawChoices.map((w) =>
+            stripUndefined({
+              id: w.id,
+              word: w.word,
+              partOfSpeech: w.partOfSpeech || 'substantivo',
+              definition: w.definition || '',
+              ...(w.falsas && w.falsas.length > 0 ? { falsas: w.falsas } : {}),
+              ...(w.difficulty ? { difficulty: w.difficulty } : {}),
+            })
+          );
 
-          room.currentRound = {
+          const publicNewChoices = newWordChoices.map((w) => ({
+            id: w.id,
+            word: w.word,
+            partOfSpeech: w.partOfSpeech,
+            definition: '',
+          }));
+
+          room.currentRound = stripUndefined({
             roundNumber,
             leaderId: nextLeader.id,
-            word: { ...newWordChoices[0], definition: '' },
+            word: {
+              id: newWordChoices[0].id,
+              word: newWordChoices[0].word,
+              partOfSpeech: newWordChoices[0].partOfSpeech,
+              definition: '',
+            },
             phase: 'WORD_CHOICE',
-            wordChoices: newWordChoices.map((w) => ({ ...w, definition: '' })),
+            wordChoices: publicNewChoices,
             bluffs: [],
             votes: {},
             isTieBreak: Boolean(room.isTieBreakActive),
-          };
+          });
 
           Object.keys(room.players).forEach((id) => {
             room.players[id].hasSubmitted = false;
@@ -1113,16 +1209,19 @@ export async function confirmNextRoundInDb(roomCode: string, playerId: string): 
       }
 
       room.updatedAt = Date.now();
-      return room;
+      return stripUndefined(room);
     });
 
     if (allConfirmed && newWordChoices.length > 0) {
-      await set(secretsRef, {
-        wordChoices: newWordChoices,
-        realDefinition: '',
-        realOptionId: '',
-        authorMap: {},
-      });
+      await set(
+        secretsRef,
+        stripUndefined({
+          wordChoices: newWordChoices,
+          realDefinition: '',
+          realOptionId: '',
+          authorMap: {},
+        })
+      );
     }
 
     return true;

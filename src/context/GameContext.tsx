@@ -509,8 +509,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     const res = await startGameInDb(room.roomCode, myPlayerId);
-    if (!res.success && res.error) {
-      setError(res.error);
+    if (!res.success) {
+      setError(res.error || 'Falha ao iniciar a partida. Verifique sua conexão e tente novamente.');
     } else {
       soundManager.playPop();
     }

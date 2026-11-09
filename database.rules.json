@@ -1,0 +1,33 @@
+{
+  "rules": {
+    "dicionario_by_fabulous": {
+      "rooms": {
+        "$roomCode": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          "hostId": {
+            ".validate": "!data.exists() || data.val() === newData.val() || data.val() === auth.uid"
+          },
+          "settings": {
+            "targetScore": {
+              ".validate": "newData.parent().parent().child('hostId').val() === auth.uid || !data.exists() || data.val() === newData.val()"
+            }
+          },
+          "players": {
+            "$playerId": {
+              "score": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && (root.child('dicionario_by_fabulous/rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('dicionario_by_fabulous/rooms/' + $roomCode + '/currentRound/leaderId').val() === auth.uid || !data.exists() || data.val() === newData.val())"
+              }
+            }
+          }
+        }
+      },
+      "secrets": {
+        "$roomCode": {
+          ".read": "auth != null && (root.child('dicionario_by_fabulous/rooms/' + $roomCode + '/currentRound/phase').val() === 'REVEAL' || root.child('dicionario_by_fabulous/rooms/' + $roomCode + '/currentRound/phase').val() === 'GAME_OVER' || root.child('dicionario_by_fabulous/rooms/' + $roomCode + '/hostId').val() === auth.uid || root.child('dicionario_by_fabulous/rooms/' + $roomCode + '/currentRound/leaderId').val() === auth.uid)",
+          ".write": "auth != null"
+        }
+      }
+    }
+  }
+}

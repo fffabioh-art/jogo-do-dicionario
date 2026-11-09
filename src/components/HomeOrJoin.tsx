@@ -60,6 +60,7 @@ export const HomeOrJoin: React.FC = () => {
     savedReconnectInfo,
     rejoinSavedRoom,
     clearSavedReconnectInfo,
+    isFirebaseReady,
   } = useGame();
 
   const [mode, setMode] = useState<'create' | 'join'>('create');
@@ -125,6 +126,20 @@ export const HomeOrJoin: React.FC = () => {
           Invente definições convincentes, blefe com seus amigos e descubra o significado real.
         </p>
       </div>
+
+      {/* Firebase Status Notice if not configured */}
+      {!isFirebaseReady && (
+        <div className="p-3.5 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs space-y-2 shadow-lg">
+          <div className="flex items-center gap-2 font-bold text-amber-400">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span>Configuração do Firebase Realtime Database (Plano Spark Gratuito)</span>
+          </div>
+          <p className="text-[11px] text-stone-300 leading-relaxed">
+            Para que você e seus amigos joguem multiplayer em dispositivos diferentes pela Vercel com custo zero,
+            defina as variáveis do Firebase (<code className="text-amber-300 font-mono">VITE_FIREBASE_*</code>) no painel da Vercel ou em um arquivo <code className="text-amber-300 font-mono">.env</code>.
+          </p>
+        </div>
+      )}
 
       {/* Quick Reconnect Card (For players who disconnected / fell out of the room) */}
       {savedReconnectInfo && (
